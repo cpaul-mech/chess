@@ -9,11 +9,13 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece {
-    private ChessGame.TeamColor color;
-    private int type;
+    private ChessGame.TeamColor _color;
+    private PieceType _type;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
-       color = pieceColor;
+       this._color = pieceColor; //possible error, I don't fully understand why the "this" command is used, or if it
+        //should be used here.
+       this._type = type;
     }
 
     /**
@@ -32,7 +34,7 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return this._color;
     }
 
     /**
