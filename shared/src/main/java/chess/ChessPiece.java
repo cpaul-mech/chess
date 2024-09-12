@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -52,7 +53,10 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        //I can see whether there are pieces on the board at a location by calling board.getPiece();
+        //I would think that the board will return null object if it doesn't find anything? Or will it return 0?
+        Collection<ChessMove> moves = new ArrayList<ChessMove>(); //a collection can be an ArrayList.
+        return moves;
         /*
         This method is similar to ChessGame.validMoves, except it does not honor whose turn it is or check
         if the king is being attacked. This method does account for enemy and friendly pieces blocking movement paths.

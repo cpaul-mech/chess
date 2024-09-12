@@ -11,7 +11,7 @@ public class ChessMove {
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
     }
-
+    //TODO: Add a toString method to improve how this functions.
     /**
      * @return ChessPosition of starting location
      */
