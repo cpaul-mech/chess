@@ -15,6 +15,11 @@ public class ChessPosition {
         this._col = col;
     }
 
+    @Override
+    public String toString() {
+        return "ChessPosition [_row=" + _row + ", _col=" + _col + "]";
+    }
+
     /**
      * @return which row this position is in
      * 1 codes for the bottom row
