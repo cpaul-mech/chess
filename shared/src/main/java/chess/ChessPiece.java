@@ -13,9 +13,9 @@ public class ChessPiece {
     private final PieceType _type;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
-       this._color = pieceColor; //possible error, I don't fully understand why the "this" command is used, or if it
+        this._color = pieceColor; //possible error, I don't fully understand why the "this" command is used, or if it
         //should be used here.
-       this._type = type;
+        this._type = type;
     }
 
     /**
