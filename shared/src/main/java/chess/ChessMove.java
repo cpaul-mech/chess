@@ -7,23 +7,36 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessMove {
+    private ChessPosition _startPosition;
+    private ChessPosition _endPosition;
+    private final ChessPiece.PieceType _promotionPiece;
 
-    public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
-                     ChessPiece.PieceType promotionPiece) {
+    public ChessMove(ChessPosition startPosition, ChessPosition endPosition, ChessPiece.PieceType promotionPiece) {
+        _startPosition = startPosition;
+        _endPosition = endPosition;
+        this._promotionPiece = promotionPiece;
     }
     /* TODO: Add a toString method to improve how this functions. */
+    @Override
+    public String toString() {
+        //This will print the start position
+        var startPos = _startPosition.toString();
+        var endPos = _endPosition.toString();
+        var promPiece = _promotionPiece.toString();
+        return "move: "+startPos+" "+endPos+" "+promPiece;
+    }
     /**
      * @return ChessPosition of starting location
      */
     public ChessPosition getStartPosition() {
-        throw new RuntimeException("Not implemented");
+        return _startPosition;
     }
 
     /**
      * @return ChessPosition of ending location
      */
     public ChessPosition getEndPosition() {
-        throw new RuntimeException("Not implemented");
+        return _endPosition;
     }
 
     /**

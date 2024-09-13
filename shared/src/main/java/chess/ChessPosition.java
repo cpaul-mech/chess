@@ -14,10 +14,9 @@ public class ChessPosition {
         this._row = row;
         this._col = col;
     }
-
     @Override
     public String toString() {
-        return "ChessPosition [_row=" + _row + ", _col=" + _col + "]";
+        return "Pos: ["+ _row + ", " + _col+"]";
     }
 
     /**
