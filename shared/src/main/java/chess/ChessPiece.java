@@ -69,4 +69,8 @@ public class ChessPiece {
         The pieceMoves method will need to take into account the type of piece, and the location of other pieces on the board.
          */
     }
+    public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
+        //TODO: use recursive helper functions to figure out what moves a bishop can take.
+        return null;
+    }
 }
