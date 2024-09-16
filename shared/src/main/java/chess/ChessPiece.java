@@ -19,10 +19,12 @@ public class ChessPiece {
         this._type = type;
     }
     // TODO: add a toString Method that prints out the teamColor and the PieceType.
-//    @Override
-//    public String toString() {
-//        return
-//    }
+    @Override
+    public String toString() {
+        String color = this._color.toString();
+        String type = this._type.toString();
+        return color + ", " + type;
+    }
     /**
      * The various different chess piece options
      */
