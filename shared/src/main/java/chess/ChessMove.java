@@ -22,8 +22,11 @@ public class ChessMove {
         //This will print the start position
         var startPos = _startPosition.toString();
         var endPos = _endPosition.toString();
-        var promPiece = _promotionPiece.toString();
-        return "move: "+startPos+" "+endPos+" "+promPiece;
+        if(_promotionPiece != null){
+            var promPiece = _promotionPiece.toString();
+        }
+
+        return "move: "+startPos+" "+endPos;
     }
     /**
      * @return ChessPosition of starting location

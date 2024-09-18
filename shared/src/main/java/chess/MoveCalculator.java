@@ -62,7 +62,7 @@ public class MoveCalculator {
     }
 
     private void pawnMoves() {
-        var nextPosition = new ChessPosition(_initial_row, _initial_col+1);
+        var nextPosition = new ChessPosition(_initial_row+1, _initial_col);
         if(board.getPiece(nextPosition) == null) {
             var nextMove = new ChessMove(initial_position, nextPosition, pieceType);
             _moveset.add(nextMove);
