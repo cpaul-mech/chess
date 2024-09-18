@@ -62,15 +62,15 @@ public class ChessPiece {
         //I can see whether there are pieces on the board at a location by calling board.getPiece();
         //I would think that the board will return null object if it doesn't find anything? Or will it return 0?
         Collection<ChessMove> moves = new ArrayList<ChessMove>(); //a collection can be an ArrayList.
+        //create a new MoveCalculator object 
+        MoveCalculator moveCalculator = new MoveCalculator(this._type, (ArrayList<ChessMove>) moves, myPosition, board);
+        moves = moveCalculator.calculate_moveset();
+
         return moves;
         /*
         This method is similar to ChessGame.validMoves, except it does not honor whose turn it is or check
         if the king is being attacked. This method does account for enemy and friendly pieces blocking movement paths.
         The pieceMoves method will need to take into account the type of piece, and the location of other pieces on the board.
          */
-    }
-    public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
-        //TODO: use recursive helper functions to figure out what moves a bishop can take.
-        return null;
     }
 }
