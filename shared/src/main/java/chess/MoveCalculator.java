@@ -62,11 +62,30 @@ public class MoveCalculator {
     }
 
     private void pawnMoves() {
-        var nextPosition = new ChessPosition(_initial_row+1, _initial_col);
+        ChessPosition nextPosition;
+        ChessPosition extraPositon = null;
+        boolean extraMove = false;
+        if(_initial_row == 2 || _initial_row == 7) extraMove = true; //flag it if the pawn can move again.
+        if (board.getPiece(initial_position).getTeamColor() ==  ChessGame.TeamColor.WHITE){
+            nextPosition = new ChessPosition(_initial_row+1, _initial_col);
+            if(extraMove){extraPositon = new ChessPosition(_initial_row+2, _initial_col);}
+        }
+        else{
+            nextPosition = new ChessPosition(_initial_row-1, _initial_col);
+            if(extraMove){extraPositon = new ChessPosition(_initial_row-2, _initial_col);}
+        }
         if(board.getPiece(nextPosition) == null) {
             var nextMove = new ChessMove(initial_position, nextPosition, null);
             _moveset.add(nextMove);
         }
+        if(extraMove){
+            if(board.getPiece(extraPositon) == null)
+            {
+                var nextMove = new ChessMove(initial_position, extraPositon, null);
+                _moveset.add(nextMove);
+            }
+        }
+
         else return;
         //pawn can move forward only for now.
 
