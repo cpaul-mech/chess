@@ -18,7 +18,19 @@ public class ChessPosition {
     public String toString() {
         return "Pos: ["+ _row + ", " + _col+"]";
     }
-
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == this) return true; //checks for memory address equals
+        if(obj instanceof ChessPosition) {
+            ChessPosition p = (ChessPosition)obj;
+            if(this._row == p._row && this._col == p._col) return true;
+        }
+        return false;
+    }
+    @Override
+    public int hashCode() {
+        return 31 * _row + 61 *  _col;
+    }
     /**
      * @return which row this position is in
      * 1 codes for the bottom row
