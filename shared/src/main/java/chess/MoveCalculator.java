@@ -89,9 +89,8 @@ public class MoveCalculator {
                 _moveset.add(nextMove);
             }
         }
-
-        else return;
-
+        pawnTakePiece();
+        //don't need a return statement!!
     }
     private void pawnTakePiece() {
         //Check for pieces on the diagonal, so up one row, and +-1 collumn
@@ -113,6 +112,14 @@ public class MoveCalculator {
         if(LeftDiagPiece != null) {
             var nextMove = new ChessMove(initial_position, diagL, null);
             _moveset.add(nextMove);
+        }else if(RightDiagPiece != null){
+            var nextMove = new ChessMove(initial_position, diagR, null);
+            _moveset.add(nextMove);
         }
     }
+//    private void pawnPromotionCheck(ChessPosition end, boolean white = true;){
+//        //the job of this function is to check for if the place that the pawn is moving will place the pawn in the end zone.
+//
+//    }
+    public void move_straight_line()
 }
