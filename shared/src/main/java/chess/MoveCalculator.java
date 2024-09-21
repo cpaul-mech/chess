@@ -47,9 +47,43 @@ public class MoveCalculator {
     }
 
     private void knightMoves() {
+        int[] upRightL = {2,1};
+        int[] upLeftL = {2,-1};
+        int[] leftUpL = {1,-2};
+        int[] leftDownL = {-1,-2};
+        int[] downLeftL = {-2,-1};
+        int[] downRightL = {-2,1};
+        int[] rightDownL = {-1,2};
+        int[] rightUpL = {1,2};
+        int limit = 1;
+        move_straight_line(_initial_row+upRightL[0],_initial_col+upRightL[1],limit,upRightL);
+        move_straight_line(_initial_row+upLeftL[0],_initial_col+upLeftL[1],limit,upLeftL);
+        move_straight_line(_initial_row+leftUpL[0],_initial_col+leftUpL[1],limit,leftUpL);
+        move_straight_line(_initial_row+leftDownL[0],_initial_col+leftDownL[1],limit,leftDownL);
+        move_straight_line(_initial_row+downLeftL[0],_initial_col+downLeftL[1],limit,downLeftL);
+        move_straight_line(_initial_row+downRightL[0],_initial_col+downRightL[1],limit,downRightL);
+        move_straight_line(_initial_row+rightDownL[0],_initial_col+rightDownL[1],limit,rightDownL);
+        move_straight_line(_initial_row+rightUpL[0],_initial_col+rightUpL[1],limit,rightUpL);
     }
 
     private void queenMoves() {
+        int[] up = {1,0};
+        int[] down = {-1, 0};
+        int[] left = {0, -1};
+        int[] right = {0, +1};
+        int[] upRight = {1,1};
+        int[] upLeft = {1,-1};
+        int[] downRight = {-1,1};
+        int[] downLeft = {-1,-1};
+        int limit = 9;
+        move_straight_line(_initial_row+1, _initial_col,limit,up);
+        move_straight_line(_initial_row-1,_initial_col,limit,down);
+        move_straight_line(_initial_row,_initial_col-1,limit,left);
+        move_straight_line(_initial_row,_initial_col+1,limit,right);
+        move_straight_line(_initial_row+1,_initial_col+1,limit,upRight);
+        move_straight_line(_initial_row+1,_initial_col-1,limit,upLeft);
+        move_straight_line(_initial_row-1,_initial_col+1,limit,downRight);
+        move_straight_line(_initial_row-1,_initial_col-1,limit,downLeft);
     }
 
     private void rookMoves() {
@@ -67,11 +101,35 @@ public class MoveCalculator {
     }
 
     private void bishopMoves() {
+        int[] upRight = {1,1};
+        int[] upLeft = {1,-1};
+        int[] downRight = {-1,1};
+        int[] downLeft = {-1,-1};
+        move_straight_line(_initial_row+1,_initial_col+1,9,upRight);
+        move_straight_line(_initial_row+1,_initial_col-1,9,upLeft);
+        move_straight_line(_initial_row-1,_initial_col+1,9,downRight);
+        move_straight_line(_initial_row-1,_initial_col-1,9,downLeft);
 
     }
 
     private void kingMoves() {
-
+        int[] up = {1,0};
+        int[] down = {-1, 0};
+        int[] left = {0, -1};
+        int[] right = {0, +1};
+        int[] upRight = {1,1};
+        int[] upLeft = {1,-1};
+        int[] downRight = {-1,1};
+        int[] downLeft = {-1,-1};
+        int limit = 1;
+        move_straight_line(_initial_row+1, _initial_col,limit,up);
+        move_straight_line(_initial_row-1,_initial_col,limit,down);
+        move_straight_line(_initial_row,_initial_col-1,limit,left);
+        move_straight_line(_initial_row,_initial_col+1,limit,right);
+        move_straight_line(_initial_row+1,_initial_col+1,limit,upRight);
+        move_straight_line(_initial_row+1,_initial_col-1,limit,upLeft);
+        move_straight_line(_initial_row-1,_initial_col+1,limit,downRight);
+        move_straight_line(_initial_row-1,_initial_col-1,limit,downLeft);
     }
 
     private void pawnMoves() {
