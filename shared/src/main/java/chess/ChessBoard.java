@@ -1,5 +1,7 @@
 package chess;
 
+import java.util.ArrayList;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -11,6 +13,8 @@ public class ChessBoard {
     public ChessBoard() {
         
     }
+    @Override
+    public void 
 
     /**
      * Adds a chess piece to the chessboard
@@ -38,6 +42,39 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        //add the black and white pawns, group 1:
+        var white = ChessGame.TeamColor.WHITE;
+        var black = ChessGame.TeamColor.BLACK;
+        var bishop = ChessPiece.PieceType.BISHOP;
+        var rook = ChessPiece.PieceType.ROOK;
+        var knight = ChessPiece.PieceType.KNIGHT;
+        var queen = ChessPiece.PieceType.QUEEN;
+        var king = ChessPiece.PieceType.KING;
+        ArrayList<ChessPiece.PieceType> group1 = new ArrayList<>();
+        group1.add(rook);
+        group1.add(knight);
+        group1.add(bishop);
+        group1.add(queen);
+        group1.add(king);
+        group1.add(bishop);
+        group1.add(knight);
+        group1.add(rook);
+        var blackPawn = new ChessPiece(black,ChessPiece.PieceType.PAWN);
+        var whitePawn = new ChessPiece(white,ChessPiece.PieceType.PAWN);
+        for (int i = 1; i <9; i++) {
+            ChessPosition bp = new ChessPosition(7,i);
+            ChessPosition wp = new ChessPosition(2,i);
+            addPiece(bp,blackPawn);
+            addPiece(wp,whitePawn);
+            ChessPosition topRow = new ChessPosition(8,i);
+            ChessPosition bottomRow = new ChessPosition(1,i);
+            var blackTopPiece = new ChessPiece(black, group1.get(i-1));
+            var whiteTopPiece = new ChessPiece(white,group1.get(i-1));
+            addPiece(topRow,blackTopPiece);
+            addPiece(bottomRow,whiteTopPiece);
+        }
+        //now go over the for loop for both white and black.
+
+
     }
 }
