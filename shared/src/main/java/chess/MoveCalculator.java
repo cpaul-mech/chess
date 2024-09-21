@@ -153,13 +153,17 @@ public class MoveCalculator {
             ChessMove nextMove = null;
             if(nextPosition.getRow() == 8 || nextPosition.getRow()==1){
                 for(ChessPiece.PieceType piecetype1 : ChessPiece.PieceType.values()){
+                    if(piecetype1 != ChessPiece.PieceType.PAWN && piecetype1 != ChessPiece.PieceType.KING){
                     nextMove = new ChessMove(initial_position, nextPosition, piecetype1);
+                    _moveset.add(nextMove);
+                    }
                 }
             }
             else {
                 nextMove = new ChessMove(initial_position, nextPosition, null);
+                _moveset.add(nextMove);
             }
-            _moveset.add(nextMove);
+
         }
         if(extraMove){
             ChessMove nextMove = null;
@@ -168,11 +172,16 @@ public class MoveCalculator {
             {
                 if(nextPosition.getRow() == 8 || nextPosition.getRow()==1){
                     for(ChessPiece.PieceType piecetype1 : ChessPiece.PieceType.values()){
-                        nextMove = new ChessMove(initial_position, nextPosition, piecetype1);
+                        if(piecetype1 != ChessPiece.PieceType.PAWN && piecetype1 != ChessPiece.PieceType.KING){
+                            nextMove = new ChessMove(initial_position, nextPosition, piecetype1);
+                            _moveset.add(nextMove);
+                        }
                     }
                 }
-                else{nextMove = new ChessMove(initial_position, extraPositon, null);}
-                _moveset.add(nextMove);
+                else{nextMove = new ChessMove(initial_position, extraPositon, null);
+                    _moveset.add(nextMove);
+                }
+
             }
         }
         pawnTakePiece();
@@ -199,19 +208,30 @@ public class MoveCalculator {
         ChessMove nextMove;
         if(LeftDiagPiece != null) {
             if(diagL.getRow() == 8 || diagL.getRow()==1){
-                nextMove = new ChessMove(initial_position, diagL, promoPiece);
-            }else{
-            nextMove = new ChessMove(initial_position, diagL, null);
+                for(ChessPiece.PieceType piecetype1 : ChessPiece.PieceType.values()){
+                    if(piecetype1 != ChessPiece.PieceType.PAWN && piecetype1 != ChessPiece.PieceType.KING){
+                        nextMove = new ChessMove(initial_position, diagL, piecetype1);
+                        _moveset.add(nextMove);
+                    }
+                }
             }
-            _moveset.add(nextMove);
+            else {
+                nextMove = new ChessMove(initial_position, diagL, null);
+                _moveset.add(nextMove);
+            }
         }else if(RightDiagPiece != null){
             if(diagR.getRow() == 8 || diagR.getRow()==1){
-                nextMove = new ChessMove(initial_position, diagL, promoPiece);
+                for(ChessPiece.PieceType piecetype1 : ChessPiece.PieceType.values()){
+                    if(piecetype1 != ChessPiece.PieceType.PAWN && piecetype1 != ChessPiece.PieceType.KING){
+                        nextMove = new ChessMove(initial_position, diagR, piecetype1);
+                        _moveset.add(nextMove);
+                    }
+                }
             }
             else {
                 nextMove = new ChessMove(initial_position, diagR, null);
+                _moveset.add(nextMove);
             }
-            _moveset.add(nextMove);
         }
     }
 //
