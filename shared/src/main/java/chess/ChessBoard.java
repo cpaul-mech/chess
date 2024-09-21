@@ -33,7 +33,18 @@ public class ChessBoard {
         }
         return true;
     }
-
+    @Override
+    public int hashCode() {
+        int runningHash = 0;
+        for (int r = 1; r < 9; r++) {
+            for (int c = 1; c < 9; c++) {
+                var p = new ChessPosition(r,c);
+                var thisPiece = getPiece(p);
+                runningHash += 13*thisPiece.hashCode();
+            }
+        }
+        return hashCode();
+    }
     /**
      * Adds a chess piece to the chessboard
      *

@@ -39,6 +39,10 @@ public class ChessPiece {
         }
         return false;
     }
+    @Override
+    public int hashCode() {
+        return 31*_color.ordinal() + 31*_type.ordinal();
+    }
     /**
      * The various different chess piece options
      */
