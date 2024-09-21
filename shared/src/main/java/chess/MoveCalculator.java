@@ -150,7 +150,7 @@ public class MoveCalculator {
             if(extraMove){extraPositon = new ChessPosition(_initial_row-2, _initial_col);}
         }
         if(board.getPiece(nextPosition) == null) {
-            ChessMove nextMove;
+            ChessMove nextMove = null;
             if(nextPosition.getRow() == 8 || nextPosition.getRow()==1){
                 for(ChessPiece.PieceType piecetype1 : pieceType.values()){
                     nextMove = new ChessMove(initial_position, nextPosition, piecetype1);
@@ -162,12 +162,14 @@ public class MoveCalculator {
             _moveset.add(nextMove);
         }
         if(extraMove){
-            ChessMove nextMove;
+            ChessMove nextMove = null;
             var extraPiece = board.getPiece(extraPositon);
             if(board.getPiece(extraPositon) == null && board.getPiece(nextPosition) ==null)
             {
                 if(nextPosition.getRow() == 8 || nextPosition.getRow()==1){
-                    nextMove = new ChessMove(initial_position, extraPositon, promoPiece);
+                    for(ChessPiece.PieceType piecetype1 : pieceType.values()){
+                        nextMove = new ChessMove(initial_position, nextPosition, piecetype1);
+                    }
                 }
                 else{nextMove = new ChessMove(initial_position, extraPositon, null);}
                 _moveset.add(nextMove);
