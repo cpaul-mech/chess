@@ -135,8 +135,11 @@ public class MoveCalculator {
     private void pawnMoves() {
         ChessPosition nextPosition;
         ChessPosition extraPositon = null;
+        var promoPiece = ChessPiece.PieceType.QUEEN;
 
-        boolean extraMove = _initial_row == 2 || _initial_row == 7;
+        boolean extraMove = (_initial_row == 2 && _teamColor == ChessGame.TeamColor.WHITE)
+                || (_initial_row == 7 && _teamColor == ChessGame.TeamColor.BLACK);
+
         //flag it if the pawn can move again.
         if (_teamColor ==  ChessGame.TeamColor.WHITE){
             nextPosition = new ChessPosition(_initial_row+1, _initial_col);
@@ -147,13 +150,24 @@ public class MoveCalculator {
             if(extraMove){extraPositon = new ChessPosition(_initial_row-2, _initial_col);}
         }
         if(board.getPiece(nextPosition) == null) {
-            var nextMove = new ChessMove(initial_position, nextPosition, null);
+            ChessMove nextMove;
+            if(nextPosition.getRow() == 8 || nextPosition.getRow()==1){
+                nextMove = new ChessMove(initial_position, nextPosition, promoPiece);
+            }
+            else {
+                nextMove = new ChessMove(initial_position, nextPosition, null);
+            }
             _moveset.add(nextMove);
         }
         if(extraMove){
-            if(board.getPiece(extraPositon) == null)
+            ChessMove nextMove;
+            var extraPiece = board.getPiece(extraPositon);
+            if(board.getPiece(extraPositon) == null && board.getPiece(nextPosition) ==null)
             {
-                var nextMove = new ChessMove(initial_position, extraPositon, null);
+                if(nextPosition.getRow() == 8 || nextPosition.getRow()==1){
+                    nextMove = new ChessMove(initial_position, extraPositon, promoPiece);
+                }
+                else{nextMove = new ChessMove(initial_position, extraPositon, null);}
                 _moveset.add(nextMove);
             }
         }
@@ -165,23 +179,34 @@ public class MoveCalculator {
         //there is a division though in which side of the board we are on, Black is up top and White is on bottom.
         ChessPosition diagL;
         ChessPosition diagR;
+        var promoPiece = ChessPiece.PieceType.QUEEN;
         if(_teamColor == ChessGame.TeamColor.WHITE){
             //diagonals are upLeft and upRight
-            diagL = new ChessPosition(_initial_row-1, _initial_col-1);
-            diagR = new ChessPosition(_initial_row-1, _initial_col+1);
-        }else{
-            //black team, diagonals are downLeft and downRight
             diagL = new ChessPosition(_initial_row+1, _initial_col-1);
             diagR = new ChessPosition(_initial_row+1, _initial_col+1);
+        }else{
+            //black team, diagonals are downLeft and downRight
+            diagL = new ChessPosition(_initial_row-1, _initial_col-1);
+            diagR = new ChessPosition(_initial_row-1, _initial_col+1);
         }
         var LeftDiagPiece = board.getPiece(diagL);
         var RightDiagPiece = board.getPiece(diagR);
         //if either of these are not null, then add that one to the _moveset
+        ChessMove nextMove;
         if(LeftDiagPiece != null) {
-            var nextMove = new ChessMove(initial_position, diagL, null);
+            if(diagL.getRow() == 8 || diagL.getRow()==1){
+                nextMove = new ChessMove(initial_position, diagL, promoPiece);
+            }else{
+            nextMove = new ChessMove(initial_position, diagL, null);
+            }
             _moveset.add(nextMove);
         }else if(RightDiagPiece != null){
-            var nextMove = new ChessMove(initial_position, diagR, null);
+            if(diagR.getRow() == 8 || diagR.getRow()==1){
+                nextMove = new ChessMove(initial_position, diagL, promoPiece);
+            }
+            else {
+                nextMove = new ChessMove(initial_position, diagR, null);
+            }
             _moveset.add(nextMove);
         }
     }
