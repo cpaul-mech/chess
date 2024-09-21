@@ -14,7 +14,25 @@ public class ChessBoard {
         
     }
     @Override
-    public void 
+    public boolean equals(Object obj){
+        if(this == obj) return true; //checks for if the memory addresses are the same.
+        if(obj == null || getClass() != obj.getClass()) return false; //checks for if the object's class is equal to the current class
+        ChessBoard thatBoard = (ChessBoard) obj; //sets a new variable move equal to the object and casts object to a ChessMove Object.
+        for (int r = 1; r < 9; r++) {
+            for (int c = 1; c < 9; c++) {
+                var p = new ChessPosition(r,c);
+                var thisPiece = getPiece(p);
+                var thatPiece = thatBoard.getPiece(p);
+                if(thisPiece == null && thatPiece == null || (thisPiece.equals(thatPiece))){
+                    // the pieces are equal, so continue.
+                }else{
+                    //the pieces are not equal, so return false
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     /**
      * Adds a chess piece to the chessboard

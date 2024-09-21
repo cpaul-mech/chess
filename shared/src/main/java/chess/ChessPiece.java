@@ -1,5 +1,6 @@
 package chess;
 
+import java.rmi.server.RemoteObjectInvocationHandler;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -24,6 +25,19 @@ public class ChessPiece {
         String color = this._color.toString();
         String type = this._type.toString();
         return color + ", " + type;
+    }
+    @Override
+    public boolean equals(Object obj){
+        //two Pieces are equal if they're both the same team color and the same PieceType
+        if(this == obj) return true; //checks for if the memory addresses are the same.
+        if(obj == null || getClass() != obj.getClass()) return false; //checks for if the object's class is equal to the current class
+        ChessPiece piece = (ChessPiece) obj; //sets a new variable move equal to the object and casts object to a ChessMove Object.
+        if(_color == piece._color){
+            if(_type == piece._type){
+                return true;
+            }
+        }
+        return false;
     }
     /**
      * The various different chess piece options
