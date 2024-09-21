@@ -4,12 +4,12 @@ import java.util.ArrayList;
 
 public class MoveCalculator {
     private final ChessPiece.PieceType pieceType;
-    private ArrayList<ChessMove> _moveset;
+    private final ArrayList<ChessMove> _moveset;
     private final ChessPosition initial_position;
-    private int _initial_row;
-    private int _initial_col;
-    private ChessBoard board;
-    private ChessGame.TeamColor _teamColor;
+    private final int _initial_row;
+    private final int _initial_col;
+    private final ChessBoard board;
+    private final ChessGame.TeamColor _teamColor;
     public MoveCalculator(ChessPiece.PieceType type, ArrayList<ChessMove> moveset, ChessPosition initial_position, ChessBoard board) {
         pieceType = type;
         _moveset = moveset;
@@ -53,6 +53,16 @@ public class MoveCalculator {
     }
 
     private void rookMoves() {
+        //can go up, down, left, right.
+        int[] up = {1,0};
+        int[] down = {-1, 0};
+        int[] left = {0, -1};
+        int[] right = {0, +1};
+        var last = new ChessPosition(_initial_row,_initial_col);
+        move_straight_line(_initial_row+1, _initial_col,9,up);
+        move_straight_line(_initial_row-1,_initial_col,9,down);
+        move_straight_line(_initial_row,_initial_col-1,9,left);
+        move_straight_line(_initial_row,_initial_col+1,9,right);
 
     }
 
@@ -68,8 +78,8 @@ public class MoveCalculator {
         ChessPosition nextPosition;
         ChessPosition extraPositon = null;
 
-        boolean extraMove = false;
-        if(_initial_row == 2 || _initial_row == 7) extraMove = true; //flag it if the pawn can move again.
+        boolean extraMove = _initial_row == 2 || _initial_row == 7;
+        //flag it if the pawn can move again.
         if (_teamColor ==  ChessGame.TeamColor.WHITE){
             nextPosition = new ChessPosition(_initial_row+1, _initial_col);
             if(extraMove){extraPositon = new ChessPosition(_initial_row+2, _initial_col);}
@@ -121,5 +131,36 @@ public class MoveCalculator {
 //        //the job of this function is to check for if the place that the pawn is moving will place the pawn in the end zone.
 //
 //    }
-    public void move_straight_line()
+    public void move_straight_line(int row, int col, int limit, int[] directionArray){
+        //direction indicates the movement that the recursive function will integer array with two items.
+        ChessPosition thisPosition = new ChessPosition(row, col);
+        if(limit == 0){
+            return;
+        }
+        if(row>8||row<=0||col>8||col<=0){
+            //outside the range of the board.
+            return;
+        }
+        if(pieceHere(thisPosition)){
+            if(board.getPiece(thisPosition).getTeamColor().ordinal() == _teamColor.ordinal()){
+                //if they're on the same team
+                return;
+            }
+            var validChessMove = new ChessMove(initial_position, thisPosition,null);
+            _moveset.add(validChessMove);
+            return;
+        }
+        var validChessMove = new ChessMove(initial_position, thisPosition,null);
+        _moveset.add(validChessMove);
+        move_straight_line(row + directionArray[0], col + directionArray[1], limit - 1, directionArray);
+    }
+
+    public boolean pieceHere(ChessPosition position){
+        //if piece here
+        var piece_here = board.getPiece(position);
+        if(piece_here == null){
+            return false;
+        }
+        return true;
+    }
 }

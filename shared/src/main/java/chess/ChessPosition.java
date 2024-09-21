@@ -16,7 +16,7 @@ public class ChessPosition {
     }
     @Override
     public String toString() {
-        return "Pos: ["+ _row + ", " + _col+"]";
+        return "Pos:["+ _row + "," + _col+"]";
     }
     @Override
     public boolean equals(Object obj) {
