@@ -152,7 +152,7 @@ public class MoveCalculator {
         if(board.getPiece(nextPosition) == null) {
             ChessMove nextMove = null;
             if(nextPosition.getRow() == 8 || nextPosition.getRow()==1){
-                for(ChessPiece.PieceType piecetype1 : pieceType.values()){
+                for(ChessPiece.PieceType piecetype1 : ChessPiece.PieceType.values()){
                     nextMove = new ChessMove(initial_position, nextPosition, piecetype1);
                 }
             }
@@ -167,7 +167,7 @@ public class MoveCalculator {
             if(board.getPiece(extraPositon) == null && board.getPiece(nextPosition) ==null)
             {
                 if(nextPosition.getRow() == 8 || nextPosition.getRow()==1){
-                    for(ChessPiece.PieceType piecetype1 : pieceType.values()){
+                    for(ChessPiece.PieceType piecetype1 : ChessPiece.PieceType.values()){
                         nextMove = new ChessMove(initial_position, nextPosition, piecetype1);
                     }
                 }
@@ -214,10 +214,7 @@ public class MoveCalculator {
             _moveset.add(nextMove);
         }
     }
-//    private void pawnPromotionCheck(ChessPosition end, boolean white = true;){
-//        //the job of this function is to check for if the place that the pawn is moving will place the pawn in the end zone.
 //
-//    }
     public void move_straight_line(int row, int col, int limit, int[] directionArray){
         //direction indicates the movement that the recursive function will integer array with two items.
         ChessPosition thisPosition = new ChessPosition(row, col);
