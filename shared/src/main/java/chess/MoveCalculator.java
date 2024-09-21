@@ -152,7 +152,9 @@ public class MoveCalculator {
         if(board.getPiece(nextPosition) == null) {
             ChessMove nextMove;
             if(nextPosition.getRow() == 8 || nextPosition.getRow()==1){
-                nextMove = new ChessMove(initial_position, nextPosition, promoPiece);
+                for(ChessPiece.PieceType piecetype1 : pieceType.values()){
+                    nextMove = new ChessMove(initial_position, nextPosition, piecetype1);
+                }
             }
             else {
                 nextMove = new ChessMove(initial_position, nextPosition, null);
