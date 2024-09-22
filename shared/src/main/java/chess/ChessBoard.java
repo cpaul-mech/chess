@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private ChessPiece[][] squares = new ChessPiece[10][10];
+    private ChessPiece[][] squares = new ChessPiece[10][10]; //an array of ChessPiece Objects!
     public ChessBoard() {
         
     }

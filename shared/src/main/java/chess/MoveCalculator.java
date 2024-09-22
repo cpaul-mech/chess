@@ -92,7 +92,6 @@ public class MoveCalculator {
         int[] down = {-1, 0};
         int[] left = {0, -1};
         int[] right = {0, +1};
-        var last = new ChessPosition(_initial_row,_initial_col);
         move_straight_line(_initial_row+1, _initial_col,9,up);
         move_straight_line(_initial_row-1,_initial_col,9,down);
         move_straight_line(_initial_row,_initial_col-1,9,left);
@@ -134,65 +133,53 @@ public class MoveCalculator {
 
     private void pawnMoves() {
         ChessPosition nextPosition;
-        ChessPosition extraPositon = null;
-        var promoPiece = ChessPiece.PieceType.QUEEN;
-
+        ChessPosition extraPosition = null;
         boolean extraMove = (_initial_row == 2 && _teamColor == ChessGame.TeamColor.WHITE)
                 || (_initial_row == 7 && _teamColor == ChessGame.TeamColor.BLACK);
 
         //flag it if the pawn can move again.
         if (_teamColor ==  ChessGame.TeamColor.WHITE){
             nextPosition = new ChessPosition(_initial_row+1, _initial_col);
-            if(extraMove){extraPositon = new ChessPosition(_initial_row+2, _initial_col);}
+            if(extraMove){extraPosition = new ChessPosition(_initial_row+2, _initial_col);}
         }
         else{
             nextPosition = new ChessPosition(_initial_row-1, _initial_col);
-            if(extraMove){extraPositon = new ChessPosition(_initial_row-2, _initial_col);}
+            if(extraMove){extraPosition = new ChessPosition(_initial_row-2, _initial_col);}
         }
         if(board.getPiece(nextPosition) == null) {
-            ChessMove nextMove = null;
-            if(nextPosition.getRow() == 8 || nextPosition.getRow()==1){
-                for(ChessPiece.PieceType piecetype1 : ChessPiece.PieceType.values()){
-                    if(piecetype1 != ChessPiece.PieceType.PAWN && piecetype1 != ChessPiece.PieceType.KING){
-                    nextMove = new ChessMove(initial_position, nextPosition, piecetype1);
-                    _moveset.add(nextMove);
-                    }
-                }
-            }
-            else {
-                nextMove = new ChessMove(initial_position, nextPosition, null);
-                _moveset.add(nextMove);
-            }
-
+            takePieceHelper(nextPosition);
         }
         if(extraMove){
-            ChessMove nextMove = null;
-            var extraPiece = board.getPiece(extraPositon);
-            if(board.getPiece(extraPositon) == null && board.getPiece(nextPosition) ==null)
+            ChessMove nextMove;
+            if(board.getPiece(extraPosition) == null && board.getPiece(nextPosition) ==null)
             {
-                if(nextPosition.getRow() == 8 || nextPosition.getRow()==1){
-                    for(ChessPiece.PieceType piecetype1 : ChessPiece.PieceType.values()){
-                        if(piecetype1 != ChessPiece.PieceType.PAWN && piecetype1 != ChessPiece.PieceType.KING){
-                            nextMove = new ChessMove(initial_position, nextPosition, piecetype1);
-                            _moveset.add(nextMove);
-                        }
-                    }
-                }
-                else{nextMove = new ChessMove(initial_position, extraPositon, null);
-                    _moveset.add(nextMove);
-                }
-
+                doubleMoveHelper(nextPosition, extraPosition);
             }
         }
         pawnTakePiece();
         //don't need a return statement!!
     }
+
+    private void doubleMoveHelper(ChessPosition nextPosition, ChessPosition extraPosition) {
+        ChessMove nextMove;
+        if(nextPosition.getRow() == 8 || nextPosition.getRow()==1){
+            for(ChessPiece.PieceType pieceType1 : ChessPiece.PieceType.values()){
+                if(pieceType1 != ChessPiece.PieceType.PAWN && pieceType1 != ChessPiece.PieceType.KING){
+                    nextMove = new ChessMove(initial_position, nextPosition, pieceType1);
+                    _moveset.add(nextMove);
+                }
+            }
+        }
+        else{nextMove = new ChessMove(initial_position, extraPosition, null);
+            _moveset.add(nextMove);
+        }
+    }
+
     private void pawnTakePiece() {
         //Check for pieces on the diagonal, so up one row, and +-1 collumn
         //there is a division though in which side of the board we are on, Black is up top and White is on bottom.
         ChessPosition diagL;
         ChessPosition diagR;
-        var promoPiece = ChessPiece.PieceType.QUEEN;
         if(_teamColor == ChessGame.TeamColor.WHITE){
             //diagonals are upLeft and upRight
             diagL = new ChessPosition(_initial_row+1, _initial_col-1);
@@ -205,36 +192,19 @@ public class MoveCalculator {
         var LeftDiagPiece = board.getPiece(diagL);
         var RightDiagPiece = board.getPiece(diagR);
         //if either of these are not null, then add that one to the _moveset
-        ChessMove nextMove;
         if(LeftDiagPiece != null) {
-            if(diagL.getRow() == 8 || diagL.getRow()==1){
-                for(ChessPiece.PieceType piecetype1 : ChessPiece.PieceType.values()){
-                    if(piecetype1 != ChessPiece.PieceType.PAWN && piecetype1 != ChessPiece.PieceType.KING){
-                        nextMove = new ChessMove(initial_position, diagL, piecetype1);
-                        _moveset.add(nextMove);
-                    }
-                }
-            }
-            else {
-                nextMove = new ChessMove(initial_position, diagL, null);
-                _moveset.add(nextMove);
-            }
+            takePieceHelper(diagL);
         }else if(RightDiagPiece != null){
-            if(diagR.getRow() == 8 || diagR.getRow()==1){
-                for(ChessPiece.PieceType piecetype1 : ChessPiece.PieceType.values()){
-                    if(piecetype1 != ChessPiece.PieceType.PAWN && piecetype1 != ChessPiece.PieceType.KING){
-                        nextMove = new ChessMove(initial_position, diagR, piecetype1);
-                        _moveset.add(nextMove);
-                    }
-                }
-            }
-            else {
-                nextMove = new ChessMove(initial_position, diagR, null);
-                _moveset.add(nextMove);
-            }
+            takePieceHelper(diagR);
         }
     }
-//
+
+    private void takePieceHelper(ChessPosition diag) {
+        ChessMove nextMove;
+        doubleMoveHelper(diag, diag);
+    }
+
+    //
     public void move_straight_line(int row, int col, int limit, int[] directionArray){
         //direction indicates the movement that the recursive function will integer array with two items.
         ChessPosition thisPosition = new ChessPosition(row, col);
@@ -262,9 +232,6 @@ public class MoveCalculator {
     public boolean pieceHere(ChessPosition position){
         //if piece here
         var piece_here = board.getPiece(position);
-        if(piece_here == null){
-            return false;
-        }
-        return true;
+        return piece_here != null;
     }
 }
