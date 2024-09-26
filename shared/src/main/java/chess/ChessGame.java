@@ -9,17 +9,19 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
-    ChessBoard _board = new ChessBoard();
+    private ChessBoard _board = new ChessBoard();
+    private TeamColor _whoTurn;
 
     public ChessGame() {
-
+        _board.resetBoard();//starts the board off in a fresh state.
+        _whoTurn = TeamColor.WHITE; //every game starts off with white.
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        return _whoTurn;
     }
 
     /**
@@ -28,7 +30,10 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        _whoTurn = team;
+    }
+    public void changeTurn(){
+        //will swap the turns so that the not current team is in charge.
     }
 
     /**
@@ -60,7 +65,17 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        //the move logic will go here, with access to the board, but the actual moving will be done by calling
+        //execute move.
+        //TODO: enforce who's turn it is in whether the move is valid!!
+        Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
+        //need to iterate through the values of the validMoves returned, then see if the move is in them.
+        for (int i = 0; i < validMoves.size(); i++) {
+            if(!validMoves.contains(move)){
+                throw new InvalidMoveException("This move is not in validMoves");
+            }
+        }
+        _board.executeMove(move);
     }
 
     /**

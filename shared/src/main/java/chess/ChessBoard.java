@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private ChessPiece[][] squares = new ChessPiece[10][10]; //an array of ChessPiece Objects!
+    private final ChessPiece[][] _board = new ChessPiece[10][10]; //an array of ChessPiece Objects!
     public ChessBoard() {
         
     }
@@ -45,6 +45,10 @@ public class ChessBoard {
         }
         return runningHash;
     }
+    public void executeMove(ChessMove move){
+        //assuming that the move is valid and won't result in check, here's where the actual moving takes place.
+
+    }
     /**
      * Adds a chess piece to the chessboard
      *
@@ -52,9 +56,11 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece){
-        squares[position.getRow()][position.getColumn()] = piece;
+        _board[position.getRow()][position.getColumn()] = piece;
     }
-
+    public void removePiece(ChessPosition position){
+        _board[position.getRow()][position.getColumn()] = null; //resets the pointer to null.
+    }
     /**
      * Gets a chess piece on the chessboard
      *
@@ -63,7 +69,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return squares[position.getRow()][position.getColumn()];
+        return _board[position.getRow()][position.getColumn()];
     }
 
     /**
