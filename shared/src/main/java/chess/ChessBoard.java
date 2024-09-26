@@ -43,7 +43,7 @@ public class ChessBoard {
                 runningHash += 13*thisPiece.hashCode();
             }
         }
-        return hashCode();
+        return runningHash;
     }
     /**
      * Adds a chess piece to the chessboard

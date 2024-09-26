@@ -9,6 +9,7 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
+    ChessBoard _board = new ChessBoard();
 
     public ChessGame() {
 
@@ -46,7 +47,10 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        var pieceHere = _board.getPiece(startPosition);
+        if(pieceHere != null){
+            return pieceHere.pieceMoves(_board,startPosition);
+        }else return null;
     }
 
     /**
