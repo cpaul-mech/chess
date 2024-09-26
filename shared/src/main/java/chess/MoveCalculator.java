@@ -1,237 +1,215 @@
 package chess;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MoveCalculator {
-    private final ChessPiece.PieceType pieceType;
-    private final ArrayList<ChessMove> _moveset;
-    private final ChessPosition initial_position;
-    private final int _initial_row;
-    private final int _initial_col;
-    private final ChessBoard board;
-    private final ChessGame.TeamColor _teamColor;
-    public MoveCalculator(ChessPiece.PieceType type, ArrayList<ChessMove> moveset, ChessPosition initial_position, ChessBoard board) {
-        pieceType = type;
-        _moveset = moveset;
-        this.initial_position = initial_position;
-        this.board = board;
-        _initial_row = initial_position.getRow();
-        _initial_col = initial_position.getColumn();
-        _teamColor = board.getPiece(initial_position).getTeamColor();
+    private ChessBoard _board;
+    private ChessPiece _piece;
+    private ChessPosition _startPosition;
+    private int _sRow;
+    private int _sCol;
+    private ArrayList<ChessMove> _moveSet = new ArrayList<>();
+    private ChessPiece.PieceType _type;
+    private ChessGame.TeamColor _color;
+
+    public MoveCalculator(ChessBoard board, ChessPiece piece, ChessPosition position){
+        _board = board;
+        _piece = piece;
+        _startPosition = position;
+        _sRow = position.getRow();
+        _sCol = position.getColumn();
+        _type = piece.getPieceType();
+        _color = piece.getTeamColor();
     }
 
-    public ArrayList<ChessMove> calculate_moveset() {
-        switch (pieceType) {
-            case PAWN:
-                pawnMoves();
-                break;
-            case KNIGHT:
-                knightMoves();
-                break;
-            case BISHOP:
-                bishopMoves();
-                break;
+    public ArrayList<ChessMove> calculateMoveSet(){
+        int[] up = {1,0};
+        int[] down = {-1,0};
+        int[] left = {0,-1};
+        int[] right = {0,1};
+        int[] upLeft = {1,-1};
+        int[] upRight = {1,1};
+        int[] downLeft = {-1,-1};
+        int[] downRight = {-1,1};
+        int[][] knightDirections = {{2,1},{1,2},{-1,2},{-2,1},{-2,-1},{-1,-2},{1,-2},{2,-1}};
+        int limit;
+        switch (_type){
             case ROOK:
-                rookMoves();
-                break;
-            case QUEEN:
-                queenMoves();
+                limit=9;
+                moveStraightLineHelper(up,limit);
+                moveStraightLineHelper(down,limit);
+                moveStraightLineHelper(left,limit);
+                moveStraightLineHelper(right,limit);
                 break;
             case KING:
-                kingMoves();
+                limit=1;
+                moveStraightLineHelper(up,limit);
+                moveStraightLineHelper(down,limit);
+                moveStraightLineHelper(left,limit);
+                moveStraightLineHelper(right,limit);
+                moveStraightLineHelper(upRight,limit);
+                moveStraightLineHelper(upLeft,limit);
+                moveStraightLineHelper(downRight,limit);
+                moveStraightLineHelper(downLeft,limit);
+                break;
+            case QUEEN:
+                limit=9;
+                moveStraightLineHelper(up,limit);
+                moveStraightLineHelper(down,limit);
+                moveStraightLineHelper(left,limit);
+                moveStraightLineHelper(right,limit);
+                moveStraightLineHelper(upRight,limit);
+                moveStraightLineHelper(upLeft,limit);
+                moveStraightLineHelper(downRight,limit);
+                moveStraightLineHelper(downLeft,limit);
+                break;
+            case PAWN:
+                //oh boy, here we go!
+                switch (_color){
+                    case BLACK:
+                        //BLACK PAWNS MOVE DOWN
+                        moveStraightLineHelper(down,1);
+                        //now check for diagonal move possibilities
+                        moveStraightLineHelper(downLeft,1);
+                        moveStraightLineHelper(downRight,1);
+                        //now check for double movement possibility
+                        if(_sRow==7 && _board.getPiece(new ChessPosition(6,_sCol))==null){
+                            int[] dubDown = {-2,0};
+                            moveStraightLineHelper(dubDown,1);
+                        }
+                        break;
+                    case WHITE:
+                        //WHITE PAWNS MOVE UP, PROMOTED AT ROW 8
+                        moveStraightLineHelper(up,1);
+                        moveStraightLineHelper(upRight,1);
+                        moveStraightLineHelper(upLeft,1);
+                        if(_sRow==2 && _board.getPiece(new ChessPosition(3,_sCol))==null){
+                            int[] dubUp = {2,0};
+                            moveStraightLineHelper(dubUp,1);
+
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+                break;
+            case BISHOP:
+                limit=9;
+                moveStraightLineHelper(upRight,limit);
+                moveStraightLineHelper(upLeft,limit);
+                moveStraightLineHelper(downRight,limit);
+                moveStraightLineHelper(downLeft,limit);
+                break;
+            case KNIGHT:
+                for (int i = 0; i < knightDirections.length; i++) {
+                    moveStraightLineHelper(knightDirections[i],1);
+                }
                 break;
             default:
-                throw new RuntimeException("Hit default case in MoveCalculator class");
+                break;
         }
-        return _moveset;
+        return _moveSet;
     }
 
-    private void knightMoves() {
-        int[] upRightL = {2,1};
-        int[] upLeftL = {2,-1};
-        int[] leftUpL = {1,-2};
-        int[] leftDownL = {-1,-2};
-        int[] downLeftL = {-2,-1};
-        int[] downRightL = {-2,1};
-        int[] rightDownL = {-1,2};
-        int[] rightUpL = {1,2};
-        int limit = 1;
-        move_straight_line(_initial_row+upRightL[0],_initial_col+upRightL[1],limit,upRightL);
-        move_straight_line(_initial_row+upLeftL[0],_initial_col+upLeftL[1],limit,upLeftL);
-        move_straight_line(_initial_row+leftUpL[0],_initial_col+leftUpL[1],limit,leftUpL);
-        move_straight_line(_initial_row+leftDownL[0],_initial_col+leftDownL[1],limit,leftDownL);
-        move_straight_line(_initial_row+downLeftL[0],_initial_col+downLeftL[1],limit,downLeftL);
-        move_straight_line(_initial_row+downRightL[0],_initial_col+downRightL[1],limit,downRightL);
-        move_straight_line(_initial_row+rightDownL[0],_initial_col+rightDownL[1],limit,rightDownL);
-        move_straight_line(_initial_row+rightUpL[0],_initial_col+rightUpL[1],limit,rightUpL);
+    private void moveStraightLineHelper(int[]direction, int limit){
+        //this function is called before moveStraightLine so that I don't mess up.
+        moveStraightLine(_sRow+direction[0],_sCol+direction[1],direction,limit);
     }
 
-    private void queenMoves() {
-        int[] up = {1,0};
-        int[] down = {-1, 0};
-        int[] left = {0, -1};
-        int[] right = {0, +1};
-        int[] upRight = {1,1};
-        int[] upLeft = {1,-1};
-        int[] downRight = {-1,1};
-        int[] downLeft = {-1,-1};
-        int limit = 9;
-        move_straight_line(_initial_row+1, _initial_col,limit,up);
-        move_straight_line(_initial_row-1,_initial_col,limit,down);
-        move_straight_line(_initial_row,_initial_col-1,limit,left);
-        move_straight_line(_initial_row,_initial_col+1,limit,right);
-        move_straight_line(_initial_row+1,_initial_col+1,limit,upRight);
-        move_straight_line(_initial_row+1,_initial_col-1,limit,upLeft);
-        move_straight_line(_initial_row-1,_initial_col+1,limit,downRight);
-        move_straight_line(_initial_row-1,_initial_col-1,limit,downLeft);
-    }
-
-    private void rookMoves() {
-        //can go up, down, left, right.
-        int[] up = {1,0};
-        int[] down = {-1, 0};
-        int[] left = {0, -1};
-        int[] right = {0, +1};
-        move_straight_line(_initial_row+1, _initial_col,9,up);
-        move_straight_line(_initial_row-1,_initial_col,9,down);
-        move_straight_line(_initial_row,_initial_col-1,9,left);
-        move_straight_line(_initial_row,_initial_col+1,9,right);
-
-    }
-
-    private void bishopMoves() {
-        int[] upRight = {1,1};
-        int[] upLeft = {1,-1};
-        int[] downRight = {-1,1};
-        int[] downLeft = {-1,-1};
-        move_straight_line(_initial_row+1,_initial_col+1,9,upRight);
-        move_straight_line(_initial_row+1,_initial_col-1,9,upLeft);
-        move_straight_line(_initial_row-1,_initial_col+1,9,downRight);
-        move_straight_line(_initial_row-1,_initial_col-1,9,downLeft);
-
-    }
-
-    private void kingMoves() {
-        int[] up = {1,0};
-        int[] down = {-1, 0};
-        int[] left = {0, -1};
-        int[] right = {0, +1};
-        int[] upRight = {1,1};
-        int[] upLeft = {1,-1};
-        int[] downRight = {-1,1};
-        int[] downLeft = {-1,-1};
-        int limit = 1;
-        move_straight_line(_initial_row+1, _initial_col,limit,up);
-        move_straight_line(_initial_row-1,_initial_col,limit,down);
-        move_straight_line(_initial_row,_initial_col-1,limit,left);
-        move_straight_line(_initial_row,_initial_col+1,limit,right);
-        move_straight_line(_initial_row+1,_initial_col+1,limit,upRight);
-        move_straight_line(_initial_row+1,_initial_col-1,limit,upLeft);
-        move_straight_line(_initial_row-1,_initial_col+1,limit,downRight);
-        move_straight_line(_initial_row-1,_initial_col-1,limit,downLeft);
-    }
-
-    private void pawnMoves() {
-        ChessPosition nextPosition;
-        ChessPosition extraPosition = null;
-        boolean extraMove = (_initial_row == 2 && _teamColor == ChessGame.TeamColor.WHITE)
-                || (_initial_row == 7 && _teamColor == ChessGame.TeamColor.BLACK);
-
-        //flag it if the pawn can move again.
-        if (_teamColor ==  ChessGame.TeamColor.WHITE){
-            nextPosition = new ChessPosition(_initial_row+1, _initial_col);
-            if(extraMove){extraPosition = new ChessPosition(_initial_row+2, _initial_col);}
-        }
+    private void moveStraightLine(int row, int col, int[] direction, int limit){
+        //this function enables the piece to move in whatever direction it is specified to have.
+        if(row<1||row>8||col<1||col>8) return;
+        else if(limit<1) return;
         else{
-            nextPosition = new ChessPosition(_initial_row-1, _initial_col);
-            if(extraMove){extraPosition = new ChessPosition(_initial_row-2, _initial_col);}
-        }
-        if(board.getPiece(nextPosition) == null) {
-            takePieceHelper(nextPosition);
-        }
-        if(extraMove){
-            ChessMove nextMove;
-            if(board.getPiece(extraPosition) == null && board.getPiece(nextPosition) ==null)
-            {
-                doubleMoveHelper(nextPosition, extraPosition);
-            }
-        }
-        pawnTakePiece();
-        //don't need a return statement!!
-    }
-
-    private void doubleMoveHelper(ChessPosition nextPosition, ChessPosition extraPosition) {
-        ChessMove nextMove;
-        if(nextPosition.getRow() == 8 || nextPosition.getRow()==1){
-            for(ChessPiece.PieceType pieceType1 : ChessPiece.PieceType.values()){
-                if(pieceType1 != ChessPiece.PieceType.PAWN && pieceType1 != ChessPiece.PieceType.KING){
-                    nextMove = new ChessMove(initial_position, nextPosition, pieceType1);
-                    _moveset.add(nextMove);
+            ChessPosition this_position = new ChessPosition(row,col);
+            ChessMove propMove = pawnPromoChecker(this_position,direction);
+            if(otherPieceHere(this_position)){
+                var otherPiece = _board.getPiece(this_position);
+                if(isEnemyPiece(otherPiece) && pawnMoveDiagChecker(direction)){
+                    //if they're an enemy, then put in the current chessMove and halt the function here.
+                    _moveSet.add(propMove);
+                    return;
+                }else{
+                    return;
                 }
+            } else if(_type== ChessPiece.PieceType.PAWN) {
+                if (!pawnMoveDiagChecker(direction)) {
+                    _moveSet.add(propMove);
+                }
+            }else {
+                _moveSet.add(propMove);
             }
-        }
-        else{nextMove = new ChessMove(initial_position, extraPosition, null);
-            _moveset.add(nextMove);
+
+            //nobody else is here, lets put the piece in and move on!
+            moveStraightLine(row+direction[0],col+direction[1],direction,limit-1);
         }
     }
-
-    private void pawnTakePiece() {
-        //Check for pieces on the diagonal, so up one row, and +-1 collumn
-        //there is a division though in which side of the board we are on, Black is up top and White is on bottom.
-        ChessPosition diagL;
-        ChessPosition diagR;
-        if(_teamColor == ChessGame.TeamColor.WHITE){
-            //diagonals are upLeft and upRight
-            diagL = new ChessPosition(_initial_row+1, _initial_col-1);
-            diagR = new ChessPosition(_initial_row+1, _initial_col+1);
-        }else{
-            //black team, diagonals are downLeft and downRight
-            diagL = new ChessPosition(_initial_row-1, _initial_col-1);
-            diagR = new ChessPosition(_initial_row-1, _initial_col+1);
-        }
-        var LeftDiagPiece = board.getPiece(diagL);
-        var RightDiagPiece = board.getPiece(diagR);
-        //if either of these are not null, then add that one to the _moveset
-        if(LeftDiagPiece != null) {
-            takePieceHelper(diagL);
-        }else if(RightDiagPiece != null){
-            takePieceHelper(diagR);
-        }
+    private boolean pawnMoveDiagChecker(int[] direction){
+        if(_type== ChessPiece.PieceType.PAWN) {
+            int[] upLeft = {1, -1};
+            int[] upRight = {1, 1};
+            int[] downLeft = {-1, -1};
+            int[] downRight = {-1, 1};
+            if (Arrays.equals(direction, upLeft) || Arrays.equals(direction, upRight) ||
+                    Arrays.equals(direction,downRight) || Arrays.equals(direction,downLeft)) {
+                return true;
+            } else return false;
+        }else return true;
     }
-
-    private void takePieceHelper(ChessPosition diag) {
-        ChessMove nextMove;
-        doubleMoveHelper(diag, diag);
-    }
-
-    //
-    public void move_straight_line(int row, int col, int limit, int[] directionArray){
-        //direction indicates the movement that the recursive function will integer array with two items.
-        ChessPosition thisPosition = new ChessPosition(row, col);
-        if(limit == 0){
-            return;
-        }
-        if(row>8||row<=0||col>8||col<=0){
-            //outside the range of the board.
-            return;
-        }
-        if(pieceHere(thisPosition)){
-            if(board.getPiece(thisPosition).getTeamColor().ordinal() == _teamColor.ordinal()){
-                //if they're on the same team
-                return;
+    private ChessMove pawnPromoChecker(ChessPosition p,int[] direction){
+        //checks if the pieceType is pawn, then only returns a different move if the piece is in the end zone, and there is an enemy and we move diagonally,
+        //or if there is not an enemy and we're moving straight.
+        if(_type == ChessPiece.PieceType.PAWN) {
+            ArrayList<ChessPiece.PieceType> pawnPromoOptions = new ArrayList<>();
+            pawnPromoOptions.add(ChessPiece.PieceType.ROOK);
+            pawnPromoOptions.add(ChessPiece.PieceType.KNIGHT);
+            pawnPromoOptions.add(ChessPiece.PieceType.BISHOP);
+            pawnPromoOptions.add(ChessPiece.PieceType.QUEEN);
+            if (_color == ChessGame.TeamColor.WHITE) {
+                //white pawn, promotion happens at row 8!
+                if (p.getRow() == 8 &&
+                        ((pawnMoveDiagChecker(direction)&&isEnemyPiece(_board.getPiece(p)))
+                                ||(!pawnMoveDiagChecker(direction))&&!isEnemyPiece(_board.getPiece(p)))) {
+                    //we need to add in every possibility except the last one, so we can carry on normal function
+                    for (int i = 0; i < pawnPromoOptions.size()-1; i++) {//loop executes 3 times, ending at 2
+                        //stops before the last element so we can return it and carry on business as usual.
+                        _moveSet.add(new ChessMove(_startPosition,p,pawnPromoOptions.get(i)));
+                    }
+                    return new ChessMove(_startPosition,p,pawnPromoOptions.get(3));
+                }else return new ChessMove(_startPosition,p,null);
+            }else {
+                if (p.getRow() == 1 &&
+                        ((pawnMoveDiagChecker(direction)&&isEnemyPiece(_board.getPiece(p)))
+                                ||(!pawnMoveDiagChecker(direction))&&!isEnemyPiece(_board.getPiece(p)))) {
+                    for (int i = 0; i < pawnPromoOptions.size()-1; i++) {//loop executes 3 times, ending at 2
+                        //stops before the last element so we can return it and carry on business as usual.
+                        _moveSet.add(new ChessMove(_startPosition,p,pawnPromoOptions.get(i)));
+                    }
+                    return new ChessMove(_startPosition,p,pawnPromoOptions.get(3));
+                }else return new ChessMove(_startPosition,p,null);
             }
-            var validChessMove = new ChessMove(initial_position, thisPosition,null);
-            _moveset.add(validChessMove);
-            return;
+
+        }else {
+            return new ChessMove(_startPosition,p,null);
         }
-        var validChessMove = new ChessMove(initial_position, thisPosition,null);
-        _moveset.add(validChessMove);
-        move_straight_line(row + directionArray[0], col + directionArray[1], limit - 1, directionArray);
+    }
+    private boolean isEnemyPiece(ChessPiece other){
+        if(_piece!=null && other != null){
+            if(_piece.getTeamColor().ordinal() == other.getTeamColor().ordinal()){
+                return false;
+            }else return true;
+        }else return false;
+
+    }
+    private boolean otherPieceHere(ChessPosition p){
+        if (_board.getPiece(p) != null){
+            return true;
+        }else {
+            return false;
+        }
     }
 
-    public boolean pieceHere(ChessPosition position){
-        //if piece here
-        var piece_here = board.getPiece(position);
-        return piece_here != null;
-    }
+
 }
