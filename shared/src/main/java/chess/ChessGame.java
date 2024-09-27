@@ -32,8 +32,12 @@ public class ChessGame {
     public void setTeamTurn(TeamColor team) {
         _whoTurn = team;
     }
+
     public void changeTurn(){
         //will swap the turns so that the not current team is in charge.
+        if(_whoTurn == TeamColor.WHITE){
+            _whoTurn = TeamColor.BLACK;
+        }else _whoTurn = TeamColor.WHITE;
     }
 
     /**
@@ -87,7 +91,33 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         throw new RuntimeException("Not implemented");
     }
-
+    public ChessPosition findKing(TeamColor teamColor){
+        if(teamColor == TeamColor.WHITE){
+            //white is at the bottom of the baord, start searching in row 1.
+            for (int r = 1; r < 9; r++) {
+                for (int c = 0; c < 9; c++) {
+                 //need to search for the king
+                 ChessPosition p = new ChessPosition(r,c);
+                 ChessPiece pc = _board.getPiece(p);
+                 if(pc.getTeamColor() == teamColor && pc.getPieceType() == ChessPiece.PieceType.KING){
+                     return p;
+                 }
+                }
+            }
+        }else {
+            for (int r = 9; r > 1; r--) {
+                for (int c = 9; c > 1; c--) {
+                    //need to search for the king
+                    ChessPosition p = new ChessPosition(r,c);
+                    ChessPiece pc = _board.getPiece(p);
+                    if(pc.getTeamColor() == TeamColor.WHITE && pc.getPieceType() == ChessPiece.PieceType.KING){
+                        return p;
+                    }
+                }
+            }
+        }
+        throw new RuntimeException("The game has no king and should have ended.");
+    }
     /**
      * Determines if the given team is in checkmate
      *
