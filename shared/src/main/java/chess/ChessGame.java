@@ -71,7 +71,9 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         //the move logic will go here, with access to the board, but the actual moving will be done by calling
         //execute move.
-        //TODO: enforce who's turn it is in whether the move is valid!!
+        if(!moveRightColorPiece(move.getStartPosition())){
+            throw new InvalidMoveException("It is not this team's turn to move a piece.");
+        }
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
         //need to iterate through the values of the validMoves returned, then see if the move is in them.
         for (int i = 0; i < validMoves.size(); i++) {
@@ -80,6 +82,16 @@ public class ChessGame {
             }
         }
         _board.executeMove(move);
+        changeTurn();
+
+    }
+    /*
+    This method checks the proposed move position to ensure that the proposed move
+    will move a piece who's turn it is right now.
+     */
+    public boolean moveRightColorPiece(ChessPosition p){
+        ChessPiece pc = _board.getPiece(p);
+        return pc.getTeamColor() == _whoTurn;
     }
 
     /**
@@ -153,7 +165,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return isInCheck(teamColor);
     }
 
     /**
