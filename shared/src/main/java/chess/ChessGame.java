@@ -89,8 +89,35 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPosition kingPosition = findKing(teamColor);
+        //now that we have found the king of the appropriate color, we need to check the other pieces and see if that piece
+        //could move to take the king.
+        if(teamColor == TeamColor.WHITE){
+            //white is at the bottom of the baord, start searching in row 1.
+            for (int r = 1; r < 9; r++) {
+                for (int c = 0; c < 9; c++) {
+                    //need to search for the king
+                    ChessPosition p = new ChessPosition(r,c);
+                    ChessPiece pc = _board.getPiece(p);
+                    if(pc.getTeamColor() == teamColor && pc.getPieceType() == ChessPiece.PieceType.KING){
+                        return p;
+                    }
+                }
+            }
+        }else {
+            for (int r = 9; r > 1; r--) {
+                for (int c = 9; c > 1; c--) {
+                    //need to search for the king
+                    ChessPosition p = new ChessPosition(r,c);
+                    ChessPiece pc = _board.getPiece(p);
+                    if(pc.getTeamColor() == TeamColor.WHITE && pc.getPieceType() == ChessPiece.PieceType.KING){
+                        return p;
+                    }
+                }
+            }
+        }
     }
+
     public ChessPosition findKing(TeamColor teamColor){
         if(teamColor == TeamColor.WHITE){
             //white is at the bottom of the baord, start searching in row 1.
@@ -145,7 +172,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        _board = board;
     }
 
     /**
@@ -154,6 +181,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return _board;
     }
 }

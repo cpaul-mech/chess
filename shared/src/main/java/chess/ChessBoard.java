@@ -45,10 +45,18 @@ public class ChessBoard {
         }
         return runningHash;
     }
+
     public void executeMove(ChessMove move){
         //assuming that the move is valid and won't result in check, here's where the actual moving takes place.
-
+        ChessPiece p = getPiece(move.getStartPosition()); //get the piece,
+        removePiece(move.getStartPosition());
+        removePiece(move.getEndPosition());
+        if(move.getPromotionPiece() != null){
+            p = new ChessPiece(p.getTeamColor(),move.getPromotionPiece()); //change the piecetype if we need to.
+        }
+        addPiece(move.getEndPosition(),p);
     }
+
     /**
      * Adds a chess piece to the chessboard
      *
