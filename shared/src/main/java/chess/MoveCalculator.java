@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MoveCalculator {
-    private ChessBoard _board;
-    private ChessPiece _piece;
-    private ChessPosition _startPosition;
-    private int _sRow;
-    private int _sCol;
-    private ArrayList<ChessMove> _moveSet = new ArrayList<>();
-    private ChessPiece.PieceType _type;
-    private ChessGame.TeamColor _color;
+    private final ChessBoard _board;
+    private final ChessPiece _piece;
+    private final ChessPosition _startPosition;
+    private final int _sRow;
+    private final int _sCol;
+    private final ArrayList<ChessMove> _moveSet = new ArrayList<>();
+    private final ChessPiece.PieceType _type;
+    private final ChessGame.TeamColor _color;
 
     public MoveCalculator(ChessBoard board, ChessPiece piece, ChessPosition position){
         _board = board;
@@ -152,10 +152,8 @@ public class MoveCalculator {
             int[] upRight = {1, 1};
             int[] downLeft = {-1, -1};
             int[] downRight = {-1, 1};
-            if (Arrays.equals(direction, upLeft) || Arrays.equals(direction, upRight) ||
-                    Arrays.equals(direction,downRight) || Arrays.equals(direction,downLeft)) {
-                return true;
-            } else return false;
+            return Arrays.equals(direction, upLeft) || Arrays.equals(direction, upRight) ||
+                    Arrays.equals(direction, downRight) || Arrays.equals(direction, downLeft);
         }else return true;
     }
     private ChessMove pawnPromoChecker(ChessPosition p,int[] direction){
@@ -197,18 +195,12 @@ public class MoveCalculator {
     }
     private boolean isEnemyPiece(ChessPiece other){
         if(_piece!=null && other != null){
-            if(_piece.getTeamColor().ordinal() == other.getTeamColor().ordinal()){
-                return false;
-            }else return true;
+            return _piece.getTeamColor().ordinal() != other.getTeamColor().ordinal();
         }else return false;
 
     }
     private boolean otherPieceHere(ChessPosition p){
-        if (_board.getPiece(p) != null){
-            return true;
-        }else {
-            return false;
-        }
+        return _board.getPiece(p) != null;
     }
 
 

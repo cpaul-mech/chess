@@ -71,7 +71,7 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         //the move logic will go here, with access to the board, but the actual moving will be done by calling
         //execute move.
-        if(!moveRightColorPiece(move.getStartPosition())){
+        if(!moveCorrectColorPiece(move.getStartPosition())){
             throw new InvalidMoveException("It is not this team's turn to move a piece.");
         }
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
@@ -81,17 +81,38 @@ public class ChessGame {
                 throw new InvalidMoveException("This move is not in validMoves");
             }
         }
+        if (!doesNotEndangerKing(move)){
+            throw new InvalidMoveException("This move would endanger the king!");
+        }
         _board.executeMove(move);
         changeTurn();
 
     }
-    /*
+    /**
     This method checks the proposed move position to ensure that the proposed move
-    will move a piece who's turn it is right now.
-     */
-    public boolean moveRightColorPiece(ChessPosition p){
+    will move a piece whose turn it is right now.
+     **/
+    public boolean moveCorrectColorPiece(ChessPosition p){
         ChessPiece pc = _board.getPiece(p);
         return pc.getTeamColor() == _whoTurn;
+    }
+    /*
+    this method must ascertain whether the proposed move will leave the king in check.
+    make a copy of the board, execute move and see if the king is in check?
+    */
+    public boolean doesNotEndangerKing(ChessMove move){
+        var copyBoard = new ChessBoard(_board);
+        var oldBoard = _board;
+        copyBoard.executeMove(move);
+        setBoard(copyBoard);
+        if(isInCheck(_whoTurn)) {
+            setBoard(oldBoard);
+            return true;
+        }else {
+            setBoard(oldBoard);
+            return false;
+        }
+        //at the end of this, java garbage collection should just remove the copyBoard object.
     }
 
     /**
@@ -101,34 +122,45 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-//        ChessPosition kingPosition = findKing(teamColor);
-//        //now that we have found the king of the appropriate color, we need to check the other pieces and see if that piece
-//        //could move to take the king.
-//        if(teamColor == TeamColor.WHITE){
-//            //white is at the bottom of the baord, start searching in row 1.
-//            for (int r = 1; r < 9; r++) {
-//                for (int c = 0; c < 9; c++) {
-//                    //need to search for the king
-//                    ChessPosition p = new ChessPosition(r,c);
-//                    ChessPiece pc = _board.getPiece(p);
-//                    if(pc.getTeamColor() == teamColor && pc.getPieceType() == ChessPiece.PieceType.KING){
-//                        return p;
-//                    }
-//                }
-//            }
-//        }else {
-//            for (int r = 9; r > 1; r--) {
-//                for (int c = 9; c > 1; c--) {
-//                    //need to search for the king
-//                    ChessPosition p = new ChessPosition(r,c);
-//                    ChessPiece pc = _board.getPiece(p);
-//                    if(pc.getTeamColor() == TeamColor.WHITE && pc.getPieceType() == ChessPiece.PieceType.KING){
-//                        return p;
-//                    }
-//                }
-//            }
-//        }
-        return true;
+        ChessPosition kingPosition = findKing(teamColor);
+        //now that we have found the king of the appropriate color, we need to check the other pieces and see if that piece
+        //could move to take the king.
+        if(teamColor == TeamColor.WHITE){
+            //white is at the bottom of the baord, start searching in row 1.
+            for (int r = 1; r < 9; r++) {
+                for (int c = 0; c < 9; c++) {
+                    //need to search for the king
+                    ChessPosition p = new ChessPosition(r,c);
+                    if(canKillKing(kingPosition,p)){
+                        return true;
+                    }
+                }
+            }
+        }else {
+            for (int r = 9; r > 1; r--) {
+                for (int c = 9; c > 1; c--) {
+                    //need to search for the king
+                    ChessPosition p = new ChessPosition(r,c);
+                    if(canKillKing(kingPosition,p)){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     *
+     * @param kingPosition current Position of the king
+     * @param killPosition position of the potential kingKiller
+     * @return true if the specified killer can in fact kill the king.
+     */
+    public boolean canKillKing(ChessPosition kingPosition, ChessPosition killPosition){
+        Collection<ChessMove> killMoves = validMoves(killPosition);
+        var kingColor = _whoTurn;
+        var killMove = new ChessMove(killPosition,kingPosition,null);
+        return killMoves.contains(killMove);
     }
 
     public ChessPosition findKing(TeamColor teamColor){
@@ -165,6 +197,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+        //TODO: THIS LOGIC ISN'T COMPLETE!!
         return isInCheck(teamColor);
     }
 

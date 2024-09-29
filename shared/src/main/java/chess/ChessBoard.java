@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -9,9 +10,13 @@ import java.util.ArrayList;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private final ChessPiece[][] _board = new ChessPiece[10][10]; //an array of ChessPiece Objects!
+    private ChessPiece[][] _board = new ChessPiece[10][10]; //an array of ChessPiece Objects!
     public ChessBoard() {
         
+    }
+    public ChessBoard(ChessBoard copy){
+        //this is the copy constructor
+        _board = Arrays.copyOf(copy._board, copy._board.length);
     }
     @Override
     public boolean equals(Object obj){
@@ -25,6 +30,7 @@ public class ChessBoard {
                 var thatPiece = thatBoard.getPiece(p);
                 if(thisPiece == null && thatPiece == null || (thisPiece.equals(thatPiece))){
                     // the pieces are equal, so continue.
+                    continue;
                 }else{
                     //the pieces are not equal, so return false
                     return false;
