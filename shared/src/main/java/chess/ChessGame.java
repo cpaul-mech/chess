@@ -157,10 +157,15 @@ public class ChessGame {
      * @return true if the specified killer can in fact kill the king.
      */
     public boolean canKillKing(ChessPosition kingPosition, ChessPosition killPosition){
+        //this function does check to make sure that the killer and the
         Collection<ChessMove> killMoves = validMoves(killPosition);
-        var kingColor = _whoTurn;
+        var kingColor = _board.getPiece(kingPosition).getTeamColor();
+        var killerColor = _board.getPiece(killPosition).getTeamColor();
         var killMove = new ChessMove(killPosition,kingPosition,null);
-        return killMoves.contains(killMove);
+        if(kingColor != killerColor && killMoves.contains(killMove)){
+            return true;
+        }else return false;
+
     }
 
     public ChessPosition findKing(TeamColor teamColor){
