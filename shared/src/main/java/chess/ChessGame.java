@@ -71,20 +71,22 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         //the move logic will go here, with access to the board, but the actual moving will be done by calling
         //execute move.
+        Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
+        if(validMoves == null){
+            throw new InvalidMoveException("No piece is there!!");
+        }
         if(!moveCorrectColorPiece(move.getStartPosition())){
             throw new InvalidMoveException("It is not this team's turn to move a piece.");
         }
-        Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
         //need to iterate through the values of the validMoves returned, then see if the move is in them.
         //if validMoves contains nothing throw exception
-        if(validMoves.size() == 0){
+        if(validMoves.isEmpty()){
             throw new InvalidMoveException("This piece is boxed in, cannot move anywhere.");
         }
-        for (int i = 0; i < validMoves.size(); i++) {
-            if(!validMoves.contains(move)){
-                throw new InvalidMoveException("This move is not in validMoves");
-            }
+        if(!validMoves.contains(move)){
+            throw new InvalidMoveException("This move is not in validMoves");
         }
+
         if (!doesNotEndangerKing(move)){
             throw new InvalidMoveException("This move would endanger the king!");
         }
@@ -135,9 +137,9 @@ public class ChessGame {
         //now that we have found the king of the appropriate color, we need to check the other pieces and see if that piece
         //could move to take the king.
         if(teamColor == TeamColor.WHITE){
-            //white is at the bottom of the baord, start searching in row 1.
+            //white is at the bottom of the board, start searching in row 1.
             for (int r = 1; r < 9; r++) {
-                for (int c = 0; c < 9; c++) {
+                for (int c = 1; c < 9; c++) {
                     //need to search for the king
                     ChessPosition p = new ChessPosition(r,c);
                     if(canKillKing(kingPosition,p)){
@@ -167,7 +169,11 @@ public class ChessGame {
      */
     public boolean canKillKing(ChessPosition kingPosition, ChessPosition killPosition){
         //this function does check to make sure that the killer and the
+        //need to do the
         Collection<ChessMove> killMoves = validMoves(killPosition);
+        if(killMoves == null){
+            return false; //a piece that doesn't exist cannot kill a king.
+        }
         var kingColor = _board.getPiece(kingPosition).getTeamColor();
         var killerColor = _board.getPiece(killPosition).getTeamColor();
         var killMove = new ChessMove(killPosition,kingPosition,null);
@@ -184,9 +190,9 @@ public class ChessGame {
      */
     public ChessPosition findKing(TeamColor teamColor){
         if(teamColor == TeamColor.WHITE){
-            //white is at the bottom of the baord, start searching in row 1.
+            //white is at the bottom of the board, start searching in row 1.
             for (int r = 1; r < 9; r++) {
-                for (int c = 0; c < 9; c++) {
+                for (int c = 1; c < 9; c++) {
                  //need to search for the king
                  ChessPosition p = new ChessPosition(r,c);
                  ChessPiece pc = _board.getPiece(p);
