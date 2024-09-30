@@ -76,6 +76,10 @@ public class ChessGame {
         }
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
         //need to iterate through the values of the validMoves returned, then see if the move is in them.
+        //if validMoves contains nothing throw exception
+        if(validMoves.size() == 0){
+            throw new InvalidMoveException("This piece is boxed in, cannot move anywhere.");
+        }
         for (int i = 0; i < validMoves.size(); i++) {
             if(!validMoves.contains(move)){
                 throw new InvalidMoveException("This move is not in validMoves");
@@ -88,18 +92,23 @@ public class ChessGame {
         changeTurn();
 
     }
+
     /**
-    This method checks the proposed move position to ensure that the proposed move
-    will move a piece whose turn it is right now.
-     **/
+     * This method checks the proposed move position to ensure that the proposed move
+     * will move a piece whose turn it is right now.
+     * @param p the Position of the piece that is trying to move.
+     * @return true if it is that pieces turn to move now
+     */
     public boolean moveCorrectColorPiece(ChessPosition p){
         ChessPiece pc = _board.getPiece(p);
         return pc.getTeamColor() == _whoTurn;
     }
-    /*
-    this method must ascertain whether the proposed move will leave the king in check.
-    make a copy of the board, execute move and see if the king is in check?
-    */
+
+    /**
+     * this method must ascertain whether the proposed move will leave the king in check
+     * @param move the ChessMove that may endanger the king
+     * @return true if move will place king in check, and false if not.
+     */
     public boolean doesNotEndangerKing(ChessMove move){
         var copyBoard = new ChessBoard(_board);
         var oldBoard = _board;
@@ -168,6 +177,11 @@ public class ChessGame {
 
     }
 
+    /**
+     * Finds the king of specified color and returns the position.
+     * @param teamColor the color of the king that you would like to find.
+     * @return ChessPosition p, the position of the king.
+     */
     public ChessPosition findKing(TeamColor teamColor){
         if(teamColor == TeamColor.WHITE){
             //white is at the bottom of the baord, start searching in row 1.
