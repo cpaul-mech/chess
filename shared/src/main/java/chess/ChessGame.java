@@ -99,7 +99,7 @@ public class ChessGame {
      * This method checks the proposed move position to ensure that the proposed move
      * will move a piece whose turn it is right now.
      * @param p the Position of the piece that is trying to move.
-     * @return true if it is that pieces turn to move now
+     * @return true if it is that piece's turn to move now
      */
     public boolean moveCorrectColorPiece(ChessPosition p){
         ChessPiece pc = _board.getPiece(p);
@@ -118,10 +118,10 @@ public class ChessGame {
         setBoard(copyBoard);
         if(isInCheck(_whoTurn)) {
             setBoard(oldBoard);
-            return true;
+            return false;
         }else {
             setBoard(oldBoard);
-            return false;
+            return true;
         }
         //at the end of this, java garbage collection should just remove the copyBoard object.
     }
