@@ -75,14 +75,13 @@ public class ChessGame {
         if(validMoves == null){
             throw new InvalidMoveException("No piece is there!!");
         }
+        if(validMoves.isEmpty()){
+            throw new InvalidMoveException("This piece is boxed in, cannot move anywhere.");
+        }
         if(!moveCorrectColorPiece(move.getStartPosition())){
             throw new InvalidMoveException("It is not this team's turn to move a piece.");
         }
         //need to iterate through the values of the validMoves returned, then see if the move is in them.
-        //if validMoves contains nothing throw exception
-        if(validMoves.isEmpty()){
-            throw new InvalidMoveException("This piece is boxed in, cannot move anywhere.");
-        }
         if(!validMoves.contains(move)){
             throw new InvalidMoveException("This move is not in validMoves");
         }
@@ -177,7 +176,9 @@ public class ChessGame {
         var kingColor = _board.getPiece(kingPosition).getTeamColor();
         var killerColor = _board.getPiece(killPosition).getTeamColor();
         var killMove = new ChessMove(killPosition,kingPosition,null);
-        if(kingColor != killerColor && killMoves.contains(killMove)){
+        //when canKillKing is called on this
+        if(kingColor != killerColor &&
+                killMoves.contains(killMove)){
             return true;
         }else return false;
 
@@ -194,20 +195,22 @@ public class ChessGame {
             for (int r = 1; r < 9; r++) {
                 for (int c = 1; c < 9; c++) {
                  //need to search for the king
-                 ChessPosition p = new ChessPosition(r,c);
-                 ChessPiece pc = _board.getPiece(p);
-                 if(pc.getTeamColor() == teamColor && pc.getPieceType() == ChessPiece.PieceType.KING){
-                     return p;
-                 }
+                    ChessPosition p = new ChessPosition(r,c);
+                    ChessPiece pc = _board.getPiece(p);
+                    if(pc != null && pc.getTeamColor() == teamColor && pc.getPieceType() == ChessPiece.PieceType.KING){
+                        return p;
+                    }
                 }
             }
         }else {
-            for (int r = 9; r > 1; r--) {
-                for (int c = 9; c > 1; c--) {
+            for (int r = 8; r > 0; r--) {
+                for (int c = 8; c > 0; c--) {
                     //need to search for the king
                     ChessPosition p = new ChessPosition(r,c);
                     ChessPiece pc = _board.getPiece(p);
-                    if(pc.getTeamColor() == TeamColor.WHITE && pc.getPieceType() == ChessPiece.PieceType.KING){
+                    if(pc != null
+                            && pc.getTeamColor() == TeamColor.BLACK
+                            && pc.getPieceType() == ChessPiece.PieceType.KING){
                         return p;
                     }
                 }

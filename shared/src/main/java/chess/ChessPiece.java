@@ -13,6 +13,14 @@ public class ChessPiece {
     private final ChessGame.TeamColor _color;
     private ChessPiece.PieceType _type;
 
+    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        _color = pieceColor;
+        _type = type;
+    }
+    public ChessPiece(ChessPiece copy){
+        _color = copy._color;
+        _type = copy._type;
+    }
     @Override
     public boolean equals(Object o){
         if(this == o) return true;
@@ -27,10 +35,6 @@ public class ChessPiece {
     @Override
     public String toString(){
         return _color.toString()+" "+_type.toString();
-    }
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
-        _color = pieceColor;
-        _type = type;
     }
 
 

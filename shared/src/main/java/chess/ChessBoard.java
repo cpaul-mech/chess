@@ -10,13 +10,25 @@ import java.util.Arrays;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private ChessPiece[][] _board = new ChessPiece[10][10]; //an array of ChessPiece Objects!
+    private ChessPiece[][] _lboard; //an array of ChessPiece Objects!
     public ChessBoard() {
-        
+        _lboard = new ChessPiece[10][10];
     }
     public ChessBoard(ChessBoard copy){
         //this is the copy constructor
-        _board = Arrays.copyOf(copy._board, copy._board.length);
+        //need to design a way to create new pieces in each location
+        _lboard = new ChessPiece[10][10];
+        for (int r = 1; r < 9; r++) {
+            for (int c = 1; c < 9; c++) {
+                //need to get the piece at every position of the copy board
+                ChessPosition p = new ChessPosition(r,c);
+                ChessPiece copyPiece = copy.getPiece(p);
+                if(copyPiece != null){
+                    //if there is a piece here, we use the copy constructor to add that piece.
+                    addPiece(p,new ChessPiece(copyPiece));
+                }
+            }
+        }
     }
     @Override
     public boolean equals(Object obj){
@@ -70,10 +82,10 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece){
-        _board[position.getRow()][position.getColumn()] = piece;
+        _lboard[position.getRow()][position.getColumn()] = piece;
     }
     public void removePiece(ChessPosition position){
-        _board[position.getRow()][position.getColumn()] = null; //resets the pointer to null.
+        _lboard[position.getRow()][position.getColumn()] = null; //resets the pointer to null.
     }
     /**
      * Gets a chess piece on the chessboard
@@ -83,7 +95,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return _board[position.getRow()][position.getColumn()];
+        return _lboard[position.getRow()][position.getColumn()];
     }
 
     /**
