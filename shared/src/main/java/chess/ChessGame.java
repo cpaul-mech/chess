@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -62,7 +63,12 @@ public class ChessGame {
             Collection<ChessMove> moveSet = pieceHere.pieceMoves(_board,startPosition);//this will return all the moves available to the piece,
             //but it doesn't check for if the piece would place the king into check or leave the king in check
             //need to implement that.
-
+            for (int i = 0; i < moveSet.size(); i++) {
+                ChessMove m = ((ArrayList<ChessMove>) moveSet).get(i);
+                if(doesNotEndangerKing(m)){
+                    continue;
+                }
+            }
             return moveSet;
         }else return null;
     }
