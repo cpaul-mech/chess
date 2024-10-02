@@ -1,5 +1,6 @@
 package chess;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -60,16 +61,19 @@ public class ChessGame {
         //TODO: ADD FUNCTIONALITY TO CHECK IF THE MOVE WILL LEAVE THE KING IN CHECK.
         var pieceHere = _board.getPiece(startPosition);
         if(pieceHere != null){
-            Collection<ChessMove> moveSet = pieceHere.pieceMoves(_board,startPosition);//this will return all the moves available to the piece,
+            Collection<ChessMove> moveSet = pieceHere.pieceMoves(_board,startPosition);
+            //this will return all the moves available to the piece,
             //but it doesn't check for if the piece would place the king into check or leave the king in check
             //need to implement that.
+            ArrayList<ChessMove> validMoveSet = new ArrayList<>();
             for (int i = 0; i < moveSet.size(); i++) {
                 ChessMove m = ((ArrayList<ChessMove>) moveSet).get(i);
                 if(doesNotEndangerKing(m)){
-                    continue;
-                }
+                    validMoveSet.add(m);
+                }//if the move would leave the king in danger afterwards, then we also need to not include that move
+
             }
-            return moveSet;
+            return validMoveSet;
         }else return null;
     }
 
@@ -106,8 +110,7 @@ public class ChessGame {
     }
 
     /**
-     * This method checks the proposed move position to ensure that the proposed move
-     * will move a piece whose turn it is right now.
+     *
      * @param p the Position of the piece that is trying to move.
      * @return true if it is that piece's turn to move now
      */
