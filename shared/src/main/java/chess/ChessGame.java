@@ -56,9 +56,14 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        //TODO: ADD FUNCTIONALITY TO CHECK IF THE MOVE WILL LEAVE THE KING IN CHECK.
         var pieceHere = _board.getPiece(startPosition);
         if(pieceHere != null){
-            return pieceHere.pieceMoves(_board,startPosition);
+            Collection<ChessMove> moveSet = pieceHere.pieceMoves(_board,startPosition);//this will return all the moves available to the piece,
+            //but it doesn't check for if the piece would place the king into check or leave the king in check
+            //need to implement that.
+
+            return moveSet;
         }else return null;
     }
 
@@ -133,6 +138,9 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPosition = findKing(teamColor);
+        if(kingPosition == null){
+            return false; //if there is no king of that color, then that king cannot be put into check.
+        }
         //now that we have found the king of the appropriate color, we need to check the other pieces and see if that piece
         //could move to take the king.
         if(teamColor == TeamColor.WHITE){
@@ -187,7 +195,7 @@ public class ChessGame {
     /**
      * Finds the king of specified color and returns the position.
      * @param teamColor the color of the king that you would like to find.
-     * @return ChessPosition p, the position of the king.
+     * @return ChessPosition p, the position of the king, or null if no king was found.
      */
     public ChessPosition findKing(TeamColor teamColor){
         if(teamColor == TeamColor.WHITE){
@@ -216,7 +224,8 @@ public class ChessGame {
                 }
             }
         }
-        throw new RuntimeException("The game has no king and should have ended.");
+        //there are some tests that require that a check for a king must not take place.
+        return null;
     }
     /**
      * Determines if the given team is in checkmate
