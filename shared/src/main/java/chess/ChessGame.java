@@ -50,9 +50,33 @@ public class ChessGame {
         BLACK
     }
 
-    public Collection<ChessMove> allMovesOfTeam(TeamColor color){
-        //return all the moves available for one team.
-        return null;
+    public ArrayList<ChessPosition> allPiecePositionsOfTeam(TeamColor color){
+        ArrayList<ChessPosition> pcPositions = new ArrayList<>();
+        for (int r = 1; r < 9; r++) {
+            for (int c = 1; c < 9; c++) {
+                ChessPosition p = new ChessPosition(r,c);
+                var pieceHere = _board.getPiece(p);
+                if(pieceHere != null && pieceHere.getTeamColor()==color){
+                    pcPositions.add(p);
+                }
+            }
+        }
+        return pcPositions;
+    }
+
+    public ArrayList<ChessMove> allValidMovesOfTeam(TeamColor color){
+        ArrayList<ChessPosition> allPositionsToCheck = allPiecePositionsOfTeam(color);
+        ArrayList<ChessMove> allMoves = new ArrayList<>();
+        for (ChessPosition position : allPositionsToCheck) {
+            //iterate through all the elements of allPositionsToCheck
+            Collection<ChessMove> vm = validMoves(position);
+            for (ChessMove move : vm) {
+                if (!allMoves.contains(move)){
+                    allMoves.add(move);
+                }
+            }
+        }
+        return allMoves;
     }
 
     /**
@@ -63,7 +87,6 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        //TODO: ADD FUNCTIONALITY TO CHECK IF THE MOVE WILL LEAVE THE KING IN CHECK and prevent those moves.
         var pieceHere = _board.getPiece(startPosition);
         if(pieceHere != null){
             Collection<ChessMove> moveSet = pieceHere.pieceMoves(_board,startPosition);
@@ -247,8 +270,10 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        //TODO: THIS LOGIC ISN'T COMPLETE!!
-        return isInCheck(teamColor);
+        var allValidMoves = allValidMovesOfTeam(teamColor);
+        if(allValidMoves.isEmpty()){
+            return true;
+        }else return false;
     }
 
     /**
