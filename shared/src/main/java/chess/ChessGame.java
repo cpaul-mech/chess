@@ -50,6 +50,11 @@ public class ChessGame {
         BLACK
     }
 
+    public Collection<ChessMove> allMovesOfTeam(TeamColor color){
+        //return all the moves available for one team.
+        return null;
+    }
+
     /**
      * Gets a valid moves for a piece at the given location
      *
@@ -58,20 +63,19 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        //TODO: ADD FUNCTIONALITY TO CHECK IF THE MOVE WILL LEAVE THE KING IN CHECK.
+        //TODO: ADD FUNCTIONALITY TO CHECK IF THE MOVE WILL LEAVE THE KING IN CHECK and prevent those moves.
         var pieceHere = _board.getPiece(startPosition);
         if(pieceHere != null){
             Collection<ChessMove> moveSet = pieceHere.pieceMoves(_board,startPosition);
             //this will return all the moves available to the piece,
             //but it doesn't check for if the piece would place the king into check or leave the king in check
             //need to implement that.
-            ArrayList<ChessMove> validMoveSet = new ArrayList<>();
+            Collection<ChessMove> validMoveSet = new ArrayList<>();
             for (int i = 0; i < moveSet.size(); i++) {
                 ChessMove m = ((ArrayList<ChessMove>) moveSet).get(i);
                 if(doesNotEndangerKing(m)){
                     validMoveSet.add(m);
-                }//if the move would leave the king in danger afterwards, then we also need to not include that move
-
+                }//if the move would leave the king in danger afterward, then we also need to not include that move
             }
             return validMoveSet;
         }else return null;
@@ -129,7 +133,7 @@ public class ChessGame {
         var oldBoard = _board;
         copyBoard.executeMove(move);
         setBoard(copyBoard);
-        if(isInCheck(_whoTurn)) {
+        if(isInCheck(_board.getPiece(move.getEndPosition()).getTeamColor())) {
             setBoard(oldBoard);
             return false;
         }else {
@@ -164,8 +168,8 @@ public class ChessGame {
                 }
             }
         }else {
-            for (int r = 9; r > 1; r--) {
-                for (int c = 9; c > 1; c--) {
+            for (int r = 8; r > 0; r--) {
+                for (int c = 8; c > 0; c--) {
                     //need to search for the king
                     ChessPosition p = new ChessPosition(r,c);
                     if(canKillKing(kingPosition,p)){
@@ -184,9 +188,9 @@ public class ChessGame {
      * @return true if the specified killer can in fact kill the king.
      */
     public boolean canKillKing(ChessPosition kingPosition, ChessPosition killPosition){
-        //this function does check to make sure that the killer and the
-        //need to do the
-        Collection<ChessMove> killMoves = validMoves(killPosition);
+        var k = _board.getPiece(killPosition);
+        if(k==null) return false;
+        Collection<ChessMove> killMoves = k.pieceMoves(_board,killPosition); // I think I found the issue!!!
         if(killMoves == null){
             return false; //a piece that doesn't exist cannot kill a king.
         }

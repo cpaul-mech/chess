@@ -106,7 +106,8 @@ public class ValidMovesTests {
         ChessPosition queenPosition = new ChessPosition(1, 2);
         ChessPosition knightPosition = new ChessPosition(5, 4);
         ChessPosition rookPosition = new ChessPosition(3, 8);
-
+        //lowercase = black!!!
+        //UPPERCASE = WHITE!!!
 
         var validMoves = loadMoves(kingPosition, new int[][]{{6, 5}});
 
