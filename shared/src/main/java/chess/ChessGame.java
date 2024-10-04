@@ -213,19 +213,23 @@ public class ChessGame {
     public boolean canKillKing(ChessPosition kingPosition, ChessPosition killPosition){
         var k = _board.getPiece(killPosition);
         if(k==null) return false;
-        Collection<ChessMove> killMoves = k.pieceMoves(_board,killPosition); // I think I found the issue!!!
+        ArrayList<ChessMove> killMoves = (ArrayList<ChessMove>) k.pieceMoves(_board,killPosition); // I think I found the issue!!!
         if(killMoves == null){
             return false; //a piece that doesn't exist cannot kill a king.
         }
         var kingColor = _board.getPiece(kingPosition).getTeamColor();
         var killerColor = _board.getPiece(killPosition).getTeamColor();
-        var killMove = new ChessMove(killPosition,kingPosition,null);
+        //look for if pawns can kill the king.
         //when canKillKing is called on this
-        if(kingColor != killerColor &&
-                killMoves.contains(killMove)){
-            return true;
-        }else return false;
+        if(kingColor != killerColor){
+            for (ChessMove m : killMoves) {
+                if (m.getEndPosition().equals(kingPosition)) {
+                    return true;
+                }
+            }
 
+        }
+        return false;
     }
 
     /**
@@ -284,7 +288,9 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        //returns true
+        var allValidMoves = allValidMovesOfTeam(teamColor);
+        return allValidMoves.isEmpty() && !isInCheck(teamColor);
     }
 
     /**
