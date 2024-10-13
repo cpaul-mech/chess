@@ -1,6 +1,5 @@
 package chess;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -275,9 +274,7 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         var allValidMoves = allValidMovesOfTeam(teamColor);
-        if(allValidMoves.isEmpty()){
-            return true;
-        }else return false;
+        return allValidMoves.isEmpty();
     }
 
     /**
