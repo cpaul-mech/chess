@@ -1,5 +1,5 @@
 package dataaccess;
 
-public class AuthDataAccess{
-
+public interface AuthDataAccess {
+    //TODO: What kinds of functions need to go here again?
 }
