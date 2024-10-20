@@ -1,4 +1,7 @@
 package dataaccess;
 
-public class UserDataAccess {
+import model.UserData;
+
+public interface UserDataAccess {
+    public UserData getUser(String username);
 }
