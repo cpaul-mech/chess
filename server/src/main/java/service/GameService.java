@@ -12,7 +12,7 @@ public class GameService {
     }
 
     public UserData registerUser(UserData newUser) {
-
+        return null;
     }
 
     public void clearGameDB() {
