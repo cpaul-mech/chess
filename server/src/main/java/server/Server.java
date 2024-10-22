@@ -1,22 +1,16 @@
 package server;
 
 import com.google.gson.Gson;
-import service.AuthService;
-import service.GameService;
-import service.UserService;
+import service.Service;
 import spark.*;
 
 public class Server {
-    private final AuthService _authService;
-    private final GameService _gameService;
-    private final UserService _userService;
+    private final Service _service = new Service();
+
 
     private final Gson serializer = new Gson();
 
-    public Server(GameService gserve, UserService userve, AuthService aserve) {
-        _authService = aserve;
-        _gameService = gserve;
-        _userService = userve;
+    public Server() {
     }
 
     public int run(int desiredPort) {
@@ -35,7 +29,7 @@ public class Server {
     }
 
     private String clearAllDB(Request req, Response res) {
-        _gameService.clearGameDB();
+        _service.clearGameDB();
         res.status(200);
         return "";
     }
