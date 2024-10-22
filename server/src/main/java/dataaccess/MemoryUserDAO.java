@@ -23,6 +23,9 @@ public class MemoryUserDAO implements UserDataAccess {
     public void clearUsers() {
         //clear all the users in the memory
         users.clear(); //I hope that this will work.
+    }
 
+    public int dbSize() {
+        return users.size();
     }
 }

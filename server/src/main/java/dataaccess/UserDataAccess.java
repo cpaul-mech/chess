@@ -10,4 +10,5 @@ public interface UserDataAccess {
 
     public void clearUsers();
 
+    public int dbSize();
 }

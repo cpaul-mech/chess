@@ -14,4 +14,12 @@ public class UserService {
     public UserService() {
         _uDAO = new MemoryUserDAO();
     }
+
+    public void clearUserDB() {
+        _uDAO.clearUsers();
+    }
+
+    public int getUserDBsize() {
+        return _uDAO.dbSize();
+    }
 }
