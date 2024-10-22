@@ -2,16 +2,17 @@ package dataaccess;
 
 import model.UserData;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MemoryUserDAO implements UserDataAccess {
     final private Map<String, UserData> users = new HashMap<>();
 
     @Override
-    public void createUser(String username, String password, String email) throws DataAccessException {
-        UserData newUser = new UserData(username, password, email);
-        users.put(username, newUser);
+    public void createUser(UserData userData) {
+        users.put(userData.username(), userData);
     }
 
     @Override
@@ -27,5 +28,10 @@ public class MemoryUserDAO implements UserDataAccess {
 
     public int dbSize() {
         return users.size();
+    }
+
+    @Override
+    public Collection<UserData> listUsers() {
+        return users.values();
     }
 }

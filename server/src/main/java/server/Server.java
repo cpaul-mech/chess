@@ -40,6 +40,7 @@ public class Server {
     private String clearAllDB(Request req, Response res) {
         _Game_service.clearGameDB();
         _user_service.clearUserDB();
+        _auth_service.clearAuthDB();
         res.status(200);
         return "";
     }

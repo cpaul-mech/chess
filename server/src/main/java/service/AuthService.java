@@ -2,6 +2,9 @@ package service;
 
 import dataaccess.AuthDataAccess;
 import dataaccess.MemoryAuthDAO;
+import model.AuthData;
+
+import java.util.UUID;
 
 public class AuthService {
     private final AuthDataAccess _aDAO;
@@ -14,8 +17,17 @@ public class AuthService {
         _aDAO = new MemoryAuthDAO();
     }
 
-    public void clearAuthDAO() {
+    public void clearAuthDB() {
         _aDAO.clearAuthDB();
+    }
+
+    public AuthData createAuthData(String username) {
+        var newAuthData = new AuthData(generateToken(), username);
+        return newAuthData;
+    }
+
+    public static String generateToken() {
+        return UUID.randomUUID().toString();
     }
 
     public int dbSize() {

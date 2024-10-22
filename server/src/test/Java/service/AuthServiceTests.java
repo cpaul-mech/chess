@@ -9,7 +9,7 @@ public class AuthServiceTests {
 
     @Test
     public void clear() {
-        authService.clearAuthDAO();
+        authService.clearAuthDB();
         assertEquals(authService.dbSize(), 0);
     }
 }
