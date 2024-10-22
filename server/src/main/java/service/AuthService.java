@@ -13,4 +13,12 @@ public class AuthService {
     public AuthService() { //default constructor.
         _aDAO = new MemoryAuthDAO();
     }
+
+    public void clearAuthDAO() {
+        _aDAO.clearAuthDB();
+    }
+
+    public int dbSize() {
+        return _aDAO.dbSize();
+    }
 }

@@ -9,4 +9,8 @@ public class MemoryAuthDAO implements AuthDataAccess {
     public int dbSize() {
         return authDB.size();
     }
+
+    public void clearAuthDB() {
+        authDB.clear();
+    }
 }
