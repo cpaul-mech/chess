@@ -1,16 +1,25 @@
 package server;
 
 import com.google.gson.Gson;
-import service.Service;
+import dataaccess.MemoryAuthDAO;
+import dataaccess.MemoryGameDAO;
+import dataaccess.MemoryUserDAO;
+import service.AuthService;
+import service.GameService;
+import service.UserService;
 import spark.*;
 
 public class Server {
-    private final Service _service = new Service();
-
-
+    private final GameService _Game_service;
+    private final UserService _user_service;
+    private final AuthService _auth_service;
     private final Gson serializer = new Gson();
 
     public Server() {
+        //this is the default constructor, I need to set this equal to memory implementations
+        _Game_service = new GameService(new MemoryGameDAO());
+        _auth_service = new AuthService(new MemoryAuthDAO());
+        _user_service = new UserService(new MemoryUserDAO());
     }
 
     public int run(int desiredPort) {
@@ -29,7 +38,7 @@ public class Server {
     }
 
     private String clearAllDB(Request req, Response res) {
-        _service.clearGameDB();
+        _Game_service.clearGameDB();
         res.status(200);
         return "";
     }

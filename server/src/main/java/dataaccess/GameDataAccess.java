@@ -16,4 +16,6 @@ public interface GameDataAccess {
     public GameData updateGame(int gameIDtoChange, GameData replacementGame);
 
     public void clearDB();
+
+    public int dbSize();
 }

@@ -2,19 +2,21 @@ package service;
 
 import dataaccess.AuthDataAccess;
 import dataaccess.GameDataAccess;
+import dataaccess.MemoryGameDAO;
 import dataaccess.UserDataAccess;
 import model.UserData;
 
-public class Service {
+public class GameService {
     private final GameDataAccess _gDAO;
-    private final UserDataAccess _uDAO;
-    private final AuthDataAccess _aDAO;
 
-    public Service(GameDataAccess gDAO, UserDataAccess uDAO, AuthDataAccess aDAO) {
+    public GameService(GameDataAccess gDAO) {
         _gDAO = gDAO;
-        _uDAO = uDAO;
-        _aDAO = aDAO;
     }
+
+    public GameService() {
+        _gDAO = new MemoryGameDAO();
+    }
+
 
     public UserData registerUser(UserData newUser) {
         return null;
@@ -22,5 +24,9 @@ public class Service {
 
     public void clearGameDB() {
         _gDAO.clearDB();
+    }
+
+    public int sizeof() {
+        return _gDAO.dbSize();
     }
 }

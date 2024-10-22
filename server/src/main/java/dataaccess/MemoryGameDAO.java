@@ -37,4 +37,9 @@ public class MemoryGameDAO implements GameDataAccess {
     public void clearDB() {
         gameDB.clear();
     }
+
+    public int dbSize() {
+        //returns the size of the database
+        return gameDB.size();
+    }
 }
