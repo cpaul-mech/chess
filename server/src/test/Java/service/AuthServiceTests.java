@@ -1,5 +1,6 @@
 package service;
 
+import model.AuthData;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,4 +13,5 @@ public class AuthServiceTests {
         authService.clearAuthDB();
         assertEquals(authService.dbSize(), 0);
     }
+
 }

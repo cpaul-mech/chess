@@ -3,11 +3,13 @@ package service;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryUserDAO;
 import dataaccess.UserDataAccess;
+import model.AuthData;
 import model.UserData;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 public class UserService {
     private final UserDataAccess _uDAO;
@@ -28,13 +30,26 @@ public class UserService {
         _authService = new AuthService();
     }
 
-    public UserData registerUser(UserData userData) throws UserAlreadyTakenError {
+    public AuthData login(UserData userDataNullEmail) {
+        var result = _uDAO.getUser(userDataNullEmail.username());
+        if (result != null && Objects.equals(result.username(), userDataNullEmail.username())
+                && Objects.equals(result.password(), userDataNullEmail.password())) { //checking to make sure that
+            //username and password both match the records.
+            return _authService.createAuthData(userDataNullEmail.username());
+        } else {
+            //this user isn't registered, or their username, password, and email do not match.
+            throw new UnauthorizedAccessError("Error: Unauthorized");
+
+        }
+    }
+
+    public AuthData registerUser(UserData userData) throws UserAlreadyTakenError {
+        //TODO: IMPLEMENT BAD REQUEST AND WEIRD REQUEST FUNCTIONALITY.
         var userResult = _uDAO.getUser(userData.username()); //can be either null or not null.
         if (userResult == null) {
             //there was no user found in the database by that name!!
             _uDAO.createUser(userData);
-            _authService.createAuthData(userData.username());
-            return userData;
+            return _authService.createAuthData(userData.username());
         } else {
             throw new UserAlreadyTakenError("User was already taken");
         }

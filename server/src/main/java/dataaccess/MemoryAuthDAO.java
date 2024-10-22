@@ -23,4 +23,8 @@ public class MemoryAuthDAO implements AuthDataAccess {
         return authData;
     }
 
+    public AuthData getAuthData(String authToken) {
+        return authDB.get(authToken);
+    }
+
 }

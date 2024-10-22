@@ -33,4 +33,8 @@ public class AuthService {
     public int dbSize() {
         return _aDAO.dbSize();
     }
+
+    public AuthData getAuthData(String authToken) {
+        return _aDAO.getAuthData(authToken);
+    }
 }
