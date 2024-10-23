@@ -20,6 +20,7 @@ public class MemoryGameDAO implements GameDataAccess {
         gameID += 1;
         ChessGame chessGame = new ChessGame();
         var newGame = new GameData(gameID, null, null, gameName, chessGame);
+        gameDB.put(gameID, newGame);
         return gameID;
     }
 

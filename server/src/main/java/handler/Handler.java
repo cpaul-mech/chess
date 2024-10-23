@@ -5,10 +5,7 @@ import dataAccess.*;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import service.AuthService;
-import service.GameService;
-import service.UserAlreadyTakenError;
-import service.UserService;
+import service.*;
 
 import java.util.Collection;
 
@@ -24,9 +21,10 @@ public class Handler {//this class will be used to call all the various services
         return userService.registerUser(userData);
     }
 
-    public AuthData login(UserData userDataNullEmail) {
+    public LoginResponse login(UserData userDataNullEmail) {
         var authData = userService.login(userDataNullEmail);
-        return authData;
+        LoginResponse loginResponse = new LoginResponse(authData.username(), authData.authToken());
+        return loginResponse;
     }
 
     public void logout(String authToken) {
@@ -42,8 +40,7 @@ public class Handler {//this class will be used to call all the various services
                 return gamesList;
             }
         } else {
-            //return the jsonthingy //UNAUTHORIZED USER!!
-            return null;
+            throw new UnauthorizedAccessError("Error: unauthorized");
         }
     }
 
@@ -52,32 +49,17 @@ public class Handler {//this class will be used to call all the various services
             return gameService.createGame(gameName);
         } else {
             //return bad things, unauthorized user!!!
-            return 0; //UNAUTHORIZED USER!!
+            throw new UnauthorizedAccessError("Error: unauthorized");
         }
     }
 
     public void updateGamePlayer(String authToken, String color, int gameID) throws DataAccessException {
         if (authService.verifyAuthToken(authToken)) {
-            //proceed
             String username = authService.getAuthData(authToken).username();
-            ChessGame.TeamColor colorToChange = null;
-            if (color.toUpperCase() == "WHITE") {
-                colorToChange = ChessGame.TeamColor.WHITE;
-            } else if (color.toUpperCase() == "BLACK") {
-                colorToChange = ChessGame.TeamColor.BLACK;
-            } else {
-                //return BAD REQUEST CODE!!!
-                return;
-            }
-            try {
-                var result = gameService.updateGame(colorToChange, gameID, username);
-            } catch (DataAccessException e) {
-                //game didn't exist
-            } catch (UserAlreadyTakenError error) {
-
-            }
-        } else {
+            gameService.updateGame(color, gameID, username);
             //return bad juju, UNAUTHORIZED USER!!!
+        } else {
+            throw new UnauthorizedAccessError("Error: unauthorized");
         }
     }
 

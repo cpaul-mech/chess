@@ -44,13 +44,22 @@ public class GameService {
         return _gDAO.dbSize();
     }
 
-    public int updateGame(ChessGame.TeamColor color, int gameID, String newUsername) throws DataAccessException {
+    public void updateGame(String updateColor, int gameID, String newUsername) throws DataAccessException {
         //what happens if the gameID is invalid? we return null... but that doesn't make this stuff true
+        ChessGame.TeamColor colorToChange = null;
+        if (updateColor.equalsIgnoreCase("WHITE")) {
+            colorToChange = ChessGame.TeamColor.WHITE;
+        } else if (updateColor.equalsIgnoreCase("BLACK")) {
+            colorToChange = ChessGame.TeamColor.BLACK;
+        } else {
+            //return BAD REQUEST CODE!!!
+            throw new BadServiceRequest("Error: bad request");
+        }
         var game = getGame(gameID);
         if (game == null) {
             throw new DataAccessException("no game found!!"); //represents an error code.
         } else {
-            if (color == ChessGame.TeamColor.BLACK) {
+            if (colorToChange == ChessGame.TeamColor.BLACK) {
                 //attempt to replace black team username
                 if (game.blackUsername() == null) {
                     var newGame = new GameData(gameID, game.whiteUsername(), newUsername, game.gameName(), game.game());
@@ -59,7 +68,7 @@ public class GameService {
                     //username already taken!!
                     throw new UserAlreadyTakenError("Error: already taken"); //error code USERNAME ALREADY TAKEN.
                 }
-            } else if (color == ChessGame.TeamColor.WHITE) {
+            } else {
                 if (game.whiteUsername() == null) {
                     var newGame = new GameData(gameID, newUsername, game.blackUsername(), game.gameName(), game.game());
                     _gDAO.updateGame(gameID, newGame);
@@ -69,6 +78,5 @@ public class GameService {
             }
 
         }
-        return gameID;
     }
 }

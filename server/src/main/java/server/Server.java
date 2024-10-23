@@ -1,10 +1,12 @@
 package server;
 
 import com.google.gson.Gson;
+import dataAccess.DataAccessException;
 import handler.Handler;
-import model.AuthData;
+import handler.JoinGameInput;
 import model.GameData;
 import model.UserData;
+import service.BadServiceRequest;
 import service.ErrorMessage;
 import service.UnauthorizedAccessError;
 import service.UserAlreadyTakenError;
@@ -24,13 +26,12 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-//        Spark.post();
-        Spark.post("/user", this::createUser);
+        Spark.post("/user", this::registerUser);
         Spark.post("/session", this::login);
         Spark.delete("/db", this::clearAllDB);
         Spark.delete("/session", this::logout);
-//        Spark.get("/game",this::);
         Spark.post("/game", this::createGame);
+        Spark.put("/game", this::joinGame);
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 
@@ -44,6 +45,28 @@ public class Server {
         return "";
     }
 
+
+    private String joinGame(Request req, Response res) throws DataAccessException {
+        var authToken = req.headers("authorization");
+        JoinGameInput joinGameInput = serializer.fromJson(req.body(), JoinGameInput.class);
+        try {
+            handler.updateGamePlayer(authToken, joinGameInput.playerColor(), joinGameInput.gameID());
+            return "";
+        } catch (BadServiceRequest e) {
+            res.status(400);
+            ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+            return serializer.toJson(errorMessage);
+        } catch (UnauthorizedAccessError e) {
+            res.status(401);
+            ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+            return serializer.toJson(errorMessage);
+        } catch (UserAlreadyTakenError e) {
+            res.status(403);
+            ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+            return serializer.toJson(errorMessage);
+        }
+    }
+
     //    private String listGames()
     private String createGame(Request req, Response res) {
         var authToken = req.headers("authorization");
@@ -53,13 +76,14 @@ public class Server {
             var result = handler.createGame(authToken, gameName.gameName());
             GameData responseData = new GameData(result, null, null, null, null);
             return serializer.toJson(responseData);
-        } catch (UnauthorizedAccessError error) {
-            ErrorMessage errorMessage = new ErrorMessage("Error: unauthorized");
+        } catch (UnauthorizedAccessError e) {
+            res.status(401);
+            ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
             return serializer.toJson(errorMessage);
         }
     }
 
-    private String createUser(Request req, Response res) {
+    private String registerUser(Request req, Response res) {
         var newUser = serializer.fromJson(req.body(), UserData.class);
         try {
             var result = handler.registerUser(newUser);
@@ -68,6 +92,10 @@ public class Server {
             ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
             res.status(403);
             return serializer.toJson(errorMessage);
+        } catch (BadServiceRequest e) {
+            ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+            res.status(400);
+            return serializer.toJson(errorMessage);
         }
 
     }
@@ -75,11 +103,15 @@ public class Server {
     private String login(Request req, Response res) {
         var loginUser = serializer.fromJson(req.body(), UserData.class);
         try {
-            var result = handler.registerUser(loginUser);
+            var result = handler.login(loginUser);
             return serializer.toJson(result);
         } catch (UserAlreadyTakenError e) {
             ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
             res.status(403);
+            return serializer.toJson(errorMessage);
+        } catch (UnauthorizedAccessError e) {
+            ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+            res.status(401);
             return serializer.toJson(errorMessage);
         }
     }

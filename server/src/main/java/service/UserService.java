@@ -31,11 +31,15 @@ public class UserService {
             return _authService.createAuthData(userDataNullEmail.username());
         } else {
             //this user isn't registered, or their username, password, and email do not match.
-            throw new UnauthorizedAccessError("Error: Unauthorized");
+            throw new UnauthorizedAccessError("Error: unauthorized");
         }
     }
 
     public AuthData registerUser(UserData userData) throws UserAlreadyTakenError {
+        if (userData.username() == null || userData.password() == null || userData.email() == null) {
+            //this is a bad request!! cannot store!!
+            throw new BadServiceRequest("Error: bad request");
+        }
         //TODO: IMPLEMENT BAD REQUEST AND WEIRD REQUEST FUNCTIONALITY.
         var userResult = _uDAO.getUser(userData.username()); //can be either null or not null.
         if (userResult == null) {
@@ -43,7 +47,7 @@ public class UserService {
             _uDAO.createUser(userData);
             return _authService.createAuthData(userData.username());
         } else {
-            throw new UserAlreadyTakenError("User was already taken");
+            throw new UserAlreadyTakenError("Error: already taken");
         }
     }
 
