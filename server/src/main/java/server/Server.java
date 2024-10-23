@@ -27,6 +27,7 @@ public class Server {
 //        Spark.post();
         Spark.delete("/db", this::clearAllDB);
 
+
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 

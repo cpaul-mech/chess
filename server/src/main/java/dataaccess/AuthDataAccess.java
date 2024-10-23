@@ -10,4 +10,6 @@ public interface AuthDataAccess {
     public AuthData getAuthData(String authToken);
 
     public AuthData addAuthData(AuthData newAuthData);
+
+    public void deleteAuthData(AuthData authData);
 }

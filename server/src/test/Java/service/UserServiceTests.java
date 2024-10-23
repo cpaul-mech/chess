@@ -44,6 +44,6 @@ public class UserServiceTests {
         assertThrows(UnauthorizedAccessError.class, () -> _user_service.login(loginUser));
         var newUser = new UserData("cpaul3", "coolDude", "sillybilly@gmail.com");
         AuthData newUserAuthData = _user_service.registerUser(newUser);
-        assertEquals(newUserAuthData, _user_service.login(newUser));
+        assertNotEquals(newUserAuthData, _user_service.login(newUser));
     }
 }

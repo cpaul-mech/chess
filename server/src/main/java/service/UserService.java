@@ -66,4 +66,8 @@ public class UserService {
     public int getUserDBsize() {
         return _uDAO.dbSize();
     }
+
+    public AuthService getAuthService() {
+        return _authService;
+    }
 }
