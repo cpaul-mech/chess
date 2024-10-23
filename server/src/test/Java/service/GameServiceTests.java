@@ -14,5 +14,10 @@ public class GameServiceTests {
         assertEquals(_game_service.sizeof(), 0);
     }
 
+    @Test
+    void getGame() {
+//        _game_service.getGame()
+    }
+
 
 }

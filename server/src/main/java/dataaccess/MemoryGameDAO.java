@@ -1,21 +1,26 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.GameData;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MemoryGameDAO implements GameDataAccess {
     private final Map<Integer, GameData> gameDB = new HashMap<>();
+    public int gameID;
 
     public MemoryGameDAO() {
+        gameID = 0; //starting value
     }
 
     @Override
-    public void createGame() {
-
+    public int createGame(String gameName) {
+        gameID += 1;
+        ChessGame chessGame = new ChessGame();
+        var newGame = new GameData(gameID, null, null, gameName, chessGame);
+        return gameID;
     }
 
     @Override

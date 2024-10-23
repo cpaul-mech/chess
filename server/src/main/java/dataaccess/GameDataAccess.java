@@ -2,12 +2,10 @@ package dataaccess;
 
 import model.GameData;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Collection;
 
 public interface GameDataAccess {
-    public void createGame();
+    public int createGame(String gameName);
 
     public GameData getGame(int gameID);
 

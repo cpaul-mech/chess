@@ -40,13 +40,19 @@ public class AuthService {
         return _aDAO.getAuthData(authToken);
     }
 
-    public boolean logout(String AuthToken) {
+    public boolean verifyAuthToken(String AuthToken) {
         var authData = getAuthData(AuthToken);
         if (authData == null) {
-            throw new UnauthorizedAccessError("Error: Unauthorized User");
-        } else {
-            deleteAuthData(authData);
+            return false;
+        } else return authData.username() != null && authData.authToken() != null;
+    }
+
+    public boolean logout(String AuthToken) {
+        if (verifyAuthToken(AuthToken)) {
+            deleteAuthData(getAuthData(AuthToken));
             return true;
+        } else {
+            return false;
         }
     }
 
