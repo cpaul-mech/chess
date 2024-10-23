@@ -3,9 +3,7 @@ package dataAccess;
 import chess.ChessGame;
 import model.GameData;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MemoryGameDAO implements GameDataAccess {
     private final Map<Integer, GameData> gameDB = new HashMap<>();
@@ -31,12 +29,28 @@ public class MemoryGameDAO implements GameDataAccess {
 
     @Override
     public Collection<GameData> listGames() {
-        return gameDB.values();
+        //need to lop off the games part of the GameData objects.
+        ArrayList<GameData> gamesList = new ArrayList<>();
+        var keySet = gameDB.keySet();
+        for (Integer key : keySet) {
+            var curGameData = gameDB.get(key);
+            String whiteUsername = curGameData.whiteUsername();
+            String blackUsername = curGameData.blackUsername();
+            if (whiteUsername == null) {
+                whiteUsername = "";
+            }
+            if (blackUsername == null) {
+                blackUsername = "";
+            }
+            GameData truncGameData = new GameData(curGameData.gameID(), whiteUsername, blackUsername, curGameData.gameName(), null);
+            gamesList.add(truncGameData);
+        }
+        return gamesList;
     }
 
     @Override
-    public GameData updateGame(int gameIDtoChange, GameData replacementGame) {
-        return null;
+    public void updateGame(int gameIDtoChange, GameData replacementGame) {
+        gameDB.replace(gameIDtoChange, replacementGame);
     }
 
     @Override

@@ -11,7 +11,7 @@ public interface GameDataAccess {
 
     public Collection<GameData> listGames();
 
-    public GameData updateGame(int gameIDtoChange, GameData replacementGame);
+    public void updateGame(int gameIDtoChange, GameData replacementGame);
 
     public void clearDB();
 

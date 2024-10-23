@@ -12,6 +12,8 @@ import service.UnauthorizedAccessError;
 import service.UserAlreadyTakenError;
 import spark.*;
 
+import java.util.Map;
+
 public class Server {
     private final Handler handler = new Handler();
     private final Gson serializer = new Gson();
@@ -32,6 +34,7 @@ public class Server {
         Spark.delete("/session", this::logout);
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::joinGame);
+        Spark.get("/game", this::listGames);
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 
@@ -45,9 +48,24 @@ public class Server {
         return "";
     }
 
+    private String listGames(Request req, Response res) {
+        String authToken = req.headers("authorization");
+        try {
+            var games = handler.listGames(authToken);
+            return serializer.toJson(Map.of("games", games));
+        } catch (UnauthorizedAccessError e) {
+            res.status(401);
+            ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+            return serializer.toJson(errorMessage);
+        } catch (Exception e) {
+            res.status(501);
+            ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+            return serializer.toJson(errorMessage);
+        }
+    }
 
     private String joinGame(Request req, Response res) throws DataAccessException {
-        var authToken = req.headers("authorization");
+        String authToken = req.headers("authorization");
         JoinGameInput joinGameInput = serializer.fromJson(req.body(), JoinGameInput.class);
         try {
             handler.updateGamePlayer(authToken, joinGameInput.playerColor(), joinGameInput.gameID());
