@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.AuthDataAccess;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryUserDAO;
 import dataaccess.UserDataAccess;
@@ -15,14 +16,9 @@ public class UserService {
     private final UserDataAccess _uDAO;
     private final AuthService _authService;
 
-    public UserService(UserDataAccess uDAO) {
+    public UserService(UserDataAccess uDAO, AuthDataAccess aDAO) {
         _uDAO = uDAO;
-        if (uDAO.getClass() == MemoryUserDAO.class) {
-            _authService = new AuthService(); //there might be a bug here because I might need to initialize with
-        } else {
-            //need to place the other class here later, but for now, leave them both as default
-            _authService = new AuthService();
-        }
+        _authService = new AuthService(aDAO);
     }
 
     public UserService() {
@@ -39,7 +35,6 @@ public class UserService {
         } else {
             //this user isn't registered, or their username, password, and email do not match.
             throw new UnauthorizedAccessError("Error: Unauthorized");
-
         }
     }
 

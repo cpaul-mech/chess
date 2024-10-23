@@ -8,4 +8,6 @@ public interface AuthDataAccess {
     public void clearAuthDB();
 
     public AuthData getAuthData(String authToken);
+
+    public AuthData addAuthData(AuthData newAuthData);
 }

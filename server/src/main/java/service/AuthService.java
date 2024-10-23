@@ -23,6 +23,7 @@ public class AuthService {
 
     public AuthData createAuthData(String username) {
         var newAuthData = new AuthData(generateToken(), username);
+        _aDAO.addAuthData(newAuthData);
         return newAuthData;
     }
 
