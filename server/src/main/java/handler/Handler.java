@@ -1,7 +1,7 @@
 package handler;
 
 import chess.ChessGame;
-import dataaccess.*;
+import dataAccess.*;
 import model.AuthData;
 import model.GameData;
 import model.UserData;

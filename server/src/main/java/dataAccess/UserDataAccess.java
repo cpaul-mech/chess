@@ -1,9 +1,8 @@
-package dataaccess;
+package dataAccess;
 
 import model.UserData;
 
 import java.util.Collection;
-import java.util.Map;
 
 public interface UserDataAccess {
     //TODO: What kinds of functions need to go here again?

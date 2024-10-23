@@ -1,15 +1,12 @@
 package service;
 
-import dataaccess.AuthDataAccess;
-import dataaccess.DataAccessException;
-import dataaccess.MemoryUserDAO;
-import dataaccess.UserDataAccess;
+import dataAccess.AuthDataAccess;
+import dataAccess.MemoryUserDAO;
+import dataAccess.UserDataAccess;
 import model.AuthData;
 import model.UserData;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Objects;
 
 public class UserService {

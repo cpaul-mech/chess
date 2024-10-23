@@ -1,9 +1,8 @@
 package service;
 
-import dataaccess.AuthDataAccess;
-import dataaccess.MemoryAuthDAO;
+import dataAccess.AuthDataAccess;
+import dataAccess.MemoryAuthDAO;
 import model.AuthData;
-import model.UserData;
 
 import java.util.UUID;
 

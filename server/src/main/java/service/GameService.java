@@ -1,10 +1,10 @@
 package service;
 
 import chess.ChessGame;
-import dataaccess.AuthDataAccess;
-import dataaccess.DataAccessException;
-import dataaccess.GameDataAccess;
-import dataaccess.MemoryGameDAO;
+import dataAccess.AuthDataAccess;
+import dataAccess.DataAccessException;
+import dataAccess.GameDataAccess;
+import dataAccess.MemoryGameDAO;
 import model.GameData;
 
 import java.util.Collection;

@@ -1,10 +1,9 @@
-package dataaccess;
+package dataAccess;
 
 import model.AuthData;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class MemoryAuthDAO implements AuthDataAccess {
     //the key, value pair is <AuthToken, AuthData object>
