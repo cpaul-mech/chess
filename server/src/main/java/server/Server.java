@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import handler.Handler;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import service.ErrorMessage;
 import service.UnauthorizedAccessError;
@@ -28,7 +29,8 @@ public class Server {
         Spark.post("/session", this::login);
         Spark.delete("/db", this::clearAllDB);
         Spark.delete("/session", this::logout);
-
+//        Spark.get("/game",this::);
+        Spark.post("/game", this::createGame);
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 
@@ -42,6 +44,20 @@ public class Server {
         return "";
     }
 
+    //    private String listGames()
+    private String createGame(Request req, Response res) {
+        var authToken = req.headers("authorization");
+        var gameName = serializer.fromJson(req.body(), GameData.class);
+        //this game should only have a gameName attached
+        try {
+            var result = handler.createGame(authToken, gameName.gameName());
+            GameData responseData = new GameData(result, null, null, null, null);
+            return serializer.toJson(responseData);
+        } catch (UnauthorizedAccessError error) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: unauthorized");
+            return serializer.toJson(errorMessage);
+        }
+    }
 
     private String createUser(Request req, Response res) {
         var newUser = serializer.fromJson(req.body(), UserData.class);
