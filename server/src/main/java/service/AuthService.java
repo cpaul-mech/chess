@@ -51,7 +51,7 @@ public class AuthService {
             deleteAuthData(getAuthData(AuthToken));
             return true;
         } else {
-            return false;
+            throw new UnauthorizedAccessError("not good");
         }
     }
 

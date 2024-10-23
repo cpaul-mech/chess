@@ -30,7 +30,7 @@ public class Handler {//this class will be used to call all the various services
     }
 
     public void logout(String authToken) {
-        authService.logout(authToken);
+        var success = authService.logout(authToken);
     }
 
     public Collection<GameData> listGames(String authToken) {

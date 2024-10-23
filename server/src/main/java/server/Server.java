@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import handler.Handler;
+import model.AuthData;
 import model.UserData;
 import service.ErrorMessage;
 import service.UnauthorizedAccessError;
@@ -68,7 +69,7 @@ public class Server {
     }
 
     public String logout(Request req, Response res) {
-        var logoutAuthToken = serializer.fromJson(req.body(), String.class);
+        var logoutAuthToken = (req.headers("authorization"));
         try {
             handler.logout(logoutAuthToken);
             return "";
