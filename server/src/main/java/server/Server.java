@@ -1,13 +1,11 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
 import handler.Handler;
-import service.AuthService;
-import service.GameService;
-import service.UserService;
+import model.UserData;
+import service.ErrorMessage;
+import service.UnauthorizedAccessError;
+import service.UserAlreadyTakenError;
 import spark.*;
 
 public class Server {
@@ -25,8 +23,10 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
 //        Spark.post();
+        Spark.post("/user", this::createUser);
+        Spark.post("/session", this::login);
         Spark.delete("/db", this::clearAllDB);
-
+        Spark.delete("/session", this::logout);
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
@@ -36,17 +36,48 @@ public class Server {
     }
 
     private String clearAllDB(Request req, Response res) {
-        handler.clearallDB();
+        handler.clearAllDB();
         res.status(200);
         return "";
     }
 
 
-//    private String createUser(Request req, Response res){
-//        var newUser = serializer.fromJson(req.body(), UserData.class);
-//        var result = UserService.registerUser(newUser);
-//        return serializer.toJson(result);
-//    }
+    private String createUser(Request req, Response res) {
+        var newUser = serializer.fromJson(req.body(), UserData.class);
+        try {
+            var result = handler.registerUser(newUser);
+            return serializer.toJson(result);
+        } catch (UserAlreadyTakenError e) {
+            ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+            res.status(403);
+            return serializer.toJson(errorMessage);
+        }
+
+    }
+
+    private String login(Request req, Response res) {
+        var loginUser = serializer.fromJson(req.body(), UserData.class);
+        try {
+            var result = handler.registerUser(loginUser);
+            return serializer.toJson(result);
+        } catch (UserAlreadyTakenError e) {
+            ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+            res.status(403);
+            return serializer.toJson(errorMessage);
+        }
+    }
+
+    public String logout(Request req, Response res) {
+        var logoutAuthToken = serializer.fromJson(req.body(), String.class);
+        try {
+            handler.logout(logoutAuthToken);
+            return "";
+        } catch (UnauthorizedAccessError e) {
+            res.status(401);
+            ErrorMessage errorMessage = new ErrorMessage("Error: unauthorized");
+            return serializer.toJson(errorMessage);
+        }
+    }
 
 
     public void stop() {
