@@ -103,8 +103,8 @@ public class MoveCalculator {
                 moveStraightLineHelper(downLeft, limit);
                 break;
             case KNIGHT:
-                for (int i = 0; i < knightDirections.length; i++) {
-                    moveStraightLineHelper(knightDirections[i], 1);
+                for (int[] knightDirection : knightDirections) {
+                    moveStraightLineHelper(knightDirection, 1);
                 }
                 break;
             default:
@@ -120,9 +120,9 @@ public class MoveCalculator {
 
     private void moveStraightLine(int row, int col, int[] direction, int limit) {
         //this function enables the piece to move in whatever direction it is specified to have.
-        if (row < 1 || row > 8 || col < 1 || col > 8) return;
-        else if (limit < 1) return;
-        else {
+        if (row < 1 || row > 8 || col < 1 || col > 8) {
+        } else if (limit < 1) {
+        } else {
             ChessPosition this_position = new ChessPosition(row, col);
             ChessMove propMove = pawnPromoChecker(this_position, direction);
             if (otherPieceHere(this_position)) {
@@ -130,10 +130,8 @@ public class MoveCalculator {
                 if (isEnemyPiece(otherPiece) && pawnMoveDiagChecker(direction)) {
                     //if they're an enemy, then put in the current chessMove and halt the function here.
                     moveSet.add(propMove);
-                    return;
-                } else {
-                    return;
                 }
+                return;
             } else if (type == ChessPiece.PieceType.PAWN) {
                 if (!pawnMoveDiagChecker(direction)) {
                     moveSet.add(propMove);
@@ -159,8 +157,9 @@ public class MoveCalculator {
     }
 
     private ChessMove pawnPromoChecker(ChessPosition p, int[] direction) {
-        //checks if the pieceType is pawn, then only returns a different move if the piece is in the end zone, and there is an enemy and we move diagonally,
-        //or if there is not an enemy and we're moving straight.
+        //checks if the pieceType is pawn, then only returns a different move if the piece is in the end zone,
+        // and there is an enemy, and we move diagonally,
+        //or if there is not an enemy, and we're moving straight.
         if (type == ChessPiece.PieceType.PAWN) {
             ArrayList<ChessPiece.PieceType> pawnPromoOptions = new ArrayList<>();
             pawnPromoOptions.add(ChessPiece.PieceType.ROOK);

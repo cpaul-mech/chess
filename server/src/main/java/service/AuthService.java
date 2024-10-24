@@ -46,9 +46,9 @@ public class AuthService {
         } else return authData.username() != null && authData.authToken() != null;
     }
 
-    public boolean logout(String AuthToken) {
-        if (verifyAuthToken(AuthToken)) {
-            deleteAuthData(getAuthData(AuthToken));
+    public boolean logout(String authToken) {
+        if (verifyAuthToken(authToken)) {
+            deleteAuthData(getAuthData(authToken));
             return true;
         } else {
             throw new UnauthorizedAccessError("Error: unauthorized");
