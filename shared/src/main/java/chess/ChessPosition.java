@@ -22,7 +22,9 @@ public class ChessPosition {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this) return true; //checks for memory address equals
+        if (obj == this) {
+            return true; //checks for memory address equals
+        }
         if (obj instanceof ChessPosition) {
             ChessPosition p = (ChessPosition) obj;
             return this.row == p.row && this.col == p.col;

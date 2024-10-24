@@ -6,7 +6,6 @@ import model.GameData;
 import model.UserData;
 import service.*;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class Handler {//this class will be used to call all the various services
@@ -42,17 +41,6 @@ public class Handler {//this class will be used to call all the various services
         } else {
             throw new UnauthorizedAccessError("Error: unauthorized");
         }
-    }
-
-    public Collection<GameData> processGameDataForReturn(ArrayList<GameData> games) {
-        //this function will take every game in gamesList and set the "game" field to null
-        for (int i = 0; i < games.size(); i++) {
-            var gameData = games.get(i);
-            var truncGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), null);
-            games.remove(gameData);
-            games.add(truncGameData);
-        }
-        return games;
     }
 
     public int createGame(String authToken, String gameName) {

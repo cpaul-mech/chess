@@ -43,7 +43,9 @@ public class AuthService {
         var authData = getAuthData(authToken);
         if (authData == null) {
             return false;
-        } else return authData.username() != null && authData.authToken() != null;
+        } else {
+            return authData.username() != null && authData.authToken() != null;
+        }
     }
 
     public boolean logout(String authToken) {
