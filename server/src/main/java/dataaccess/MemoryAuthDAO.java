@@ -1,4 +1,4 @@
-package dataAccess;
+package dataaccess;
 
 import model.AuthData;
 
@@ -17,9 +17,8 @@ public class MemoryAuthDAO implements AuthDataAccess {
         authDB.clear();
     }
 
-    public AuthData addAuthData(AuthData authData) {
+    public void addAuthData(AuthData authData) {
         authDB.put(authData.authToken(), authData);
-        return authData;
     }
 
     @Override

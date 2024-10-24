@@ -1,7 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import dataAccess.DataAccessException;
+import dataaccess.DataAccessException;
 import handler.Handler;
 import handler.JoinGameInput;
 import model.GameData;

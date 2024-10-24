@@ -1,7 +1,6 @@
 package handler;
 
-import chess.ChessGame;
-import dataAccess.*;
+import dataaccess.*;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
