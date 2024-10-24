@@ -153,7 +153,9 @@ public class MoveCalculator {
             int[] downRight = {-1, 1};
             return Arrays.equals(direction, upLeft) || Arrays.equals(direction, upRight) ||
                     Arrays.equals(direction, downRight) || Arrays.equals(direction, downLeft);
-        } else return true;
+        } else {
+            return true;
+        }
     }
 
     private ChessMove pawnPromoChecker(ChessPosition p, int[] direction) {
@@ -177,7 +179,9 @@ public class MoveCalculator {
                         moveSet.add(new ChessMove(startPosition, p, pawnPromoOptions.get(i)));
                     }
                     return new ChessMove(startPosition, p, pawnPromoOptions.get(3));
-                } else return new ChessMove(startPosition, p, null);
+                } else {
+                    return new ChessMove(startPosition, p, null);
+                }
             } else {
                 if (p.getRow() == 1 &&
                         ((pawnMoveDiagChecker(direction) && isEnemyPiece(board.getPiece(p)))
@@ -187,7 +191,9 @@ public class MoveCalculator {
                         moveSet.add(new ChessMove(startPosition, p, pawnPromoOptions.get(i)));
                     }
                     return new ChessMove(startPosition, p, pawnPromoOptions.get(3));
-                } else return new ChessMove(startPosition, p, null);
+                } else {
+                    return new ChessMove(startPosition, p, null);
+                }
             }
 
         } else {
@@ -198,7 +204,9 @@ public class MoveCalculator {
     private boolean isEnemyPiece(ChessPiece other) {
         if (piece != null && other != null) {
             return piece.getTeamColor().ordinal() != other.getTeamColor().ordinal();
-        } else return false;
+        } else {
+            return false;
+        }
 
     }
 

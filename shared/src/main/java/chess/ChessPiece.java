@@ -25,8 +25,12 @@ public class ChessPiece {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || this.getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || this.getClass() != o.getClass()) {
+            return false;
+        }
         ChessPiece that = (ChessPiece) o; //recast to current class
         return type == that.getPieceType() && color.ordinal() == that.getTeamColor().ordinal();
     }

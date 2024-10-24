@@ -38,7 +38,9 @@ public class ChessGame {
         //will swap the turns so that the not current team is in charge.
         if (whoTurn == TeamColor.WHITE) {
             whoTurn = TeamColor.BLACK;
-        } else whoTurn = TeamColor.WHITE;
+        } else {
+            whoTurn = TeamColor.WHITE;
+        }
     }
 
     /**
@@ -100,7 +102,9 @@ public class ChessGame {
                 }//if the move would leave the king in danger afterward, then we also need to not include that move
             }
             return validMoveSet;
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -210,7 +214,9 @@ public class ChessGame {
      */
     public boolean canKillKing(ChessPosition kingPosition, ChessPosition killPosition) {
         var k = board.getPiece(killPosition);
-        if (k == null) return false;
+        if (k == null) {
+            return false;
+        }
         ArrayList<ChessMove> killMoves = (ArrayList<ChessMove>) k.pieceMoves(board, killPosition); // I think I found the issue!!!
         if (killMoves == null) {
             return false; //a piece that doesn't exist cannot kill a king.

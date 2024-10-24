@@ -31,9 +31,12 @@ public class ChessMove {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true; //checks for if the memory addresses are the same.
-        if (obj == null || getClass() != obj.getClass())
+        if (this == obj) {
+            return true; //checks for if the memory addresses are the same.
+        }
+        if (obj == null || getClass() != obj.getClass()) {
             return false; //checks for if the object's class is equal to the current class
+        }
         ChessMove move = (ChessMove) obj; //sets a new variable move equal to the object and casts object to a ChessMove Object.
         return (startPosition.equals(move.startPosition) && endPosition.equals(move.endPosition) &&
                 promotionPiece == move.promotionPiece);
@@ -42,8 +45,11 @@ public class ChessMove {
     @Override
     public int hashCode() {
         int promotionCode;
-        if (promotionPiece == null) promotionCode = 9;
-        else promotionCode = promotionPiece.ordinal();
+        if (promotionPiece == null) {
+            promotionCode = 9;
+        } else {
+            promotionCode = promotionPiece.ordinal();
+        }
         return (71 * startPosition.hashCode()) + endPosition.hashCode() + promotionCode;
     }
 
