@@ -40,7 +40,6 @@ public class UserService {
             //this is a bad request!! cannot store!!
             throw new BadServiceRequest("Error: bad request");
         }
-        //TODO: IMPLEMENT BAD REQUEST AND WEIRD REQUEST FUNCTIONALITY.
         var userResult = userDataAccess.getUser(userData.username()); //can be either null or not null.
         if (userResult == null) {
             //there was no user found in the database by that name!!
