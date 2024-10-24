@@ -202,7 +202,6 @@ public class StandardAPITests {
 
         Assertions.assertEquals(1, listResult.getGames().length);
         Assertions.assertEquals(existingUser.getUsername(), listResult.getGames()[0].getWhiteUsername());
-        var result1 = listResult.getGames()[0].getBlackUsername();
         Assertions.assertNull(listResult.getGames()[0].getBlackUsername());
     }
 
