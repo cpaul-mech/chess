@@ -36,7 +36,7 @@ public class Handler {//this class will be used to call all the various services
         if (authService.verifyAuthToken(authToken)) {
             var gamesList = gameService.listGames();
             if (gamesList == null || gamesList.isEmpty()) {
-                return null;
+                return gamesList;
             } else {
                 return gamesList;
             }

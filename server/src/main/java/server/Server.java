@@ -53,6 +53,7 @@ public class Server {
         try {
             var games = handler.listGames(authToken);
             if (games == null) {
+                res.status(200);
                 return "";
             }
             return serializer.toJson(Map.of("games", games));
