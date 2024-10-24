@@ -1,7 +1,6 @@
 package chess;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -10,40 +9,44 @@ import java.util.Arrays;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private ChessPiece[][] _lboard; //an array of ChessPiece Objects!
+    private ChessPiece[][] pieces; //an array of ChessPiece Objects!
+
     public ChessBoard() {
-        _lboard = new ChessPiece[10][10];
+        pieces = new ChessPiece[10][10];
     }
-    public ChessBoard(ChessBoard copy){
+
+    public ChessBoard(ChessBoard copy) {
         //this is the copy constructor
         //need to design a way to create new pieces in each location
-        _lboard = new ChessPiece[10][10];
+        pieces = new ChessPiece[10][10];
         for (int r = 1; r < 9; r++) {
             for (int c = 1; c < 9; c++) {
                 //need to get the piece at every position of the copy board
-                ChessPosition p = new ChessPosition(r,c);
+                ChessPosition p = new ChessPosition(r, c);
                 ChessPiece copyPiece = copy.getPiece(p);
-                if(copyPiece != null){
+                if (copyPiece != null) {
                     //if there is a piece here, we use the copy constructor to add that piece.
-                    addPiece(p,new ChessPiece(copyPiece));
+                    addPiece(p, new ChessPiece(copyPiece));
                 }
             }
         }
     }
+
     @Override
-    public boolean equals(Object obj){
-        if(this == obj) return true; //checks for if the memory addresses are the same.
-        if(obj == null || getClass() != obj.getClass()) return false; //checks for if the object's class is equal to the current class
+    public boolean equals(Object obj) {
+        if (this == obj) return true; //checks for if the memory addresses are the same.
+        if (obj == null || getClass() != obj.getClass())
+            return false; //checks for if the object's class is equal to the current class
         ChessBoard thatBoard = (ChessBoard) obj; //sets a new variable move equal to the object and casts object to a ChessMove Object.
         for (int r = 1; r < 9; r++) {
             for (int c = 1; c < 9; c++) {
-                var p = new ChessPosition(r,c);
+                var p = new ChessPosition(r, c);
                 var thisPiece = getPiece(p);
                 var thatPiece = thatBoard.getPiece(p);
-                if(thisPiece == null && thatPiece == null || (thisPiece.equals(thatPiece))){
+                if (thisPiece == null && thatPiece == null || (thisPiece.equals(thatPiece))) {
                     // the pieces are equal, so continue.
                     continue;
-                }else{
+                } else {
                     //the pieces are not equal, so return false
                     return false;
                 }
@@ -51,28 +54,29 @@ public class ChessBoard {
         }
         return true;
     }
+
     @Override
     public int hashCode() {
         int runningHash = 0;
         for (int r = 1; r < 9; r++) {
             for (int c = 1; c < 9; c++) {
-                var p = new ChessPosition(r,c);
+                var p = new ChessPosition(r, c);
                 var thisPiece = getPiece(p);
-                runningHash += 13*thisPiece.hashCode();
+                runningHash += 13 * thisPiece.hashCode();
             }
         }
         return runningHash;
     }
 
-    public void executeMove(ChessMove move){
+    public void executeMove(ChessMove move) {
         //assuming that the move is valid and won't result in check, here's where the actual moving takes place.
         ChessPiece p = getPiece(move.getStartPosition()); //get the piece,
         removePiece(move.getStartPosition());
         removePiece(move.getEndPosition());
-        if(move.getPromotionPiece() != null){
-            p = new ChessPiece(p.getTeamColor(),move.getPromotionPiece()); //change the piecetype if we need to.
+        if (move.getPromotionPiece() != null) {
+            p = new ChessPiece(p.getTeamColor(), move.getPromotionPiece()); //change the piecetype if we need to.
         }
-        addPiece(move.getEndPosition(),p);
+        addPiece(move.getEndPosition(), p);
     }
 
     /**
@@ -81,12 +85,14 @@ public class ChessBoard {
      * @param position where to add the piece to
      * @param piece    the piece to add
      */
-    public void addPiece(ChessPosition position, ChessPiece piece){
-        _lboard[position.getRow()][position.getColumn()] = piece;
+    public void addPiece(ChessPosition position, ChessPiece piece) {
+        pieces[position.getRow()][position.getColumn()] = piece;
     }
-    public void removePiece(ChessPosition position){
-        _lboard[position.getRow()][position.getColumn()] = null; //resets the pointer to null.
+
+    public void removePiece(ChessPosition position) {
+        pieces[position.getRow()][position.getColumn()] = null; //resets the pointer to null.
     }
+
     /**
      * Gets a chess piece on the chessboard
      *
@@ -95,7 +101,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return _lboard[position.getRow()][position.getColumn()];
+        return pieces[position.getRow()][position.getColumn()];
     }
 
     /**
@@ -120,19 +126,19 @@ public class ChessBoard {
         group1.add(bishop);
         group1.add(knight);
         group1.add(rook);
-        var blackPawn = new ChessPiece(black,ChessPiece.PieceType.PAWN);
-        var whitePawn = new ChessPiece(white,ChessPiece.PieceType.PAWN);
-        for (int i = 1; i <9; i++) {
-            ChessPosition bp = new ChessPosition(7,i);
-            ChessPosition wp = new ChessPosition(2,i);
-            addPiece(bp,blackPawn);
-            addPiece(wp,whitePawn);
-            ChessPosition topRow = new ChessPosition(8,i);
-            ChessPosition bottomRow = new ChessPosition(1,i);
-            var blackTopPiece = new ChessPiece(black, group1.get(i-1));
-            var whiteTopPiece = new ChessPiece(white,group1.get(i-1));
-            addPiece(topRow,blackTopPiece);
-            addPiece(bottomRow,whiteTopPiece);
+        var blackPawn = new ChessPiece(black, ChessPiece.PieceType.PAWN);
+        var whitePawn = new ChessPiece(white, ChessPiece.PieceType.PAWN);
+        for (int i = 1; i < 9; i++) {
+            ChessPosition bp = new ChessPosition(7, i);
+            ChessPosition wp = new ChessPosition(2, i);
+            addPiece(bp, blackPawn);
+            addPiece(wp, whitePawn);
+            ChessPosition topRow = new ChessPosition(8, i);
+            ChessPosition bottomRow = new ChessPosition(1, i);
+            var blackTopPiece = new ChessPiece(black, group1.get(i - 1));
+            var whiteTopPiece = new ChessPiece(white, group1.get(i - 1));
+            addPiece(topRow, blackTopPiece);
+            addPiece(bottomRow, whiteTopPiece);
         }
         //now go over the for loop for both white and black.
 
