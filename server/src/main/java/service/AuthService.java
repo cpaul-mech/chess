@@ -39,8 +39,8 @@ public class AuthService {
         return authDataAccess.getAuthData(authToken);
     }
 
-    public boolean verifyAuthToken(String AuthToken) {
-        var authData = getAuthData(AuthToken);
+    public boolean verifyAuthToken(String authToken) {
+        var authData = getAuthData(authToken);
         if (authData == null) {
             return false;
         } else return authData.username() != null && authData.authToken() != null;

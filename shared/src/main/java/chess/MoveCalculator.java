@@ -123,10 +123,10 @@ public class MoveCalculator {
         if (row < 1 || row > 8 || col < 1 || col > 8) {
         } else if (limit < 1) {
         } else {
-            ChessPosition this_position = new ChessPosition(row, col);
-            ChessMove propMove = pawnPromoChecker(this_position, direction);
-            if (otherPieceHere(this_position)) {
-                var otherPiece = board.getPiece(this_position);
+            ChessPosition thisPosition = new ChessPosition(row, col);
+            ChessMove propMove = pawnPromoChecker(thisPosition, direction);
+            if (otherPieceHere(thisPosition)) {
+                var otherPiece = board.getPiece(thisPosition);
                 if (isEnemyPiece(otherPiece) && pawnMoveDiagChecker(direction)) {
                     //if they're an enemy, then put in the current chessMove and halt the function here.
                     moveSet.add(propMove);
