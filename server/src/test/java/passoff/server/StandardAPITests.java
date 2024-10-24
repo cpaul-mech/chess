@@ -202,6 +202,7 @@ public class StandardAPITests {
 
         Assertions.assertEquals(1, listResult.getGames().length);
         Assertions.assertEquals(existingUser.getUsername(), listResult.getGames()[0].getWhiteUsername());
+        var result1 = listResult.getGames()[0].getBlackUsername();
         Assertions.assertNull(listResult.getGames()[0].getBlackUsername());
     }
 
@@ -291,7 +292,7 @@ public class StandardAPITests {
         TestUser userA = new TestUser("a", "A", "a.A");
         TestUser userB = new TestUser("b", "B", "b.B");
         TestUser userC = new TestUser("c", "C", "c.C");
-        
+
         TestAuthResult authA = serverFacade.register(userA);
         TestAuthResult authB = serverFacade.register(userB);
         TestAuthResult authC = serverFacade.register(userC);
