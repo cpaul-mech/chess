@@ -10,38 +10,37 @@ import model.GameData;
 import java.util.Collection;
 
 public class GameService {
-    private final GameDataAccess _gDAO;
-    private final AuthService _authService;
+    private final GameDataAccess gameDataAccess;
+    private final AuthService authService;
 
     public GameService(GameDataAccess gDAO, AuthDataAccess aDAO) {
-        _gDAO = gDAO;
-        _authService = new AuthService(aDAO);
+        gameDataAccess = gDAO;
+        authService = new AuthService(aDAO);
     }
 
     public GameService() {
-        _gDAO = new MemoryGameDAO();
-        _authService = new AuthService();
+        gameDataAccess = new MemoryGameDAO();
+        authService = new AuthService();
     }
 
     public GameData getGame(int gameID) {
-        return _gDAO.getGame(gameID);
+        return gameDataAccess.getGame(gameID);
     }
 
     public Collection<GameData> listGames() {
-        return _gDAO.listGames(); //list games will only be called if the user is authorized.
+        return gameDataAccess.listGames(); //list games will only be called if the user is authorized.
     }
 
     public int createGame(String gameName) {
-        int newGame = _gDAO.createGame(gameName);
-        return newGame;
+        return gameDataAccess.createGame(gameName);
     }
 
     public void clearGameDB() {
-        _gDAO.clearDB();
+        gameDataAccess.clearDB();
     }
 
     public int sizeof() {
-        return _gDAO.dbSize();
+        return gameDataAccess.dbSize();
     }
 
     public void updateGame(String updateColor, int gameID, String newUsername) throws DataAccessException {
@@ -65,7 +64,7 @@ public class GameService {
                 //attempt to replace black team username
                 if (game.blackUsername() == null) {
                     var newGame = new GameData(gameID, game.whiteUsername(), newUsername, game.gameName(), game.game());
-                    _gDAO.updateGame(gameID, newGame);
+                    gameDataAccess.updateGame(gameID, newGame);
                 } else {
                     //username already taken!!
                     throw new UserAlreadyTakenError("Error: already taken"); //error code USERNAME ALREADY TAKEN.
@@ -73,7 +72,7 @@ public class GameService {
             } else {
                 if (game.whiteUsername() == null) {
                     var newGame = new GameData(gameID, newUsername, game.blackUsername(), game.gameName(), game.game());
-                    _gDAO.updateGame(gameID, newGame);
+                    gameDataAccess.updateGame(gameID, newGame);
                 } else {
                     throw new UserAlreadyTakenError("Error: already taken"); //error code USERNAME ALREADY TAKEN.
                 }

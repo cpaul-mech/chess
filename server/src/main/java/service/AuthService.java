@@ -7,23 +7,23 @@ import model.AuthData;
 import java.util.UUID;
 
 public class AuthService {
-    private final AuthDataAccess _aDAO;
+    private final AuthDataAccess authDataAccess;
 
     public AuthService(AuthDataAccess aDAO) { //optional dataAccess constructor
-        _aDAO = aDAO;
+        authDataAccess = aDAO;
     }
 
     public AuthService() { //default constructor.
-        _aDAO = new MemoryAuthDAO();
+        authDataAccess = new MemoryAuthDAO();
     }
 
     public void clearAuthDB() {
-        _aDAO.clearAuthDB();
+        authDataAccess.clearAuthDB();
     }
 
     public AuthData createAuthData(String username) {//im going to add smart functionality to this, there should only ever be one authtoken per user
         var newAuthData = new AuthData(generateToken(), username);
-        _aDAO.addAuthData(newAuthData);
+        authDataAccess.addAuthData(newAuthData);
         return newAuthData;
     }
 
@@ -32,11 +32,11 @@ public class AuthService {
     }
 
     public int dbSize() {
-        return _aDAO.dbSize();
+        return authDataAccess.dbSize();
     }
 
     public AuthData getAuthData(String authToken) {
-        return _aDAO.getAuthData(authToken);
+        return authDataAccess.getAuthData(authToken);
     }
 
     public boolean verifyAuthToken(String AuthToken) {
@@ -56,6 +56,6 @@ public class AuthService {
     }
 
     public void deleteAuthData(AuthData authData) {
-        _aDAO.deleteAuthData(authData);
+        authDataAccess.deleteAuthData(authData);
     }
 }
