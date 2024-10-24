@@ -52,6 +52,9 @@ public class Server {
         String authToken = req.headers("authorization");
         try {
             var games = handler.listGames(authToken);
+            if (games == null) {
+                return serializer.toJson(Map.of("games", ""));
+            }
             return serializer.toJson(Map.of("games", games));
         } catch (UnauthorizedAccessError e) {
             res.status(401);
