@@ -88,7 +88,6 @@ public class Server {
         }
     }
 
-    //    private String listGames()
     private String createGame(Request req, Response res) {
         var authToken = req.headers("authorization");
         var gameName = serializer.fromJson(req.body(), GameData.class);

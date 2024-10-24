@@ -37,10 +37,10 @@ public class MemoryGameDAO implements GameDataAccess {
             String whiteUsername = curGameData.whiteUsername();
             String blackUsername = curGameData.blackUsername();
             if (whiteUsername == null) {
-                whiteUsername = "";
+                whiteUsername = "null";
             }
             if (blackUsername == null) {
-                blackUsername = "";
+                blackUsername = "null";
             }
             GameData truncGameData = new GameData(curGameData.gameID(), whiteUsername, blackUsername, curGameData.gameName(), null);
             gamesList.add(truncGameData);
