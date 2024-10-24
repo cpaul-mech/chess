@@ -33,5 +33,10 @@ public class GameServiceTests {
         assertNotEquals(gameID1, gameID2);
     }
 
+    @Test
+    void goodUpdateGame() {
+
+    }
+
 
 }

@@ -11,16 +11,13 @@ import java.util.Collection;
 
 public class GameService {
     private final GameDataAccess gameDataAccess;
-    private final AuthService authService;
 
     public GameService(GameDataAccess gDAO, AuthDataAccess aDAO) {
         gameDataAccess = gDAO;
-        authService = new AuthService(aDAO);
     }
 
     public GameService() {
         gameDataAccess = new MemoryGameDAO();
-        authService = new AuthService();
     }
 
     public GameData getGame(int gameID) {

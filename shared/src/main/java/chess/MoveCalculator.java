@@ -170,9 +170,9 @@ public class MoveCalculator {
             pawnPromoOptions.add(ChessPiece.PieceType.QUEEN);
             if (color == ChessGame.TeamColor.WHITE) {
                 //white pawn, promotion happens at row 8!
-                if (p.getRow() == 8 &&
+                if ((p.getRow() == 8) &&
                         ((pawnMoveDiagChecker(direction) && isEnemyPiece(board.getPiece(p)))
-                                || (!pawnMoveDiagChecker(direction)) && !isEnemyPiece(board.getPiece(p)))) {
+                                || ((!pawnMoveDiagChecker(direction)) && !isEnemyPiece(board.getPiece(p))))) {
                     //we need to add in every possibility except the last one, so we can carry on normal function
                     for (int i = 0; i < pawnPromoOptions.size() - 1; i++) {//loop executes 3 times, ending at 2
                         //stops before the last element so we can return it and carry on business as usual.
