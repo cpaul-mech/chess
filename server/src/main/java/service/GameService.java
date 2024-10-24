@@ -59,7 +59,7 @@ public class GameService {
         }
         var game = getGame(gameID);
         if (game == null) {
-            throw new DataAccessException("Error: no game Found"); //represents an error code.
+            throw new BadServiceRequest("Error: bad request"); //represents an error code.
         } else {
             if (colorToChange == ChessGame.TeamColor.BLACK) {
                 //attempt to replace black team username

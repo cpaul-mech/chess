@@ -53,7 +53,7 @@ public class Server {
         try {
             var games = handler.listGames(authToken);
             if (games == null) {
-                return serializer.toJson(Map.of("games", ""));
+                return "";
             }
             return serializer.toJson(Map.of("games", games));
         } catch (UnauthorizedAccessError e) {
