@@ -6,17 +6,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GameServiceTests {
     //initialize DAO's
-    static final GameService gameService = new GameService();//default is a memory DAO;
+    static final GameService GAME_SERVICE = new GameService();//default is a memory DAO;
 
     @Test
     void clear() {
-        gameService.clearGameDB();
-        assertEquals(gameService.sizeof(), 0);
+        GAME_SERVICE.clearGameDB();
+        assertEquals(GAME_SERVICE.sizeof(), 0);
     }
 
     @Test
     void getGame() {
-//        gameService.getGame()
+//        GAME_SERVICE.getGame()
     }
 
 
