@@ -7,53 +7,58 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessMove {
-    private ChessPosition _startPosition;
-    private ChessPosition _endPosition;
-    private final ChessPiece.PieceType _promotionPiece;
+    private ChessPosition startPosition;
+    private ChessPosition endPosition;
+    private final ChessPiece.PieceType promotionPiece;
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition, ChessPiece.PieceType promotionPiece) {
-        _startPosition = startPosition;
-        _endPosition = endPosition;
-        this._promotionPiece = promotionPiece;
+        this.startPosition = startPosition;
+        this.endPosition = endPosition;
+        this.promotionPiece = promotionPiece;
     }
+
     @Override
     public String toString() {
         //This will print the start position
-        var startPos = _startPosition.toString();
-        var endPos = _endPosition.toString();
-        if(_promotionPiece != null){
-            var promPiece = _promotionPiece.toString();
+        var startPos = startPosition.toString();
+        var endPos = endPosition.toString();
+        if (promotionPiece != null) {
+            var promPiece = promotionPiece.toString();
         }
 
-        return "move: "+startPos+" "+endPos;
+        return "move: " + startPos + " " + endPos;
     }
+
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) return true; //checks for if the memory addresses are the same.
-        if(obj == null || getClass() != obj.getClass()) return false; //checks for if the object's class is equal to the current class
+        if (this == obj) return true; //checks for if the memory addresses are the same.
+        if (obj == null || getClass() != obj.getClass())
+            return false; //checks for if the object's class is equal to the current class
         ChessMove move = (ChessMove) obj; //sets a new variable move equal to the object and casts object to a ChessMove Object.
-        return (_startPosition.equals(move._startPosition) && _endPosition.equals(move._endPosition) &&
-                _promotionPiece == move._promotionPiece);
+        return (startPosition.equals(move.startPosition) && endPosition.equals(move.endPosition) &&
+                promotionPiece == move.promotionPiece);
     }
+
     @Override
     public int hashCode() {
         int promotionCode;
-        if (_promotionPiece == null) promotionCode = 9;
-        else promotionCode = _promotionPiece.ordinal();
-        return (71*_startPosition.hashCode()) + _endPosition.hashCode() + promotionCode;
+        if (promotionPiece == null) promotionCode = 9;
+        else promotionCode = promotionPiece.ordinal();
+        return (71 * startPosition.hashCode()) + endPosition.hashCode() + promotionCode;
     }
+
     /**
      * @return ChessPosition of starting location
      */
     public ChessPosition getStartPosition() {
-        return _startPosition;
+        return startPosition;
     }
 
     /**
      * @return ChessPosition of ending location
      */
     public ChessPosition getEndPosition() {
-        return _endPosition;
+        return endPosition;
     }
 
     /**
@@ -63,6 +68,6 @@ public class ChessMove {
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
     public ChessPiece.PieceType getPromotionPiece() {
-        return _promotionPiece;
+        return promotionPiece;
     }
 }
