@@ -12,6 +12,10 @@ public class MoveCalculator {
     private final ArrayList<ChessMove> moveSet = new ArrayList<>();
     private final ChessPiece.PieceType type;
     private final ChessGame.TeamColor color;
+    private final int[] upLeft = {1, -1};
+    private final int[] upRight = {1, 1};
+    private final int[] downLeft = {-1, -1};
+    private final int[] downRight = {-1, 1};
 
     public MoveCalculator(ChessBoard board, ChessPiece piece, ChessPosition position) {
         this.board = board;
@@ -28,10 +32,6 @@ public class MoveCalculator {
         int[] down = {-1, 0};
         int[] left = {0, -1};
         int[] right = {0, 1};
-        int[] upLeft = {1, -1};
-        int[] upRight = {1, 1};
-        int[] downLeft = {-1, -1};
-        int[] downRight = {-1, 1};
         int[][] knightDirections = {{2, 1}, {1, 2}, {-1, 2}, {-2, 1}, {-2, -1}, {-1, -2}, {1, -2}, {2, -1}};
         int limit;
         switch (type) {
@@ -147,10 +147,6 @@ public class MoveCalculator {
 
     private boolean pawnMoveDiagChecker(int[] direction) {
         if (type == ChessPiece.PieceType.PAWN) {
-            int[] upLeft = {1, -1};
-            int[] upRight = {1, 1};
-            int[] downLeft = {-1, -1};
-            int[] downRight = {-1, 1};
             return Arrays.equals(direction, upLeft) || Arrays.equals(direction, upRight) ||
                     Arrays.equals(direction, downRight) || Arrays.equals(direction, downLeft);
         } else {

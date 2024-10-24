@@ -18,7 +18,7 @@ public class GameServiceTests {
 
 
     @Test
-    void goodcreateGame() {
+    void goodCreateGame() {
         int gameID = GAME_SERVICE.createGame("myGame");
         assertNotEquals(0, gameID);
     }
