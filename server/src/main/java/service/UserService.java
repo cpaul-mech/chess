@@ -1,7 +1,6 @@
 package service;
 
 import dataaccess.AuthDataAccess;
-import dataaccess.MemoryUserDAO;
 import dataaccess.UserDataAccess;
 import model.AuthData;
 import model.UserData;
@@ -16,11 +15,6 @@ public class UserService {
     public UserService(UserDataAccess uDAO, AuthDataAccess aDAO) {
         userDataAccess = uDAO;
         authService = new AuthService(aDAO);
-    }
-
-    public UserService() {
-        userDataAccess = new MemoryUserDAO();
-        authService = new AuthService();
     }
 
     public AuthData login(UserData userDataNullEmail) {
