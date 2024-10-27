@@ -2,6 +2,8 @@ package service;
 
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
+import exceptions.UnauthorizedAccessError;
+import exceptions.UserAlreadyTakenError;
 import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.Test;

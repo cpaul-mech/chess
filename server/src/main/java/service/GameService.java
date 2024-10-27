@@ -5,6 +5,8 @@ import dataaccess.AuthDataAccess;
 import dataaccess.DataAccessException;
 import dataaccess.GameDataAccess;
 import dataaccess.MemoryGameDAO;
+import exceptions.BadServiceRequest;
+import exceptions.UserAlreadyTakenError;
 import model.GameData;
 
 import java.util.Collection;

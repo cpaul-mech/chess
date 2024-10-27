@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.DataAccessException;
+import exceptions.BadServiceRequest;
 import model.GameData;
 import org.junit.jupiter.api.Test;
 

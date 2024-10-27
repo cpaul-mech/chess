@@ -2,6 +2,9 @@ package service;
 
 import dataaccess.AuthDataAccess;
 import dataaccess.UserDataAccess;
+import exceptions.BadServiceRequest;
+import exceptions.UnauthorizedAccessError;
+import exceptions.UserAlreadyTakenError;
 import model.AuthData;
 import model.UserData;
 

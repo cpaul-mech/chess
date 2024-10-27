@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.AuthDataAccess;
 import dataaccess.MemoryAuthDAO;
+import exceptions.UnauthorizedAccessError;
 import model.AuthData;
 
 import java.util.UUID;

@@ -1,6 +1,7 @@
 package handler;
 
 import dataaccess.*;
+import exceptions.UnauthorizedAccessError;
 import model.AuthData;
 import model.GameData;
 import model.UserData;

@@ -6,10 +6,10 @@ import handler.Handler;
 import handler.JoinGameInput;
 import model.GameData;
 import model.UserData;
-import service.BadServiceRequest;
+import exceptions.BadServiceRequest;
 import service.ErrorMessage;
-import service.UnauthorizedAccessError;
-import service.UserAlreadyTakenError;
+import exceptions.UnauthorizedAccessError;
+import exceptions.UserAlreadyTakenError;
 import spark.*;
 
 import java.util.Map;
