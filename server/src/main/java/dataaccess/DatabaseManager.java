@@ -12,7 +12,7 @@ public class DatabaseManager {
     /*
      * Load the database information for the db.properties file.
      */
-    static {
+    static { //whenever this code is included in any code anywhere in the project, it calls this function once.
         try {
             try (var propStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("db.properties")) {
                 if (propStream == null) {
