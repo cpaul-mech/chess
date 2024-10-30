@@ -7,6 +7,7 @@ import exceptions.UnauthorizedAccessError;
 import exceptions.UserAlreadyTakenError;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -22,8 +23,9 @@ public class UserService {
 
     public AuthData login(UserData userDataNullEmail) {
         var result = userDataAccess.getUser(userDataNullEmail.username());
+        //here in the service level is where we're comparing the passwords. so I will be using BCrypt.checkpw
         if (result != null && Objects.equals(result.username(), userDataNullEmail.username())
-                && Objects.equals(result.password(), userDataNullEmail.password())) { //checking to make sure that
+                && BCrypt.checkpw(userDataNullEmail.password(), result.password())) { //checking to make sure that
             //username and password both match the records.
             return authService.createAuthData(userDataNullEmail.username());
         } else {
@@ -40,8 +42,10 @@ public class UserService {
         var userResult = userDataAccess.getUser(userData.username()); //can be either null or not null.
         if (userResult == null) {
             //there was no user found in the database by that name!!
-            userDataAccess.createUser(userData);
-            return authService.createAuthData(userData.username());
+            String hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
+            UserData userDataHashedPassword = new UserData(userData.username(), hashedPassword, userData.email());
+            userDataAccess.createUser(userDataHashedPassword);
+            return authService.createAuthData(userDataHashedPassword.username());
         } else {
             throw new UserAlreadyTakenError("Error: already taken");
         }

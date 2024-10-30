@@ -5,8 +5,11 @@ import exceptions.UnauthorizedAccessError;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import org.eclipse.jetty.server.Authentication;
+import org.mindrot.jbcrypt.BCrypt;
 import service.*;
 
+import java.sql.Struct;
 import java.util.Collection;
 
 public class Handler {//this class will be used to call all the various services
@@ -18,11 +21,12 @@ public class Handler {//this class will be used to call all the various services
     private final AuthService authService = new AuthService(authDataAccess);
 
     public AuthData registerUser(UserData userData) {
+        //I'm going to replace the password here with a hashed password string.
         return userService.registerUser(userData);
     }
 
     public LoginResponse login(UserData userDataNullEmail) {
-        var authData = userService.login(userDataNullEmail);
+        AuthData authData = userService.login(userDataNullEmail);
         return new LoginResponse(authData.username(), authData.authToken());
     }
 
@@ -42,7 +46,6 @@ public class Handler {//this class will be used to call all the various services
         if (authService.verifyAuthToken(authToken)) {
             return gameService.createGame(gameName);
         } else {
-            //return bad things, unauthorized user!!!
             throw new UnauthorizedAccessError("Error: unauthorized");
         }
     }
@@ -51,7 +54,6 @@ public class Handler {//this class will be used to call all the various services
         if (authService.verifyAuthToken(authToken)) {
             String username = authService.getAuthData(authToken).username();
             gameService.updateGame(color, gameID, username);
-            //return bad juju, UNAUTHORIZED USER!!!
         } else {
             throw new UnauthorizedAccessError("Error: unauthorized");
         }
