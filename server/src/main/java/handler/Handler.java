@@ -10,9 +10,9 @@ import service.*;
 import java.util.Collection;
 
 public class Handler {//this class will be used to call all the various services
-    private GameDataAccess gameDataAccess = new MemoryGameDAO();
-    private UserDataAccess userDataAccess = new MemoryUserDAO();
-    private AuthDataAccess authDataAccess = new MemoryAuthDAO();
+    private final GameDataAccess gameDataAccess = new MemoryGameDAO();
+    private final UserDataAccess userDataAccess = new MemoryUserDAO();
+    private final AuthDataAccess authDataAccess = new MemoryAuthDAO();
     private final GameService gameService = new GameService(gameDataAccess, authDataAccess);
     private final UserService userService = new UserService(userDataAccess, authDataAccess);
     private final AuthService authService = new AuthService(authDataAccess);
@@ -23,22 +23,16 @@ public class Handler {//this class will be used to call all the various services
 
     public LoginResponse login(UserData userDataNullEmail) {
         var authData = userService.login(userDataNullEmail);
-        LoginResponse loginResponse = new LoginResponse(authData.username(), authData.authToken());
-        return loginResponse;
+        return new LoginResponse(authData.username(), authData.authToken());
     }
 
     public void logout(String authToken) {
-        var success = authService.logout(authToken);
+        authService.logout(authToken);
     }
 
     public Collection<GameData> listGames(String authToken) {
         if (authService.verifyAuthToken(authToken)) {
-            var gamesList = gameService.listGames();
-            if (gamesList == null || gamesList.isEmpty()) {
-                return gamesList;
-            } else {
-                return gamesList;
-            }
+            return gameService.listGames();
         } else {
             throw new UnauthorizedAccessError("Error: unauthorized");
         }
