@@ -33,7 +33,15 @@ public class SQLGameDAO implements GameDataAccess {
     }
 
     @Override
-    public void clearDB() {
+    public void clearDB() throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            String truncateString = "TRUNCATE TABLE gameDB";
+            try (var preparedStatement = conn.prepareStatement(truncateString)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
+        }
 
     }
 

@@ -13,7 +13,7 @@ public interface GameDataAccess {
 
     public void updateGame(int gameIDtoChange, GameData replacementGame);
 
-    public void clearDB();
+    public void clearDB() throws DataAccessException;
 
     public int dbSize();
 }
