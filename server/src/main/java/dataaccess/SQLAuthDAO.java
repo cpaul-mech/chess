@@ -29,6 +29,7 @@ public class SQLAuthDAO implements AuthDataAccess {
     @Override
     public void addAuthData(AuthData newAuthData) {
 
+
     }
 
     @Override

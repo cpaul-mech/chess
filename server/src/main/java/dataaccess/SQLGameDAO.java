@@ -50,6 +50,16 @@ public class SQLGameDAO implements GameDataAccess {
         return 0;
     }
 
+    private void executeOneLineStatement(String statement) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("Unable to execute statement: " + statement + ", " + ex.getMessage());
+        }
+    }
+
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS gameDB (
