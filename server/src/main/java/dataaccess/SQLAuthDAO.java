@@ -17,14 +17,8 @@ public class SQLAuthDAO implements AuthDataAccess {
 
     @Override
     public void clearAuthDB() throws DataAccessException {
-        try (var conn = DatabaseManager.getConnection()) {
-            String truncateString = "TRUNCATE TABLE authDB";
-            try (var preparedStatement = conn.prepareStatement(truncateString)) {
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to clear database: %s", ex.getMessage()));
-        }
+        String truncateString = "TRUNCATE TABLE authDB";
+        executeOneLineStatement(truncateString);
     }
 
     @Override
@@ -40,6 +34,16 @@ public class SQLAuthDAO implements AuthDataAccess {
     @Override
     public void deleteAuthData(AuthData authData) {
 
+    }
+
+    private void executeOneLineStatement(String statement) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("Unable to execute statement: " + statement + ", " + ex.getMessage());
+        }
     }
 
     private final String[] createStatements = {

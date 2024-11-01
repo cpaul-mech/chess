@@ -25,7 +25,7 @@ public class AuthServiceTests {
     }
 
     @Test
-    public void addAuthToken() {
+    public void addAuthToken() throws DataAccessException {
         var newUser = new UserData("crp", "abcd", "helpme@hotmail.com");
         var newUserAuthData = userService.registerUser(newUser);
         var result = authService.getAuthData(newUserAuthData.authToken());
@@ -33,7 +33,7 @@ public class AuthServiceTests {
     }
 
     @Test
-    public void logout() {
+    public void logout() throws DataAccessException {
         var newUser = new UserData("crp", "abcd", "helpme@hotmail.com");
         var newUserAuthData = userService.registerUser(newUser);
         var result = authService.getAuthData(newUserAuthData.authToken());

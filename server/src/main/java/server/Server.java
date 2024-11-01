@@ -117,6 +117,10 @@ public class Server {
             ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
             res.status(400);
             return serializer.toJson(errorMessage);
+        } catch (DataAccessException e) {
+            ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+            res.status(500);
+            return serializer.toJson(errorMessage);
         }
 
     }

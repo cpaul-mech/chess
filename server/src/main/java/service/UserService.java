@@ -35,7 +35,7 @@ public class UserService {
         }
     }
 
-    public AuthData registerUser(UserData userData) throws UserAlreadyTakenError {
+    public AuthData registerUser(UserData userData) throws UserAlreadyTakenError, DataAccessException {
         if (userData.username() == null || userData.password() == null || userData.email() == null) {
             //this is a bad request!! cannot store!!
             throw new BadServiceRequest("Error: bad request");

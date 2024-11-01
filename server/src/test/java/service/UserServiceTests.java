@@ -23,7 +23,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void registerUser() {
+    public void registerUser() throws DataAccessException {
         UserData newUser = new UserData("cpaul", "asdhfasdf", "sillybilly@gmail.com");
         AuthData user = userService.registerUser(newUser);
         assertEquals(userService.getUserDBsize(), 1);
@@ -31,7 +31,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void duplicateUser() {
+    public void duplicateUser() throws DataAccessException {
         var newUser = new UserData("cpaul", "coolDude", "sillybilly@gmail.com");
         var user = userService.registerUser(newUser);
         var allUsers = userService.listUsers();
@@ -39,7 +39,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void login() {
+    public void login() throws DataAccessException {
         var loginUser = new UserData("cpaul3", "coolDude", null);
         //make sure that you cannot log in if your username is not in the DB.
         assertThrows(UnauthorizedAccessError.class, () -> userService.login(loginUser));

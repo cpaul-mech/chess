@@ -20,7 +20,7 @@ public class Handler {//this class will be used to call all the various services
     private final UserService userService = new UserService(userDataAccess, authDataAccess);
     private final AuthService authService = new AuthService(authDataAccess);
 
-    public AuthData registerUser(UserData userData) {
+    public AuthData registerUser(UserData userData) throws DataAccessException {
         //I'm going to replace the password here with a hashed password string.
         return userService.registerUser(userData);
     }

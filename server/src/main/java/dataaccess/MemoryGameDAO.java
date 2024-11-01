@@ -10,7 +10,7 @@ public class MemoryGameDAO implements GameDataAccess {
     public int gameID;
 
     public MemoryGameDAO() {
-        gameID = 0; //starting value
+        gameID = 0;
     }
 
     @Override

@@ -13,8 +13,10 @@ public class SQLUserDAO implements UserDataAccess {
     }
 
     @Override
-    public void createUser(UserData userData) {
-
+    public void createUser(UserData userData) throws DataAccessException {
+        String createUserString = String.format("INSERT INTO userDB (username, password, email) VALUES" +
+                " ('%s', '%s', '%s')", userData.username(), userData.password(), userData.email());
+        executeOneLineStatement(createUserString);
     }
 
     @Override
@@ -24,15 +26,8 @@ public class SQLUserDAO implements UserDataAccess {
 
     @Override
     public void clearUsers() throws DataAccessException {
-        try (var conn = DatabaseManager.getConnection()) {
-            String truncateString = "TRUNCATE TABLE userDB";
-            try (var preparedStatement = conn.prepareStatement(truncateString)) {
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
-        }
-
+        String truncateString = "TRUNCATE TABLE userDB";
+        executeOneLineStatement(truncateString);
     }
 
     @Override
@@ -43,6 +38,16 @@ public class SQLUserDAO implements UserDataAccess {
     @Override
     public Collection<UserData> listUsers() {
         return List.of();
+    }
+
+    private void executeOneLineStatement(String statement) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("Unable to execute statement: " + statement + ", " + ex.getMessage());
+        }
     }
 
     private final String[] createStatements = {
