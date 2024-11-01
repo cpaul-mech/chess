@@ -34,7 +34,7 @@ public class GameService {
         return gameDataAccess.createGame(gameName);
     }
 
-    public void clearGameDB() {
+    public void clearGameDB() throws DataAccessException {
         gameDataAccess.clearDB();
     }
 

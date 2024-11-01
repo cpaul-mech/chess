@@ -12,7 +12,7 @@ public class GameServiceTests {
     static final GameService GAME_SERVICE = new GameService();//default is a memory DAO;
 
     @Test
-    void clear() {
+    void clear() throws DataAccessException {
         GAME_SERVICE.clearGameDB();
         assertEquals(GAME_SERVICE.sizeof(), 0);
     }

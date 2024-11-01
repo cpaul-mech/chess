@@ -42,7 +42,7 @@ public class Server {
         return Spark.port();
     }
 
-    private String clearAllDB(Request req, Response res) {
+    private String clearAllDB(Request req, Response res) throws DataAccessException {
         handler.clearAllDB();
         res.status(200);
         return "";

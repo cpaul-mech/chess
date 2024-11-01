@@ -59,7 +59,7 @@ public class Handler {//this class will be used to call all the various services
         }
     }
 
-    public void clearAllDB() {
+    public void clearAllDB() throws DataAccessException {
         userService.clearUserDB();
         gameService.clearGameDB();
         authService.clearAuthDB();
