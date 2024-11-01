@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
 import exceptions.UnauthorizedAccessError;
@@ -16,7 +17,7 @@ public class UserServiceTests {
     private final UserService userService = new UserService(memoryUserDAO, memoryAuthDAO);
 
     @Test
-    public void clearUserDB() {
+    public void clearUserDB() throws DataAccessException {
         userService.clearUserDB();
         assertEquals(userService.getUserDBsize(), 0);
     }

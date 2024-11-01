@@ -23,7 +23,15 @@ public class SQLUserDAO implements UserDataAccess {
     }
 
     @Override
-    public void clearUsers() {
+    public void clearUsers() throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            String truncateString = "TRUNCATE TABLE userDB";
+            try (var preparedStatement = conn.prepareStatement(truncateString)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
+        }
 
     }
 

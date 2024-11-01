@@ -5,13 +5,13 @@ import model.UserData;
 import java.util.Collection;
 
 public interface UserDataAccess {
-    public void createUser(UserData userData);
+    void createUser(UserData userData);
 
-    public UserData getUser(String username);
+    UserData getUser(String username);
 
-    public void clearUsers();
+    void clearUsers() throws DataAccessException;
 
-    public int dbSize();
+    int dbSize();
 
-    public Collection<UserData> listUsers();
+    Collection<UserData> listUsers();
 }

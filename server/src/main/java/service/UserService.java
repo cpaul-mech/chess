@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.AuthDataAccess;
+import dataaccess.DataAccessException;
 import dataaccess.UserDataAccess;
 import exceptions.BadServiceRequest;
 import exceptions.UnauthorizedAccessError;
@@ -60,7 +61,7 @@ public class UserService {
         return userDataAccess.getUser(username);
     }
 
-    public void clearUserDB() {
+    public void clearUserDB() throws DataAccessException {
         userDataAccess.clearUsers();
     }
 
