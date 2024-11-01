@@ -33,7 +33,7 @@ public class SQLGameDAO implements GameDataAccess {
     }
 
     @Override
-    public void clearDB() throws DataAccessException {
+    public void clearGameDB() throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             String truncateString = "TRUNCATE TABLE gameDB";
             try (var preparedStatement = conn.prepareStatement(truncateString)) {

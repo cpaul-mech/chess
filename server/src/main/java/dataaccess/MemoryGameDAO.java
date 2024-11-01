@@ -48,7 +48,7 @@ public class MemoryGameDAO implements GameDataAccess {
     }
 
     @Override
-    public void clearDB() {
+    public void clearGameDB() {
         gameDB.clear();
     }
 

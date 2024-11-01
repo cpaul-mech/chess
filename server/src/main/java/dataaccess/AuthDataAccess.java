@@ -5,7 +5,7 @@ import model.AuthData;
 public interface AuthDataAccess {
     public int dbSize();
 
-    public void clearAuthDB();
+    public void clearAuthDB() throws DataAccessException;
 
     public AuthData getAuthData(String authToken);
 

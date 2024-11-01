@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
 import model.AuthData;
@@ -18,7 +19,7 @@ public class AuthServiceTests {
 
 
     @BeforeEach
-    public void clear() {
+    public void clear() throws DataAccessException {
         authService.clearAuthDB();
         assertEquals(authService.dbSize(), 0);
     }

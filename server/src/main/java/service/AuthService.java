@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.AuthDataAccess;
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import exceptions.UnauthorizedAccessError;
 import model.AuthData;
@@ -18,7 +19,7 @@ public class AuthService {
         authDataAccess = new MemoryAuthDAO();
     }
 
-    public void clearAuthDB() {
+    public void clearAuthDB() throws DataAccessException {
         authDataAccess.clearAuthDB();
     }
 

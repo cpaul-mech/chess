@@ -35,7 +35,7 @@ public class GameService {
     }
 
     public void clearGameDB() throws DataAccessException {
-        gameDataAccess.clearDB();
+        gameDataAccess.clearGameDB();
     }
 
     public int sizeof() {
