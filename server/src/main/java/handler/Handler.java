@@ -11,12 +11,28 @@ import java.sql.Struct;
 import java.util.Collection;
 
 public class Handler {//this class will be used to call all the various services
-    private final GameDataAccess gameDataAccess = new MemoryGameDAO();
-    private final UserDataAccess userDataAccess = new MemoryUserDAO();
-    private final AuthDataAccess authDataAccess = new MemoryAuthDAO();
-    private final GameService gameService = new GameService(gameDataAccess);
-    private final UserService userService = new UserService(userDataAccess, authDataAccess);
-    private final AuthService authService = new AuthService(authDataAccess);
+    private final AuthDataAccess authDataAccess;
+
+    private final GameService gameService;
+    private final UserService userService;
+    private final AuthService authService;
+
+    public Handler() {
+        try {
+            //    private final GameDataAccess gameDataAccess = new MemoryGameDAO();
+            //    private final UserDataAccess userDataAccess = new MemoryUserDAO();
+            //    private final AuthDataAccess authDataAccess = new MemoryAuthDAO();
+            GameDataAccess gameDataAccess = new SQLGameDAO();
+            UserDataAccess userDataAccess = new SQLUserDAO();
+            authDataAccess = new SQLAuthDAO();
+            gameService = new GameService(gameDataAccess);
+            userService = new UserService(userDataAccess, authDataAccess);
+            authService = new AuthService(authDataAccess);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public AuthData registerUser(UserData userData) throws DataAccessException {
         //I'm going to replace the password here with a hashed password string.

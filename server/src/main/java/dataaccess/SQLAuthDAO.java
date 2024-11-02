@@ -35,7 +35,9 @@ public class SQLAuthDAO implements AuthDataAccess {
             try (var preparedStatement = conn.prepareStatement("SELECT username FROM authDB WHERE authCode=?")) {
                 preparedStatement.setString(1, authToken);
                 var rs = preparedStatement.executeQuery();
-                rs.next();
+                if (!rs.next()) {
+                    return null;
+                }
                 String username = rs.getString(1);
                 return new AuthData(authToken, username);
             }

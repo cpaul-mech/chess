@@ -43,7 +43,9 @@ public class SQLGameDAO implements GameDataAccess {
                     "gameName, game FROM gameDB WHERE gameID=?")) {
                 preparedStatement.setInt(1, gameID);
                 var rs = preparedStatement.executeQuery();
-                rs.next();
+                if (!rs.next()) {
+                    return null;
+                }
                 String whiteUsername = rs.getString("whiteUsername");
                 String blackUsername = rs.getString("blackUsername");
                 String gameName = rs.getString("gameName");

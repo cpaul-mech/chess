@@ -24,7 +24,9 @@ public class SQLUserDAO implements UserDataAccess {
             try (var preparedStatement = conn.prepareStatement("SELECT password, email FROM userDB WHERE username=?")) {
                 preparedStatement.setString(1, username);
                 var rs = preparedStatement.executeQuery();
-                rs.next();
+                if (!rs.next()) {
+                    return null;
+                }
                 String password = rs.getString(1);
                 String email = rs.getString(2);
                 return new UserData(username, password, email);

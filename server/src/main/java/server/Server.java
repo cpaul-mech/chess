@@ -61,7 +61,7 @@ public class Server {
             res.status(401);
             ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
             return serializer.toJson(errorMessage);
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             res.status(501);
             ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
             return serializer.toJson(errorMessage);
