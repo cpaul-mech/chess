@@ -1,5 +1,7 @@
 package dataaccess;
 
+import chess.ChessGame;
+import model.GameData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -35,5 +37,11 @@ public class SQLGameDAOTests {
         Assertions.assertDoesNotThrow(() -> sqlGameDAO.clearGameDB());
     }
 
-
+    @Test
+    public void getGame() throws DataAccessException {
+        int gameID = sqlGameDAO.createGame("theWorstGame");
+        GameData gameData = new GameData(gameID, null, null, "theWorstGame", new ChessGame());
+        GameData gameData2 = sqlGameDAO.getGame(gameID);
+        Assertions.assertEquals(gameData, sqlGameDAO.getGame(gameID));
+    }
 }

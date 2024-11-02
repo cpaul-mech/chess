@@ -37,8 +37,22 @@ public class SQLGameDAO implements GameDataAccess {
     }
 
     @Override
-    public GameData getGame(int gameID) {
-        return null;
+    public GameData getGame(int gameID) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT whiteUsername, blackUsername," +
+                    "gameName, game FROM gameDB WHERE gameID=?")) {
+                preparedStatement.setInt(1, gameID);
+                var rs = preparedStatement.executeQuery();
+                rs.next();
+                String whiteUsername = rs.getString("whiteUsername");
+                String blackUsername = rs.getString("blackUsername");
+                String gameName = rs.getString("gameName");
+                ChessGame game = serializer.fromJson(rs.getString("game"), ChessGame.class);
+                return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("Unable to execute query" + ex.getMessage());
+        }
     }
 
     @Override
@@ -110,7 +124,9 @@ public class SQLGameDAO implements GameDataAccess {
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS gameDB (
-             gameID INT NOT NULL AUTO_INCREMENT, whiteUsername VARCHAR(255), blackUsername VARCHAR(255),
+             gameID INT NOT NULL AUTO_INCREMENT,
+             whiteUsername VARCHAR(255),
+             blackUsername VARCHAR(255),
              gameName VARCHAR(255) NOT NULL,
              game TEXT NOT NULL,
              PRIMARY KEY (gameID),

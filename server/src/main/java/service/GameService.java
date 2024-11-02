@@ -1,7 +1,6 @@
 package service;
 
 import chess.ChessGame;
-import dataaccess.AuthDataAccess;
 import dataaccess.DataAccessException;
 import dataaccess.GameDataAccess;
 import dataaccess.MemoryGameDAO;
@@ -22,7 +21,7 @@ public class GameService {
         gameDataAccess = new MemoryGameDAO();
     }
 
-    public GameData getGame(int gameID) {
+    public GameData getGame(int gameID) throws DataAccessException {
         return gameDataAccess.getGame(gameID);
     }
 

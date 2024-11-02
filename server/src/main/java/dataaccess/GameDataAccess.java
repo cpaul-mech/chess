@@ -7,7 +7,7 @@ import java.util.Collection;
 public interface GameDataAccess {
     public int createGame(String gameName) throws DataAccessException;
 
-    public GameData getGame(int gameID);
+    public GameData getGame(int gameID) throws DataAccessException;
 
     public Collection<GameData> listGames() throws DataAccessException;
 

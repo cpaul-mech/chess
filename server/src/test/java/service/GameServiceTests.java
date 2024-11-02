@@ -52,7 +52,7 @@ public class GameServiceTests {
     }
 
     @Test
-    void badGetGame() {
+    void badGetGame() throws DataAccessException {
         var result = GAME_SERVICE.getGame(0);
         assertNull(result);
     }
