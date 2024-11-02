@@ -45,7 +45,10 @@ public class SQLAuthDAO implements AuthDataAccess {
     }
 
     @Override
-    public void deleteAuthData(AuthData authData) {
+    public void deleteAuthData(AuthData authData) throws DataAccessException {
+        String deleteAuthString = "DELETE FROM authDB WHERE authCode=?";
+        String[] values = {authData.authToken()};
+        executeOneLineUpdate(deleteAuthString, values);
 
     }
 
@@ -62,9 +65,6 @@ public class SQLAuthDAO implements AuthDataAccess {
         } catch (SQLException ex) {
             throw new DataAccessException("Unable to execute statement: " + statement + ", " + ex.getMessage());
         }
-    }
-
-    private void executeSQLQuery() {
     }
 
     private final String[] createStatements = {

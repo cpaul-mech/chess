@@ -11,5 +11,5 @@ public interface AuthDataAccess {
 
     public void addAuthData(AuthData newAuthData) throws DataAccessException;
 
-    public void deleteAuthData(AuthData authData);
+    public void deleteAuthData(AuthData authData) throws DataAccessException;
 }

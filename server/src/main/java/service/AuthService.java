@@ -59,7 +59,7 @@ public class AuthService {
         }
     }
 
-    public void deleteAuthData(AuthData authData) {
+    public void deleteAuthData(AuthData authData) throws DataAccessException {
         authDataAccess.deleteAuthData(authData);
     }
 }
