@@ -49,6 +49,15 @@ public class SQLAuthDAOTests {
     }
 
     @Test
+    public void getBadAuthData() throws DataAccessException {
+        String authToken = UUID.randomUUID().toString();
+        AuthData authData = new AuthData(authToken, "broHomieDudeMan");
+        sqlAuthDAO.addAuthData(authData);
+        Assertions.assertNull(sqlAuthDAO.getAuthData(authToken + "3"));
+    }
+
+
+    @Test
     public void deleteAuthData() throws DataAccessException {
         String authToken = UUID.randomUUID().toString();
         AuthData authData = new AuthData(authToken, "broHomieDudeMan2.0");
@@ -56,6 +65,6 @@ public class SQLAuthDAOTests {
         AuthData returnedAuthData = sqlAuthDAO.getAuthData(authToken);
         Assertions.assertEquals(authData, returnedAuthData);
         sqlAuthDAO.deleteAuthData(authData);
-        Assertions.assertThrows(Exception.class, () -> sqlAuthDAO.getAuthData(authToken));
+        Assertions.assertNull(sqlAuthDAO.getAuthData(authToken));
     }
 }
