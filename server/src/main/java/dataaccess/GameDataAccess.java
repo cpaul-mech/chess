@@ -5,7 +5,7 @@ import model.GameData;
 import java.util.Collection;
 
 public interface GameDataAccess {
-    public int createGame(String gameName);
+    public int createGame(String gameName) throws DataAccessException;
 
     public GameData getGame(int gameID);
 
@@ -15,5 +15,5 @@ public interface GameDataAccess {
 
     public void clearGameDB() throws DataAccessException;
 
-    public int dbSize();
+    public int dbSize() throws DataAccessException;
 }

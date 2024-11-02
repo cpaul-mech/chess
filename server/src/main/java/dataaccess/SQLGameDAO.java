@@ -1,5 +1,8 @@
 package dataaccess;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
+import model.AuthData;
 import model.GameData;
 import model.UserData;
 
@@ -9,14 +12,28 @@ import java.util.Collection;
 import java.util.List;
 
 public class SQLGameDAO implements GameDataAccess {
+    private final Gson serializer = new Gson();
 
     public SQLGameDAO() throws DataAccessException {
         configureDatabaseGameTable();
     }
 
     @Override
-    public int createGame(String gameName) {
-        return 0;
+    public int createGame(String gameName) throws DataAccessException {
+        ChessGame chessGame = new ChessGame();
+        String createGameString = "INSERT INTO gameDB (gameName, game) VALUES (?, ?)";
+        String[] values = {gameName, serializer.toJson(chessGame)};
+        executeOneLineUpdate(createGameString, values);
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT gameID FROM gameDB WHERE gameName=?")) {
+                preparedStatement.setString(1, gameName);
+                var rs = preparedStatement.executeQuery();
+                rs.next();
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("Unable to execute query" + ex.getMessage());
+        }
     }
 
     @Override
@@ -63,13 +80,26 @@ public class SQLGameDAO implements GameDataAccess {
     }
 
     @Override
-    public int dbSize() {
-        return 0;
+    public int dbSize() throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT * FROM gameDB")) {
+                var rs = preparedStatement.executeQuery();
+                rs.next();
+                return rs.getFetchSize();
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("Unable to execute query" + ex.getMessage());
+        }
     }
 
-    private void executeOneLineStatement(String statement) throws DataAccessException {
+    private void executeOneLineUpdate(String statement, String[] args) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
+                if (args != null) {
+                    for (int i = 1; i < args.length + 1; i++) {
+                        preparedStatement.setString(i, args[i - 1]);
+                    }
+                }
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException ex) {
@@ -83,7 +113,8 @@ public class SQLGameDAO implements GameDataAccess {
              gameID INT NOT NULL AUTO_INCREMENT, whiteUsername VARCHAR(255), blackUsername VARCHAR(255),
              gameName VARCHAR(255) NOT NULL,
              game TEXT NOT NULL,
-             PRIMARY KEY (gameID)
+             PRIMARY KEY (gameID),
+             INDEX (gameName)
              ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };

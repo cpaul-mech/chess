@@ -52,11 +52,6 @@ public class UserService {
         }
     }
 
-    public Collection<UserData> listUsers() throws DataAccessException {
-        var allUsers = userDataAccess.listUsers();
-        return allUsers;
-    }
-
     public UserData getUser(String username) throws DataAccessException {
         return userDataAccess.getUser(username);
     }

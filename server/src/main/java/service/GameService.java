@@ -26,11 +26,11 @@ public class GameService {
         return gameDataAccess.getGame(gameID);
     }
 
-    public Collection<GameData> listGames() {
+    public Collection<GameData> listGames() throws DataAccessException {
         return gameDataAccess.listGames(); //list games will only be called if the user is authorized.
     }
 
-    public int createGame(String gameName) {
+    public int createGame(String gameName) throws DataAccessException {
         return gameDataAccess.createGame(gameName);
     }
 
@@ -38,7 +38,7 @@ public class GameService {
         gameDataAccess.clearGameDB();
     }
 
-    public int sizeof() {
+    public int sizeof() throws DataAccessException {
         return gameDataAccess.dbSize();
     }
 

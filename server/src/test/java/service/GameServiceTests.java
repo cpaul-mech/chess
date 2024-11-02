@@ -19,13 +19,13 @@ public class GameServiceTests {
 
 
     @Test
-    void goodCreateGame() {
+    void goodCreateGame() throws DataAccessException {
         int gameID = GAME_SERVICE.createGame("myGame");
         assertNotEquals(0, gameID);
     }
 
     @Test
-    void badCreateGame() {
+    void badCreateGame() throws DataAccessException {
         int gameID1 = GAME_SERVICE.createGame("yourGame");
         int gameID2 = GAME_SERVICE.createGame("thisGame");
         assertNotEquals(gameID1, gameID2);
@@ -45,7 +45,7 @@ public class GameServiceTests {
     }
 
     @Test
-    void goodGetGame() {
+    void goodGetGame() throws DataAccessException {
         int gameID4 = GAME_SERVICE.createGame("oops");
         var result = GAME_SERVICE.getGame(gameID4);
         assertEquals(GameData.class, result.getClass());

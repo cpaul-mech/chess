@@ -3,7 +3,9 @@ package dataaccess;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import java.sql.SQLException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLGameDAOTests {
     SQLGameDAO sqlGameDAO = new SQLGameDAO();
@@ -21,9 +23,11 @@ public class SQLGameDAOTests {
         }
     }
 
-    public void addNewGame() {
-//        GameData gameData = new GameData(1,
-
+    @Test
+    public void addNewGame() throws DataAccessException {
+        clearAllGames();
+        int gameID = sqlGameDAO.createGame("theBestGame");
+        assertEquals(1, gameID);
     }
 
     @Test
