@@ -1,9 +1,12 @@
 package dataaccess;
 
+import model.AuthData;
 import model.UserData;
 import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.UUID;
 
 public class SQLUserDAOTests {
     SQLUserDAO sqlUserDAO = new SQLUserDAO();
@@ -27,5 +30,12 @@ public class SQLUserDAOTests {
         Assertions.assertDoesNotThrow(() -> sqlUserDAO.createUser(newUserData));
     }
 
+    @Test
+    public void getUserData() throws DataAccessException {
+        UserData newUserData = new UserData("cpaul15", "mynameisJEFFHAW", "myname@gmail.comm");
+        sqlUserDAO.createUser(newUserData);
+        UserData returnedUserData = sqlUserDAO.getUser("cpaul15");
+        Assertions.assertEquals(newUserData, returnedUserData);
+    }
 
 }

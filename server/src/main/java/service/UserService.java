@@ -57,7 +57,7 @@ public class UserService {
         return allUsers;
     }
 
-    public UserData getUser(String username) {
+    public UserData getUser(String username) throws DataAccessException {
         return userDataAccess.getUser(username);
     }
 
@@ -65,7 +65,7 @@ public class UserService {
         userDataAccess.clearUsers();
     }
 
-    public int getUserDBsize() {
+    public int getUserDBsize() throws DataAccessException {
         return userDataAccess.dbSize();
     }
 

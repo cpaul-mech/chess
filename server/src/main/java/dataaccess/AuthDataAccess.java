@@ -3,7 +3,7 @@ package dataaccess;
 import model.AuthData;
 
 public interface AuthDataAccess {
-    public int dbSize();
+    public int dbSize() throws DataAccessException;
 
     public void clearAuthDB() throws DataAccessException;
 

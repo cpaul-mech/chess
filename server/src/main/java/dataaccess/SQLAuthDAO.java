@@ -11,8 +11,16 @@ public class SQLAuthDAO implements AuthDataAccess {
     }
 
     @Override
-    public int dbSize() {
-        return 0;
+    public int dbSize() throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT * FROM authDB")) {
+                var rs = preparedStatement.executeQuery();
+                rs.next();
+                return rs.getFetchSize();
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("Unable to execute query" + ex.getMessage());
+        }
     }
 
     @Override
@@ -49,7 +57,6 @@ public class SQLAuthDAO implements AuthDataAccess {
         String deleteAuthString = "DELETE FROM authDB WHERE authCode=?";
         String[] values = {authData.authToken()};
         executeOneLineUpdate(deleteAuthString, values);
-
     }
 
     private void executeOneLineUpdate(String statement, String[] args) throws DataAccessException {
@@ -80,6 +87,10 @@ public class SQLAuthDAO implements AuthDataAccess {
 
 
     private void configureDatabaseAuthTable() throws DataAccessException {
+        configureDatabaseSpecificTable(createStatements);
+    }
+
+    public static void configureDatabaseSpecificTable(String[] createStatements) throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
             for (var statement : createStatements) {

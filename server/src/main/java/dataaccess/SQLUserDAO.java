@@ -1,5 +1,6 @@
 package dataaccess;
 
+import model.AuthData;
 import model.UserData;
 
 import java.sql.SQLException;
@@ -14,25 +15,45 @@ public class SQLUserDAO implements UserDataAccess {
 
     @Override
     public void createUser(UserData userData) throws DataAccessException {
-        String createUserString = String.format("INSERT INTO userDB (username, password, email) VALUES" +
-                " ('%s', '%s', '%s')", userData.username(), userData.password(), userData.email());
-        executeOneLineUpdate(createUserString);
+        String createUserString = "INSERT INTO userDB (username, password, email) VALUES" +
+                " (?, ?, ?)";
+        String[] values = {userData.username(), userData.password(), userData.email()};
+        executeOneLineUpdate(createUserString, values);
     }
 
     @Override
-    public UserData getUser(String username) {
-        return null;
+    public UserData getUser(String username) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT password, email FROM userDB WHERE username=?")) {
+                preparedStatement.setString(1, username);
+                var rs = preparedStatement.executeQuery();
+                rs.next();
+                String password = rs.getString(1);
+                String email = rs.getString(2);
+                return new UserData(username, password, email);
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("Unable to execute query" + ex.getMessage());
+        }
     }
 
     @Override
     public void clearUsers() throws DataAccessException {
         String truncateString = "TRUNCATE TABLE userDB";
-        executeOneLineUpdate(truncateString);
+        executeOneLineUpdate(truncateString, null);
     }
 
     @Override
-    public int dbSize() {
-        return 0;
+    public int dbSize() throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT * FROM userDB")) {
+                var rs = preparedStatement.executeQuery();
+                rs.next();
+                return rs.getFetchSize();
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("Unable to execute query" + ex.getMessage());
+        }
     }
 
     @Override
@@ -40,9 +61,14 @@ public class SQLUserDAO implements UserDataAccess {
         return List.of();
     }
 
-    private void executeOneLineUpdate(String statement) throws DataAccessException {
+    private void executeOneLineUpdate(String statement, String[] args) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
+                if (args != null) {
+                    for (int i = 1; i < args.length + 1; i++) {
+                        preparedStatement.setString(i, args[i - 1]);
+                    }
+                }
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException ex) {
@@ -63,15 +89,6 @@ public class SQLUserDAO implements UserDataAccess {
 
 
     private void configureDatabaseUserTable() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
-        }
+        SQLAuthDAO.configureDatabaseSpecificTable(createStatements);
     }
 }

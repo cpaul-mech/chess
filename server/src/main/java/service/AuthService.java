@@ -33,7 +33,7 @@ public class AuthService {
         return UUID.randomUUID().toString();
     }
 
-    public int dbSize() {
+    public int dbSize() throws DataAccessException {
         return authDataAccess.dbSize();
     }
 
