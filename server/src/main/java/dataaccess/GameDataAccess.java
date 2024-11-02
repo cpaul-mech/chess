@@ -11,7 +11,7 @@ public interface GameDataAccess {
 
     public Collection<GameData> listGames() throws DataAccessException;
 
-    public void updateGame(int gameIDtoChange, GameData replacementGame);
+    public void updateGame(int gameIDtoChange, GameData replacementGame) throws DataAccessException;
 
     public void clearGameDB() throws DataAccessException;
 

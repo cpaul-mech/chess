@@ -14,7 +14,7 @@ public record GameData(int gameID, String whiteUsername, String blackUsername, S
             return false;
         }
         return gameID == gameData.gameID &&
-                game.equals(gameData.game) &&
+                Objects.equals(game, gameData.game) &&
                 Objects.equals(gameName, gameData.gameName) &&
                 Objects.equals(whiteUsername, gameData.whiteUsername) &&
                 Objects.equals(blackUsername, gameData.blackUsername);

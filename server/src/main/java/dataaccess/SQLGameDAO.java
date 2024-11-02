@@ -62,13 +62,15 @@ public class SQLGameDAO implements GameDataAccess {
                 List<GameData> gameList = new ArrayList<>();
                 var rs = preparedStatement.executeQuery();
                 while (rs.next()) {
-                    var gameID = rs.getInt("gameID");
-                    var password = rs.getString("password");
-                    var email = rs.getString("email");
+                    int gameID = rs.getInt("gameID");
+                    String whiteUsername = rs.getString("whiteUsername");
+                    String blackUsername = rs.getString("blackUsername");
+                    String gameName = rs.getString("gameName");
+                    ChessGame game = serializer.fromJson(rs.getString("game"), ChessGame.class);
+                    gameList.add(new GameData(gameID, whiteUsername, blackUsername, gameName, game));
                 }
-                return List.of();
                 //TODO: FINISH AND TEST THIS!!!
-
+                return gameList;
             }
         } catch (SQLException ex) {
             throw new DataAccessException("Unable to execute query" + ex.getMessage());
@@ -76,8 +78,20 @@ public class SQLGameDAO implements GameDataAccess {
     }
 
     @Override
-    public void updateGame(int gameIDtoChange, GameData replacementGame) {
-
+    public void updateGame(int gameIDtoChange, GameData replacementGame) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("UPDATE gameDB SET whiteUsername=?," +
+                    "blackUsername=?, gameName=?, game=? WHERE gameID=?")) {
+                preparedStatement.setString(1, replacementGame.whiteUsername());
+                preparedStatement.setString(2, replacementGame.blackUsername());
+                preparedStatement.setString(3, replacementGame.gameName());
+                preparedStatement.setString(4, serializer.toJson(replacementGame.game()));
+                preparedStatement.setInt(5, gameIDtoChange);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("Unable to execute query" + ex.getMessage());
+        }
     }
 
     @Override

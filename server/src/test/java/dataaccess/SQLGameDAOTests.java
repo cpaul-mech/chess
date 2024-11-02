@@ -39,9 +39,20 @@ public class SQLGameDAOTests {
 
     @Test
     public void getGame() throws DataAccessException {
-        int gameID = sqlGameDAO.createGame("theWorstGame");
-        GameData gameData = new GameData(gameID, null, null, "theWorstGame", new ChessGame());
+        String gameName = "helpThisGame";
+        int gameID = sqlGameDAO.createGame(gameName);
+        GameData gameData = new GameData(gameID, null, null, gameName, new ChessGame());
         GameData gameData2 = sqlGameDAO.getGame(gameID);
-        Assertions.assertEquals(gameData, sqlGameDAO.getGame(gameID));
+        Assertions.assertEquals(gameData, gameData2);
+    }
+
+    @Test
+    public void updateGame() throws DataAccessException {
+        int gameID = sqlGameDAO.createGame("theWorstGame2");
+        sqlGameDAO.createGame("myGame");
+        String newWhiteUsername = "dwayneTheRockJohnson";
+        GameData updatedGame = new GameData(gameID, newWhiteUsername, null, "theWorstGame", new ChessGame());
+        sqlGameDAO.updateGame(gameID, updatedGame);
+        Assertions.assertEquals(updatedGame, sqlGameDAO.getGame(gameID));
     }
 }
