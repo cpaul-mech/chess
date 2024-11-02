@@ -27,42 +27,34 @@ public class MoveCalculator {
         color = piece.getTeamColor();
     }
 
+    private void moveCalculatorCaller(ArrayList<int[]> movesToCall, int limit, int movesToCallLimit) {
+        for (int i = 0; i < movesToCallLimit; i++) {
+            moveStraightLineHelper(movesToCall.get(i), limit);
+        }
+
+    }
+
     public ArrayList<ChessMove> calculateMoveSet() {
         int[] up = {1, 0};
         int[] down = {-1, 0};
         int[] left = {0, -1};
         int[] right = {0, 1};
+        ArrayList<int[]> movesToCall = new ArrayList<>();
+        movesToCall.addAll(Arrays.asList(up, down, left, right, upLeft, upRight, downLeft, downRight));
         int[][] knightDirections = {{2, 1}, {1, 2}, {-1, 2}, {-2, 1}, {-2, -1}, {-1, -2}, {1, -2}, {2, -1}};
         int limit;
         switch (type) {
             case ROOK:
                 limit = 9;
-                moveStraightLineHelper(up, limit);
-                moveStraightLineHelper(down, limit);
-                moveStraightLineHelper(left, limit);
-                moveStraightLineHelper(right, limit);
+                moveCalculatorCaller(movesToCall, limit, 4);
                 break;
             case KING:
                 limit = 1;
-                moveStraightLineHelper(up, limit);
-                moveStraightLineHelper(down, limit);
-                moveStraightLineHelper(left, limit);
-                moveStraightLineHelper(right, limit);
-                moveStraightLineHelper(upRight, limit);
-                moveStraightLineHelper(upLeft, limit);
-                moveStraightLineHelper(downRight, limit);
-                moveStraightLineHelper(downLeft, limit);
+                moveCalculatorCaller(movesToCall, limit, 8);
                 break;
             case QUEEN:
                 limit = 9;
-                moveStraightLineHelper(up, limit);
-                moveStraightLineHelper(down, limit);
-                moveStraightLineHelper(left, limit);
-                moveStraightLineHelper(right, limit);
-                moveStraightLineHelper(upRight, limit);
-                moveStraightLineHelper(upLeft, limit);
-                moveStraightLineHelper(downRight, limit);
-                moveStraightLineHelper(downLeft, limit);
+                moveCalculatorCaller(movesToCall, limit, 8);
                 break;
             case PAWN:
                 //oh boy, here we go!

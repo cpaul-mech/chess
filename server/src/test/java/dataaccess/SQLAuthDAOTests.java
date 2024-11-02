@@ -34,6 +34,12 @@ public class SQLAuthDAOTests {
     }
 
     @Test
+    public void addBadAuthData() {
+        AuthData authData = new AuthData(null, "cpaul");
+        Assertions.assertThrows(DataAccessException.class, () -> sqlAuthDAO.addAuthData(authData));
+    }
+
+    @Test
     public void getAuthData() throws DataAccessException {
         String authToken = UUID.randomUUID().toString();
         AuthData authData = new AuthData(authToken, "broHomieDudeMan");
