@@ -62,6 +62,10 @@ public class SQLAuthDAO implements AuthDataAccess {
     }
 
     private void executeOneLineUpdate(String statement, String[] args) throws DataAccessException {
+        commonOneLineUpdate(statement, args);
+    }
+
+    static void commonOneLineUpdate(String statement, String[] args) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 if (args != null) {

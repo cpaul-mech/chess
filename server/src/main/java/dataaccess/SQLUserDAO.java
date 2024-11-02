@@ -56,18 +56,7 @@ public class SQLUserDAO implements UserDataAccess {
     }
 
     private void executeOneLineUpdate(String statement, String[] args) throws DataAccessException {
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                if (args != null) {
-                    for (int i = 1; i < args.length + 1; i++) {
-                        preparedStatement.setString(i, args[i - 1]);
-                    }
-                }
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException("Unable to execute statement: " + statement + ", " + ex.getMessage());
-        }
+        SQLAuthDAO.commonOneLineUpdate(statement, args);
     }
 
     private final String[] createStatements = {

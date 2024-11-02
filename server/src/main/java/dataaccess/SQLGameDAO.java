@@ -2,9 +2,7 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import model.AuthData;
 import model.GameData;
-import model.UserData;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -123,18 +121,7 @@ public class SQLGameDAO implements GameDataAccess {
     }
 
     private void executeOneLineUpdate(String statement, String[] args) throws DataAccessException {
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                if (args != null) {
-                    for (int i = 1; i < args.length + 1; i++) {
-                        preparedStatement.setString(i, args[i - 1]);
-                    }
-                }
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException("Unable to execute statement: " + statement + ", " + ex.getMessage());
-        }
+        SQLAuthDAO.commonOneLineUpdate(statement, args);
     }
 
     private final String[] createStatements = {
