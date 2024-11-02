@@ -23,7 +23,7 @@ public class AuthService {
         authDataAccess.clearAuthDB();
     }
 
-    public AuthData createAuthData(String username) {//im going to add smart functionality to this, there should only ever be one authtoken per user
+    public AuthData createAuthData(String username) throws DataAccessException {//im going to add smart functionality to this, there should only ever be one authtoken per user
         var newAuthData = new AuthData(generateToken(), username);
         authDataAccess.addAuthData(newAuthData);
         return newAuthData;
@@ -37,11 +37,11 @@ public class AuthService {
         return authDataAccess.dbSize();
     }
 
-    public AuthData getAuthData(String authToken) {
+    public AuthData getAuthData(String authToken) throws DataAccessException {
         return authDataAccess.getAuthData(authToken);
     }
 
-    public boolean verifyAuthToken(String authToken) {
+    public boolean verifyAuthToken(String authToken) throws DataAccessException {
         var authData = getAuthData(authToken);
         if (authData == null) {
             return false;
@@ -50,7 +50,7 @@ public class AuthService {
         }
     }
 
-    public boolean logout(String authToken) {
+    public boolean logout(String authToken) throws DataAccessException {
         if (verifyAuthToken(authToken)) {
             deleteAuthData(getAuthData(authToken));
             return true;

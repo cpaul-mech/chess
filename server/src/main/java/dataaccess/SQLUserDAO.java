@@ -16,7 +16,7 @@ public class SQLUserDAO implements UserDataAccess {
     public void createUser(UserData userData) throws DataAccessException {
         String createUserString = String.format("INSERT INTO userDB (username, password, email) VALUES" +
                 " ('%s', '%s', '%s')", userData.username(), userData.password(), userData.email());
-        executeOneLineStatement(createUserString);
+        executeOneLineUpdate(createUserString);
     }
 
     @Override
@@ -27,7 +27,7 @@ public class SQLUserDAO implements UserDataAccess {
     @Override
     public void clearUsers() throws DataAccessException {
         String truncateString = "TRUNCATE TABLE userDB";
-        executeOneLineStatement(truncateString);
+        executeOneLineUpdate(truncateString);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class SQLUserDAO implements UserDataAccess {
         return List.of();
     }
 
-    private void executeOneLineStatement(String statement) throws DataAccessException {
+    private void executeOneLineUpdate(String statement) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();

@@ -5,8 +5,6 @@ import exceptions.UnauthorizedAccessError;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
-import org.mindrot.jbcrypt.BCrypt;
 import service.*;
 
 import java.sql.Struct;
@@ -16,7 +14,7 @@ public class Handler {//this class will be used to call all the various services
     private final GameDataAccess gameDataAccess = new MemoryGameDAO();
     private final UserDataAccess userDataAccess = new MemoryUserDAO();
     private final AuthDataAccess authDataAccess = new MemoryAuthDAO();
-    private final GameService gameService = new GameService(gameDataAccess, authDataAccess);
+    private final GameService gameService = new GameService(gameDataAccess);
     private final UserService userService = new UserService(userDataAccess, authDataAccess);
     private final AuthService authService = new AuthService(authDataAccess);
 
@@ -25,16 +23,16 @@ public class Handler {//this class will be used to call all the various services
         return userService.registerUser(userData);
     }
 
-    public LoginResponse login(UserData userDataNullEmail) {
+    public LoginResponse login(UserData userDataNullEmail) throws DataAccessException {
         AuthData authData = userService.login(userDataNullEmail);
         return new LoginResponse(authData.username(), authData.authToken());
     }
 
-    public void logout(String authToken) {
+    public void logout(String authToken) throws DataAccessException {
         authService.logout(authToken);
     }
 
-    public Collection<GameData> listGames(String authToken) {
+    public Collection<GameData> listGames(String authToken) throws DataAccessException {
         if (authService.verifyAuthToken(authToken)) {
             return gameService.listGames();
         } else {
@@ -42,7 +40,7 @@ public class Handler {//this class will be used to call all the various services
         }
     }
 
-    public int createGame(String authToken, String gameName) {
+    public int createGame(String authToken, String gameName) throws DataAccessException {
         if (authService.verifyAuthToken(authToken)) {
             return gameService.createGame(gameName);
         } else {

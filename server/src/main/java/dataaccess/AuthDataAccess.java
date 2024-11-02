@@ -7,9 +7,9 @@ public interface AuthDataAccess {
 
     public void clearAuthDB() throws DataAccessException;
 
-    public AuthData getAuthData(String authToken);
+    public AuthData getAuthData(String authToken) throws DataAccessException;
 
-    public void addAuthData(AuthData newAuthData);
+    public void addAuthData(AuthData newAuthData) throws DataAccessException;
 
     public void deleteAuthData(AuthData authData);
 }

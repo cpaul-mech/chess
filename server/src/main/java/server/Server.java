@@ -101,6 +101,10 @@ public class Server {
             res.status(401);
             ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
             return serializer.toJson(errorMessage);
+        } catch (DataAccessException e) {
+            ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+            res.status(500);
+            return serializer.toJson(errorMessage);
         }
     }
 
@@ -138,6 +142,10 @@ public class Server {
             ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
             res.status(401);
             return serializer.toJson(errorMessage);
+        } catch (DataAccessException e) {
+            ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+            res.status(500);
+            return serializer.toJson(errorMessage);
         }
     }
 
@@ -149,6 +157,10 @@ public class Server {
         } catch (UnauthorizedAccessError e) {
             res.status(401);
             ErrorMessage errorMessage = new ErrorMessage("Error: unauthorized");
+            return serializer.toJson(errorMessage);
+        } catch (DataAccessException e) {
+            ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+            res.status(500);
             return serializer.toJson(errorMessage);
         }
     }

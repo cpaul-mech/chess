@@ -14,7 +14,7 @@ import java.util.Collection;
 public class GameService {
     private final GameDataAccess gameDataAccess;
 
-    public GameService(GameDataAccess gDAO, AuthDataAccess aDAO) {
+    public GameService(GameDataAccess gDAO) {
         gameDataAccess = gDAO;
     }
 
@@ -44,7 +44,7 @@ public class GameService {
 
     public void updateGame(String updateColor, int gameID, String newUsername) throws DataAccessException {
         //what happens if the gameID is invalid? we return null... but that doesn't make this stuff true
-        ChessGame.TeamColor colorToChange = null;
+        ChessGame.TeamColor colorToChange;
         if (updateColor == null) {
             throw new BadServiceRequest("Error: bad request");
         } else if (updateColor.equalsIgnoreCase("WHITE")) {

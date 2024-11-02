@@ -18,18 +18,30 @@ public class SQLAuthDAO implements AuthDataAccess {
     @Override
     public void clearAuthDB() throws DataAccessException {
         String truncateString = "TRUNCATE TABLE authDB";
-        executeOneLineStatement(truncateString);
+        executeOneLineUpdate(truncateString, null);
     }
 
     @Override
-    public AuthData getAuthData(String authToken) {
-        return null;
+    public AuthData getAuthData(String authToken) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT username FROM authDB WHERE authCode=?")) {
+                preparedStatement.setString(1, authToken);
+                var rs = preparedStatement.executeQuery();
+                rs.next();
+                String username = rs.getString(1);
+                return new AuthData(authToken, username);
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("Unable to execute query" + ex.getMessage());
+        }
     }
 
     @Override
-    public void addAuthData(AuthData newAuthData) {
-
-
+    public void addAuthData(AuthData newAuthData) throws DataAccessException {
+        //TODO: DO I NEED TO USE THE PREPARESTATEMENTS SYNTAX that we covered in Lecture 18?
+        String addAuthString = "INSERT INTO authDB (authCode, username) VALUES (?, ?)";
+        String[] values = {newAuthData.authToken(), newAuthData.username()};
+        executeOneLineUpdate(addAuthString, values);
     }
 
     @Override
@@ -37,14 +49,22 @@ public class SQLAuthDAO implements AuthDataAccess {
 
     }
 
-    private void executeOneLineStatement(String statement) throws DataAccessException {
+    private void executeOneLineUpdate(String statement, String[] args) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
+                if (args != null) {
+                    for (int i = 1; i < args.length + 1; i++) {
+                        preparedStatement.setString(i, args[i - 1]);
+                    }
+                }
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException ex) {
             throw new DataAccessException("Unable to execute statement: " + statement + ", " + ex.getMessage());
         }
+    }
+
+    private void executeSQLQuery() {
     }
 
     private final String[] createStatements = {

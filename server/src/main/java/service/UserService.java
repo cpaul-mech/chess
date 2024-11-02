@@ -22,7 +22,7 @@ public class UserService {
         authService = new AuthService(aDAO);
     }
 
-    public AuthData login(UserData userDataNullEmail) {
+    public AuthData login(UserData userDataNullEmail) throws DataAccessException {
         var result = userDataAccess.getUser(userDataNullEmail.username());
         //here in the service level is where we're comparing the passwords. so I will be using BCrypt.checkpw
         if (result != null && Objects.equals(result.username(), userDataNullEmail.username())
