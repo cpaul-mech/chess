@@ -33,6 +33,12 @@ public class SQLGameDAOTests {
     }
 
     @Test
+    public void addBadGame() throws DataAccessException {
+        clearAllGames();
+        Assertions.assertThrows(Exception.class, () -> sqlGameDAO.createGame(null));
+    }
+
+    @Test
     public void clearAllGames() throws DataAccessException {
         Assertions.assertDoesNotThrow(() -> sqlGameDAO.clearGameDB());
     }
