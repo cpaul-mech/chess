@@ -38,4 +38,5 @@ public class SQLUserDAOTests {
         Assertions.assertEquals(newUserData, returnedUserData);
     }
 
+
 }

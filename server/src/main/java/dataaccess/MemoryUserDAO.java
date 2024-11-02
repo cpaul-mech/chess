@@ -2,7 +2,6 @@ package dataaccess;
 
 import model.UserData;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,10 +26,5 @@ public class MemoryUserDAO implements UserDataAccess {
 
     public int dbSize() {
         return users.size();
-    }
-
-    @Override
-    public Collection<UserData> listUsers() {
-        return users.values();
     }
 }

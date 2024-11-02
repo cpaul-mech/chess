@@ -9,7 +9,7 @@ public interface GameDataAccess {
 
     public GameData getGame(int gameID);
 
-    public Collection<GameData> listGames();
+    public Collection<GameData> listGames() throws DataAccessException;
 
     public void updateGame(int gameIDtoChange, GameData replacementGame);
 

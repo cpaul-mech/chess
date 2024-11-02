@@ -1,11 +1,8 @@
 package dataaccess;
 
-import model.AuthData;
 import model.UserData;
 
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.List;
 
 public class SQLUserDAO implements UserDataAccess {
 
@@ -54,11 +51,6 @@ public class SQLUserDAO implements UserDataAccess {
         } catch (SQLException ex) {
             throw new DataAccessException("Unable to execute query" + ex.getMessage());
         }
-    }
-
-    @Override
-    public Collection<UserData> listUsers() {
-        return List.of();
     }
 
     private void executeOneLineUpdate(String statement, String[] args) throws DataAccessException {

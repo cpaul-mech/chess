@@ -1,8 +1,10 @@
 package dataaccess;
 
 import model.GameData;
+import model.UserData;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -23,8 +25,23 @@ public class SQLGameDAO implements GameDataAccess {
     }
 
     @Override
-    public Collection<GameData> listGames() {
-        return List.of();
+    public Collection<GameData> listGames() throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT * FROM gameDB")) {
+                List<GameData> gameList = new ArrayList<>();
+                var rs = preparedStatement.executeQuery();
+                while (rs.next()) {
+                    var gameID = rs.getInt("gameID");
+                    var password = rs.getString("password");
+                    var email = rs.getString("email");
+                }
+                return List.of();
+                //TODO: FINISH AND TEST THIS!!!
+
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("Unable to execute query" + ex.getMessage());
+        }
     }
 
     @Override

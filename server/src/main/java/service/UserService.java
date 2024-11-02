@@ -52,7 +52,7 @@ public class UserService {
         }
     }
 
-    public Collection<UserData> listUsers() {
+    public Collection<UserData> listUsers() throws DataAccessException {
         var allUsers = userDataAccess.listUsers();
         return allUsers;
     }

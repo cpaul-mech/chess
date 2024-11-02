@@ -34,7 +34,6 @@ public class UserServiceTests {
     public void duplicateUser() throws DataAccessException {
         var newUser = new UserData("cpaul", "coolDude", "sillybilly@gmail.com");
         var user = userService.registerUser(newUser);
-        var allUsers = userService.listUsers();
         assertThrows(UserAlreadyTakenError.class, () -> userService.registerUser(newUser));
     }
 
