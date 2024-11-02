@@ -19,9 +19,6 @@ public class Handler {//this class will be used to call all the various services
 
     public Handler() {
         try {
-            //    private final GameDataAccess gameDataAccess = new MemoryGameDAO();
-            //    private final UserDataAccess userDataAccess = new MemoryUserDAO();
-            //    private final AuthDataAccess authDataAccess = new MemoryAuthDAO();
             GameDataAccess gameDataAccess = new SQLGameDAO();
             UserDataAccess userDataAccess = new SQLUserDAO();
             authDataAccess = new SQLAuthDAO();

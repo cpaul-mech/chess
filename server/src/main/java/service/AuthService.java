@@ -23,7 +23,8 @@ public class AuthService {
         authDataAccess.clearAuthDB();
     }
 
-    public AuthData createAuthData(String username) throws DataAccessException {//im going to add smart functionality to this, there should only ever be one authtoken per user
+    public AuthData createAuthData(String username) throws DataAccessException {//im going to add smart functionality
+        // to this, there should only ever be one authtoken per user
         var newAuthData = new AuthData(generateToken(), username);
         authDataAccess.addAuthData(newAuthData);
         return newAuthData;
