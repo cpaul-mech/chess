@@ -5,10 +5,14 @@ import java.util.Objects;
 import java.util.Scanner;
 
 public class OverallRepl {
-    LoginState loginState;
+    private LoginState loginState;
+    private final LoggedOutClient loggedOutClient;
+    private final LoggedInClient loggedInClient;
 
     public OverallRepl() {
         loginState = LoginState.LOGGED_OUT;
+        loggedOutClient = new LoggedOutClient();
+        loggedInClient = new LoggedInClient();
     }
 
     private enum LoginState {
@@ -30,10 +34,11 @@ public class OverallRepl {
                         line = scanner.nextLine();
                     }
                 }
-
+                //need to parse the command given
+                result = loggedOutClient.eval(line);
             }
         } catch (IOException e) {
-
+            System.out.println("An Io Exception occurred, please try again.");
         }
 
     }
