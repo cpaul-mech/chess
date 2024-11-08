@@ -1,7 +1,11 @@
 package ui;
 
 public class LoggedInClient {
-    public void help() {
-        System.out.println("");
+    public String help() {
+        return "";
+    }
+
+    public String eval(String line) {
+        return "";
     }
 }

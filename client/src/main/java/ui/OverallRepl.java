@@ -33,14 +33,27 @@ public class OverallRepl {
             String line = scanner.nextLine();
             //need to parse the command given
             try {
-                result = loggedOutClient.eval(line);
+                if (loginState == LoginState.LOGGED_OUT) {
+                    result = loggedOutClient.eval(line);
+                } else {
+                    result = loggedInClient.eval(line);
+                }
                 System.out.println(result);
+
             } catch (Exception e) {
                 var errorMessage = e.getMessage();
                 System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + errorMessage);
             }
         }
 
+    }
+
+    public void changeLoginState() {
+        if (loginState == LoginState.LOGGED_IN) {
+            loginState = LoginState.LOGGED_OUT;
+        } else {
+            loginState = LoginState.LOGGED_OUT;
+        }
     }
 
     public void terminalArrows() {
