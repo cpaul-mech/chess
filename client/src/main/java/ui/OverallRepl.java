@@ -22,29 +22,29 @@ public class OverallRepl {
 
     public void run() {
         //this will be called to run the repl
-        System.out.println("-----You have entered the ChessGame Terminal-----\nType Help to get started.");
+        System.out.println(EscapeSequences.SET_TEXT_COLOR_GREEN + "-----You have entered the ChessGame " +
+                "Terminal-----\n" + EscapeSequences.RESET_TEXT_COLOR +
+                "Type" + EscapeSequences.SET_TEXT_COLOR_GREEN + " help" + EscapeSequences.RESET_TEXT_COLOR +
+                " to get started.");
         Scanner scanner = new Scanner(System.in);
         var result = "";
-        String line = "";
-        try {
-            while (!result.equals("quit")) {
-                terminalArrows();
-                while (Objects.equals(line, "")) {
-                    if (System.in.available() > 0) {
-                        line = scanner.nextLine();
-                    }
-                }
-                //need to parse the command given
+        while (!result.equals("quit")) {
+            terminalArrows();
+            String line = scanner.nextLine();
+            //need to parse the command given
+            try {
                 result = loggedOutClient.eval(line);
+                System.out.println(result);
+            } catch (Exception e) {
+                var errorMessage = e.getMessage();
+                System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + errorMessage);
             }
-        } catch (IOException e) {
-            System.out.println("An Io Exception occurred, please try again.");
         }
 
     }
 
     public void terminalArrows() {
-        System.out.println(loginState.toString() + ": >>> ");
+        System.out.print(EscapeSequences.RESET_TEXT_COLOR + loginState.toString() + ": >>> ");
     }
 
 

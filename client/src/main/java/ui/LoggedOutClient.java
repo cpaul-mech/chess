@@ -13,27 +13,22 @@ public class LoggedOutClient {
         } else {
             //cases are help, quit, login, register
             String cmd = tokens[0];
-            switch (cmd) {
-                case "help":
-                    loggedOutHelp();
-                    break;
-                case "quit":
-                    return "quit";
-                break;
-
-            }
+            return switch (cmd) {
+                case "help" -> loggedOutHelp();
+                case "quit" -> "quit";
+                default -> "input: " + line + " was not understood. \nProper commands are:\n" + loggedOutHelp();
+            };
         }
     }
 
-    public void loggedOutHelp() {
-        String[] helpLines = {
-                "register <USERNAME> <PASSWORD> <EMAIL> - To create an account.",
-                "login <USERNAME> <PASSWORD> - To play chess",
-                "quit - stop playing chess",
-                "help - list all possible commands"
-        };
-        for (String line : helpLines) {
-            System.out.println(line);
-        }
+    public String loggedOutHelp() {
+        return """
+                Possible commands are:
+                register <USERNAME> <PASSWORD> <EMAIL> - To create an account.
+                login <USERNAME> <PASSWORD> - To play chess.
+                quit - stop playing chess
+                help - list all possible commands
+                note: bracketed values are parameters.
+                """;
     }
 }
