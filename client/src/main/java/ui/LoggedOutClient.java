@@ -3,8 +3,10 @@ package ui;
 import java.util.Arrays;
 
 public class LoggedOutClient {
-    public LoggedOutClient() {
+    private String thisServerURL;
 
+    public LoggedOutClient(String serverURL) {
+        thisServerURL = serverURL;
     }
 
     public String eval(String line) throws BadInputException {
@@ -32,6 +34,8 @@ public class LoggedOutClient {
         if (params == null || params.length < 3) {
             throw new BadInputException("cmd: login did not have enough parameters.");
         } //TODO: IMPLEMENT HTTP CODE.
+
+        return "";
     }
 
     public String loggedOutHelp() {

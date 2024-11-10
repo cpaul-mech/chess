@@ -5,7 +5,8 @@ import ui.EscapeSequences;
 import ui.OverallRepl;
 
 public class ReplTests {
-    OverallRepl overallRepl = new OverallRepl();
+    String server = "http://localhost:8080";
+    OverallRepl overallRepl = new OverallRepl(server);
 
     @Test
     public void runTest() {

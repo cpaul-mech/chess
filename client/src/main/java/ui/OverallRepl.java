@@ -9,9 +9,9 @@ public class OverallRepl {
     private final LoggedOutClient loggedOutClient;
     private final LoggedInClient loggedInClient;
 
-    public OverallRepl() {
+    public OverallRepl(String serverURL) {
         loginState = LoginState.LOGGED_OUT;
-        loggedOutClient = new LoggedOutClient();
+        loggedOutClient = new LoggedOutClient(serverURL);
         loggedInClient = new LoggedInClient();
     }
 
