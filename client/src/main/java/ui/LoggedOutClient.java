@@ -35,7 +35,7 @@ public class LoggedOutClient {
             throw new BadInputException("cmd: login did not have enough parameters.");
         } //TODO: IMPLEMENT HTTP CODE.
 
-        return "";
+        return "You logged in as: " + params[0];
     }
 
     public String loggedOutHelp() {
