@@ -45,6 +45,7 @@ public class OverallRepl {
                 System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + errorMessage);
             }
         }
+        System.out.println("You have quit Chess, thanks for playing!!");
 
     }
 
