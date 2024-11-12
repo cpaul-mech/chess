@@ -1,12 +1,22 @@
 package ui;
 
+import model.UserData;
+
 import java.util.Arrays;
 
 public class LoggedOutClient {
     private String thisServerURL;
+    private final ServerFacade server;
+    //todo: implement other variables to make sure I store things like the AuthToken and username.
+    private String username;
 
     public LoggedOutClient(String serverURL) {
         thisServerURL = serverURL;
+        server = new ServerFacade(thisServerURL);
+    }
+
+    public ServerFacade getServer() {
+        return server;
     }
 
     public String eval(String line) throws BadInputException {
@@ -25,18 +35,27 @@ public class LoggedOutClient {
                 case "help" -> loggedOutHelp();
                 case "quit" -> "quit";
                 case "login" -> login(params);
+                case "register" -> register(params);
                 default -> "cmd: " + cmd + " was not understood. \nProper commands are:\n" + loggedOutHelp();
             };
         }
     }
 
     public String login(String[] params) throws BadInputException {
-        if (params == null || params.length < 3) {
+        if (params == null || params.length < 2) {
             throw new BadInputException("cmd: login did not have enough parameters.");
         } //TODO: IMPLEMENT HTTP CODE.
+        //Now we have 3 strings, username, password
+        UserData loginData = new UserData(params[0], params[1], null); //the login endpoint is expecting a userData
+        //object without an email, so serverFacade will be expecting that as well.
 
         return "You logged in as: " + params[0];
     }
+
+    public String register(String[] params) {
+        return "";
+    }
+
 
     public String loggedOutHelp() {
         return """

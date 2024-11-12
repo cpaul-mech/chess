@@ -19,8 +19,6 @@ public class Server {
     private final Gson serializer = new Gson();
 
     public Server() {
-        //this is the default constructor, I need to set this equal to memory implementations
-
     }
 
     public int run(int desiredPort) {

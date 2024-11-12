@@ -1,6 +1,8 @@
 package ui;
 
 import com.google.gson.Gson;
+import model.AuthData;
+import model.UserData;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +19,10 @@ public class ServerFacade {
         serverUrl = url;
     }
 
+    public AuthData login(UserData userData) {
+        //this method expects a userData object with email = null
+        AuthData authData = makeRequest()
+    }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ServerException {
         try {

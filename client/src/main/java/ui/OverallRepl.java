@@ -7,12 +7,12 @@ import java.util.Scanner;
 public class OverallRepl {
     private LoginState loginState;
     private final LoggedOutClient loggedOutClient;
-    private final LoggedInClient loggedInClient;
+    private LoggedInClient loggedInClient; //it will be initialized later on.
 
     public OverallRepl(String serverURL) {
         loginState = LoginState.LOGGED_OUT;
         loggedOutClient = new LoggedOutClient(serverURL);
-        loggedInClient = new LoggedInClient();
+        loggedInClient = new LoggedInClient(serverURL, loggedOutClient.getServer());
     }
 
     private enum LoginState {
