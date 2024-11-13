@@ -32,7 +32,7 @@ public class ServerFacade {
     }
 
     public void clearDataBases() throws ServerException {
-
+        makeRequest("DELETE", "/db", null, null);
     }
 
 

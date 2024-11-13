@@ -30,9 +30,9 @@ public class ServerFacadeTests {
         server.stop();
     }
 
-    @AfterAll
-    static void clearServers() {
-
+    @Test
+    public void clearServer() throws ServerException {
+        serverFacade.clearDataBases();
     }
 
 
