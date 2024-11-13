@@ -25,6 +25,11 @@ public class ServerFacade {
         return makeRequest("POST", "/session", loginData, AuthData.class);
     }
 
+    public AuthData registerUser(UserData userData) throws ServerException {
+        return makeRequest("POST", "/user", userData, AuthData.class);
+    }
+
+
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ServerException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
