@@ -19,9 +19,10 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public AuthData login(UserData userData) {
+    public AuthData login(UserData userData) throws ServerException {
         //this method expects a userData object with email = null
-        AuthData authData = makeRequest()
+        LoginData loginData = new LoginData(userData.username(), userData.password());
+        return makeRequest("POST", "/session", loginData, AuthData.class);
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ServerException {
