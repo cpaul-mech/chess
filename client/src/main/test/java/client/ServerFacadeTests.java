@@ -35,6 +35,11 @@ public class ServerFacadeTests {
         serverFacade.clearDataBases();
     }
 
+    @Test
+    public void successfulLogoutTest() {
+
+    }
+
 
     @Test
     public void successfulRegisterTest() throws ServerException {

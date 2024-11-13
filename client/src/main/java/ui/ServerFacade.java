@@ -25,6 +25,10 @@ public class ServerFacade {
         return makeRequest("POST", "/session", loginData, AuthData.class);
     }
 
+    public void logout(AuthData authData) {
+
+    }
+
     public AuthData registerUser(UserData userData) throws ServerException {
         AuthData authData = makeRequest("POST", "/user", userData, AuthData.class);
         return authData;
