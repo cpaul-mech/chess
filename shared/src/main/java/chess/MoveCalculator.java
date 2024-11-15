@@ -39,8 +39,7 @@ public class MoveCalculator {
         int[] down = {-1, 0};
         int[] left = {0, -1};
         int[] right = {0, 1};
-        ArrayList<int[]> movesToCall = new ArrayList<>();
-        movesToCall.addAll(Arrays.asList(up, down, left, right, upLeft, upRight, downLeft, downRight));
+        ArrayList<int[]> movesToCall = new ArrayList<>(Arrays.asList(up, down, left, right, upLeft, upRight, downLeft, downRight));
         int[][] knightDirections = {{2, 1}, {1, 2}, {-1, 2}, {-2, 1}, {-2, -1}, {-1, -2}, {1, -2}, {2, -1}};
         int limit;
         switch (type) {
@@ -112,9 +111,7 @@ public class MoveCalculator {
 
     private void moveStraightLine(int row, int col, int[] direction, int limit) {
         //this function enables the piece to move in whatever direction it is specified to have.
-        if (row < 1 || row > 8 || col < 1 || col > 8) {
-        } else if (limit < 1) {
-        } else {
+        if ((row >= 1 && row <= 8 && col >= 1 && col <= 8) && limit >= 1) {
             ChessPosition thisPosition = new ChessPosition(row, col);
             ChessMove propMove = pawnPromoChecker(thisPosition, direction);
             if (otherPieceHere(thisPosition)) {
