@@ -13,7 +13,7 @@ import java.net.URI;
 import java.net.URL;
 
 public class ServerFacade {
-    private String serverUrl;
+    private final String serverUrl;
 
     public ServerFacade(String url) {
         serverUrl = url;
@@ -22,31 +22,36 @@ public class ServerFacade {
     public AuthData login(UserData userData) throws ServerException {
         //this method expects a userData object with email = null
         LoginData loginData = new LoginData(userData.username(), userData.password());
-        return makeRequest("POST", "/session", loginData, AuthData.class);
+        return makeRequest("POST", "/session", loginData, AuthData.class, null);
     }
 
-    public void logout(AuthData authData) {
-
+    public void logout(AuthData authData) throws ServerException {
+        String[] authHeader = {"authorization", authData.authToken()};
+        makeRequest("DELETE", "/session", null, null, authHeader);
     }
 
     public AuthData registerUser(UserData userData) throws ServerException {
-        AuthData authData = makeRequest("POST", "/user", userData, AuthData.class);
+        AuthData authData = makeRequest("POST", "/user", userData, AuthData.class, null);
         return authData;
 
     }
 
     public void clearDataBases() throws ServerException {
-        makeRequest("DELETE", "/db", null, null);
+        makeRequest("DELETE", "/db", null, null, null);
     }
 
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ServerException {
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass,
+                              String[] headerString) throws ServerException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
-
+            if (headerString != null) {
+                //headerString must be a two element String array.
+                http.addRequestProperty(headerString[0], headerString[1]);
+            }
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
@@ -54,7 +59,7 @@ public class ServerFacade {
         } catch (Exception ex) {
             throw new ServerException(ex.getMessage(), 500);
         }
-    } //this code appears to
+    }
 
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {

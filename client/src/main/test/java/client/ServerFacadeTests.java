@@ -32,12 +32,15 @@ public class ServerFacadeTests {
 
     @Test
     public void clearServer() throws ServerException {
-        serverFacade.clearDataBases();
+        Assertions.assertDoesNotThrow(() -> serverFacade.clearDataBases());
     }
 
     @Test
-    public void successfulLogoutTest() {
-
+    public void successfulLogoutTest() throws ServerException {
+        serverFacade.clearDataBases();
+        UserData registerData = new UserData("cpauldude", "Perspiration", "8ball@gmail.com");
+        AuthData authData = serverFacade.registerUser(registerData);
+        Assertions.assertDoesNotThrow(() -> serverFacade.logout(authData));
     }
 
 
