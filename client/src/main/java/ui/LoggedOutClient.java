@@ -22,12 +22,12 @@ public class LoggedOutClient {
 
     public String eval(String line) throws BadInputException {
         //need to parse the line
-        var tokens = line.toLowerCase().split(" ");
+        var tokens = line.split(" ");
         if (tokens.length == 0) {
             return "";
         } else {
             //cases are help, quit, login, register
-            String cmd = tokens[0];
+            String cmd = tokens[0].toLowerCase();
             String[] params = null;
             if (tokens.length > 1) {
                 params = Arrays.copyOfRange(tokens, 1, tokens.length);
