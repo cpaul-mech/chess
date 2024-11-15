@@ -36,13 +36,32 @@ public class ServerFacadeTests {
 
     @Test
     public void successfulLogoutTest() throws ServerException {
-        serverFacade.clearDataBases();
         UserData registerData = new UserData("cpauldude", "Perspiration", "8ball@gmail.com");
         AuthData authData = serverFacade.registerUser(registerData);
         Assertions.assertDoesNotThrow(() -> serverFacade.logout(authData));
     }
-//    @Test
-//    public void badLogoutTest()
+
+    @Test
+    public void badLogoutTest() {
+        AuthData badAuthData = new AuthData("thisissupersecure!", "cpaul12345");
+        Assertions.assertThrows(ServerException.class, () -> serverFacade.logout(badAuthData));
+    }
+
+    @Test
+    public void loginTest() throws ServerException {
+        UserData registerData = new UserData("cpauldude", "Perspiration", "8ball@gmail.com");
+        AuthData authData = serverFacade.registerUser(registerData);
+        serverFacade.logout(authData);
+        // now the authtoken isn't relevant, but the username is still registered.
+        Assertions.assertDoesNotThrow(() ->
+                serverFacade.login(new UserData("cpauldude", "Perspiration", null)));
+    }
+
+    @Test
+    public void badLogInTest() {
+        Assertions.assertThrows(ServerException.class,
+                () -> serverFacade.login(new UserData("notUser", "notPass", null)));
+    }
 
 
     @Test
