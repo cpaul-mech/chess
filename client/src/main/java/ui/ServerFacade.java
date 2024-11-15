@@ -33,7 +33,6 @@ public class ServerFacade {
     public AuthData registerUser(UserData userData) throws ServerException {
         AuthData authData = makeRequest("POST", "/user", userData, AuthData.class, null);
         return authData;
-
     }
 
     public void clearDataBases() throws ServerException {

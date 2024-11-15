@@ -1,4 +1,4 @@
-package client;
+package java.client;
 
 import model.AuthData;
 import model.UserData;

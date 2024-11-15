@@ -1,22 +1,24 @@
 package ui;
 
+import model.AuthData;
+
 public class LoggedInClient {
-    private String authToken;
+    private AuthData currentAuthToken;
     private String serverUrl;
     private ServerFacade server;
 
     public LoggedInClient(String url, ServerFacade facade) {
         //when this object is created, it will always be null
-        authToken = null;
+        currentAuthToken = null;
         serverUrl = url;
         server = facade;
     }
 
-    public void setAuthToken(String aT) {
-        authToken = aT;
+    public void setCurrentAuthData(AuthData aD) {
+        currentAuthToken = aD;
     }
 
-    public String help() {
+    public String loggedInhelp() {
         return "";
     }
 

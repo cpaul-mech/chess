@@ -1,5 +1,7 @@
 package ui;
 
+import model.AuthData;
+
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Scanner;
@@ -7,7 +9,8 @@ import java.util.Scanner;
 public class OverallRepl {
     private LoginState loginState;
     private final LoggedOutClient loggedOutClient;
-    private LoggedInClient loggedInClient; //it will be initialized later on.
+    private final LoggedInClient loggedInClient;
+    private AuthData userAuthData;
 
     public OverallRepl(String serverURL) {
         loginState = LoginState.LOGGED_OUT;
@@ -35,6 +38,13 @@ public class OverallRepl {
             try {
                 if (loginState == LoginState.LOGGED_OUT) {
                     result = loggedOutClient.eval(line);
+                    if (loggedOutClient.getCurrentUserAuthData() != null) {
+                        //the login was successful, now we need to change the state and add the AuthData to the loggedin
+                        //client
+                        loggedInClient.setCurrentAuthData(loggedOutClient.getCurrentUserAuthData());
+                        //change the state:
+                        loginState = LoginState.LOGGED_IN;
+                    }
                 } else {
                     result = loggedInClient.eval(line);
                 }
