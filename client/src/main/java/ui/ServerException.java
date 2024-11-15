@@ -1,7 +1,7 @@
 package ui;
 
 public class ServerException extends Exception {
-    private int rCode;
+    private final int rCode;
 
     public ServerException(String message, int responseCode) {
         super(message);

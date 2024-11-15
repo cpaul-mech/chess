@@ -1,5 +1,6 @@
 package ui;
 
+import model.AuthData;
 import model.UserData;
 
 import java.util.Arrays;
@@ -36,19 +37,35 @@ public class LoggedOutClient {
                 case "quit" -> "quit";
                 case "login" -> login(params);
                 case "register" -> register(params);
-                default -> "cmd: " + cmd + " was not understood. \nProper commands are:\n" + loggedOutHelp();
+                default -> EscapeSequences.SET_TEXT_COLOR_RED + "cmd: '" + cmd + "' was not understood.\n" +
+                        EscapeSequences.RESET_TEXT_COLOR + loggedOutHelp();
             };
         }
     }
 
     public String login(String[] params) throws BadInputException {
         if (params == null || params.length < 2) {
-            throw new BadInputException("cmd: login did not have enough parameters.");
-        } //TODO: IMPLEMENT HTTP CODE.
+            return "cmd: login did not have enough parameters.\n" +
+                    "Please provide your username and password.";
+        }
         //Now we have 3 strings, username, password
         UserData loginData = new UserData(params[0], params[1], null); //the login endpoint is expecting a userData
         //object without an email, so serverFacade will be expecting that as well.
-
+        try {
+            AuthData returnedAuthData = server.login(loginData);
+        } catch (ServerException e) {
+            if (e.getrCode() == 500) {
+                return "Uh oh, an internal server error occurred: \n" +
+                        e.getMessage() +
+                        "\nPlease try again!";
+            }
+            if (e.getrCode() == 401) {
+                return String.format(EscapeSequences.SET_TEXT_COLOR_RED + """
+                        The username: %s and password: %s that you entered did\s
+                        not match our records, please try again or type help to review\s
+                        the 'register' command.""", params[0], params[1]);
+            }
+        }
         return "You logged in as: " + params[0];
     }
 
@@ -58,13 +75,14 @@ public class LoggedOutClient {
 
 
     public String loggedOutHelp() {
-        return """
-                Possible commands are:
-                register <USERNAME> <PASSWORD> <EMAIL> - To create an account.
-                login <USERNAME> <PASSWORD> - To play chess.
-                quit - stop playing chess
-                help - list all possible commands
-                note: bracketed values are parameters.
-                """;
+        return EscapeSequences.RESET_TEXT_COLOR +
+                """
+                        Possible commands are:
+                        register <USERNAME> <PASSWORD> <EMAIL> - To create an account.
+                        login <USERNAME> <PASSWORD> - To play chess.
+                        quit - stop playing chess
+                        help - list all possible commands
+                        note: bracketed values are parameters.
+                        """;
     }
 }

@@ -56,6 +56,8 @@ public class ServerFacade {
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
+        } catch (ServerException ex) {
+            throw new ServerException(ex.getMessage(), ex.getrCode());
         } catch (Exception ex) {
             throw new ServerException(ex.getMessage(), 500);
         }
