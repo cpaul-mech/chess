@@ -29,7 +29,7 @@ public class ServerFacadeTests {
         server.stop();
     }
 
-    @Test
+    @BeforeEach
     public void clearServer() throws ServerException {
         Assertions.assertDoesNotThrow(() -> serverFacade.clearDataBases());
     }
@@ -41,6 +41,8 @@ public class ServerFacadeTests {
         AuthData authData = serverFacade.registerUser(registerData);
         Assertions.assertDoesNotThrow(() -> serverFacade.logout(authData));
     }
+//    @Test
+//    public void badLogoutTest()
 
 
     @Test
