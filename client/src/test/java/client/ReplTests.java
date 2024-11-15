@@ -1,5 +1,6 @@
-package java.client;
+package client;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import server.Server;
@@ -24,6 +25,11 @@ public class ReplTests {
     @Test
     public void runTest() {
         overallRepl.run();
+    }
+
+    @AfterAll
+    static void stopServer() {
+        server.stop();
     }
 
 
