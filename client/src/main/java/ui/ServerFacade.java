@@ -41,7 +41,7 @@ public class ServerFacade {
 
     public int createGame(AuthData authData, String gameName) throws ServerException {
         String[] authHeader = {"authorization", authData.authToken()};
-        GameName thisGameName = new GameName("gameName");
+        GameName thisGameName = new GameName(gameName);
         GameData gameData = makeRequest("POST", "/game", thisGameName, GameData.class, authHeader);
         return gameData.gameID();
     }
