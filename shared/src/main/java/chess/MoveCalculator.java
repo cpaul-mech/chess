@@ -144,9 +144,6 @@ public class MoveCalculator {
     }
 
     private ChessMove pawnPromoChecker(ChessPosition p, int[] direction) {
-        //checks if the pieceType is pawn, then only returns a different move if the piece is in the end zone,
-        // and there is an enemy, and we move diagonally,
-        //or if there is not an enemy, and we're moving straight.
         if (type == ChessPiece.PieceType.PAWN) {
             ArrayList<ChessPiece.PieceType> pawnPromoOptions = new ArrayList<>();
             pawnPromoOptions.add(ChessPiece.PieceType.ROOK);
@@ -154,30 +151,24 @@ public class MoveCalculator {
             pawnPromoOptions.add(ChessPiece.PieceType.BISHOP);
             pawnPromoOptions.add(ChessPiece.PieceType.QUEEN);
             if (color == ChessGame.TeamColor.WHITE) {
-                //white pawn, promotion happens at row 8!
-                if ((p.getRow() == 8) &&
-                        ((pawnMoveDiagChecker(direction) && isEnemyPiece(board.getPiece(p)))
-                                || ((!pawnMoveDiagChecker(direction)) && !isEnemyPiece(board.getPiece(p))))) {
-                    for (int i = 0; i < pawnPromoOptions.size() - 1; i++) {
-                        moveSet.add(new ChessMove(startPosition, p, pawnPromoOptions.get(i)));
-                    }
-                    return new ChessMove(startPosition, p, pawnPromoOptions.get(3));
-                } else {
-                    return new ChessMove(startPosition, p, null);
-                }
+                return pawnPromoCheckerHelper(p, 8, pawnPromoOptions, direction);
             } else {
-                if (p.getRow() == 1 &&
-                        ((pawnMoveDiagChecker(direction) && isEnemyPiece(board.getPiece(p)))
-                                || (!pawnMoveDiagChecker(direction)) && !isEnemyPiece(board.getPiece(p)))) {
-                    for (int i = 0; i < pawnPromoOptions.size() - 1; i++) {
-                        moveSet.add(new ChessMove(startPosition, p, pawnPromoOptions.get(i)));
-                    }
-                    return new ChessMove(startPosition, p, pawnPromoOptions.get(3));
-                } else {
-                    return new ChessMove(startPosition, p, null);
-                }
+                return pawnPromoCheckerHelper(p, 1, pawnPromoOptions, direction);
             }
 
+        } else {
+            return new ChessMove(startPosition, p, null);
+        }
+    }
+
+    private ChessMove pawnPromoCheckerHelper(ChessPosition p, int x, ArrayList<ChessPiece.PieceType> pawnPromoOptions, int[] direction) {
+        if ((p.getRow() == x) &&
+                ((pawnMoveDiagChecker(direction) && isEnemyPiece(board.getPiece(p)))
+                        || (!pawnMoveDiagChecker(direction)) && !isEnemyPiece(board.getPiece(p)))) {
+            for (int i = 0; i < pawnPromoOptions.size() - 1; i++) {
+                moveSet.add(new ChessMove(startPosition, p, pawnPromoOptions.get(i)));
+            }
+            return new ChessMove(startPosition, p, pawnPromoOptions.get(3));
         } else {
             return new ChessMove(startPosition, p, null);
         }
@@ -189,7 +180,6 @@ public class MoveCalculator {
         } else {
             return false;
         }
-
     }
 
     private boolean otherPieceHere(ChessPosition p) {
