@@ -158,9 +158,7 @@ public class MoveCalculator {
                 if ((p.getRow() == 8) &&
                         ((pawnMoveDiagChecker(direction) && isEnemyPiece(board.getPiece(p)))
                                 || ((!pawnMoveDiagChecker(direction)) && !isEnemyPiece(board.getPiece(p))))) {
-                    //we need to add in every possibility except the last one, so we can carry on normal function
-                    for (int i = 0; i < pawnPromoOptions.size() - 1; i++) {//loop executes 3 times, ending at 2
-                        //stops before the last element so we can return it and carry on business as usual.
+                    for (int i = 0; i < pawnPromoOptions.size() - 1; i++) {
                         moveSet.add(new ChessMove(startPosition, p, pawnPromoOptions.get(i)));
                     }
                     return new ChessMove(startPosition, p, pawnPromoOptions.get(3));
@@ -171,8 +169,7 @@ public class MoveCalculator {
                 if (p.getRow() == 1 &&
                         ((pawnMoveDiagChecker(direction) && isEnemyPiece(board.getPiece(p)))
                                 || (!pawnMoveDiagChecker(direction)) && !isEnemyPiece(board.getPiece(p)))) {
-                    for (int i = 0; i < pawnPromoOptions.size() - 1; i++) {//loop executes 3 times, ending at 2
-                        //stops before the last element so we can return it and carry on business as usual.
+                    for (int i = 0; i < pawnPromoOptions.size() - 1; i++) {
                         moveSet.add(new ChessMove(startPosition, p, pawnPromoOptions.get(i)));
                     }
                     return new ChessMove(startPosition, p, pawnPromoOptions.get(3));
