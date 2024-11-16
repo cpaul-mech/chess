@@ -52,9 +52,6 @@ public class LoggedOutClient {
         UserData loginData = new UserData(params[0], params[1], null);
         try {
             currentUserAuthData = server.login(loginData);
-
-            //this means that the login was successful!!
-            //need to store this authData somehow
         } catch (ServerException e) {
             if (e.getrCode() == 500) {
                 return "Uh oh, an internal server error occurred: \n" +
@@ -112,6 +109,10 @@ public class LoggedOutClient {
 
     public AuthData getCurrentUserAuthData() {
         return currentUserAuthData;
+    }
+
+    public void deleteCurrentUserAuthData() {
+        currentUserAuthData = null;
     }
 
     public String loggedOutHelp() {

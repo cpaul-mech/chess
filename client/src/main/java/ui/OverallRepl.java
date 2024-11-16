@@ -47,6 +47,10 @@ public class OverallRepl {
                     }
                 } else {
                     result = loggedInClient.eval(line);
+                    if (loggedInClient.getCurrentAuthData() == null) {
+                        loggedOutClient.deleteCurrentUserAuthData();
+                        loginState = LoginState.LOGGED_OUT;
+                    }
                 }
                 System.out.println(result);
 

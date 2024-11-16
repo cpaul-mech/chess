@@ -3,22 +3,22 @@ package ui;
 import model.AuthData;
 
 import java.util.Arrays;
-import java.util.Map;
 
 public class LoggedInClient {
     private AuthData currentAuthToken;
-    private String serverUrl;
-    private ServerFacade server;
+    private final ServerFacade server;
 
     public LoggedInClient(String url, ServerFacade facade) {
-        //when this object is created, it will always be null
         currentAuthToken = null;
-        serverUrl = url;
         server = facade;
     }
 
     public void setCurrentAuthData(AuthData aD) {
         currentAuthToken = aD;
+    }
+
+    public AuthData getCurrentAuthData() {
+        return currentAuthToken;
     }
 
     public String eval(String line) {
@@ -40,7 +40,7 @@ public class LoggedInClient {
                 case "list" -> list(params);
                 case "join" -> joinGame(params);
                 case "observe" -> observe(params);
-                case "logout" -> logout(params);
+                case "logout" -> logout();
                 default -> EscapeSequences.SET_TEXT_COLOR_RED + "cmd: '" + cmd + "' was not understood.\n" +
                         EscapeSequences.RESET_TEXT_COLOR + loggedInhelp();
             };
@@ -81,6 +81,7 @@ public class LoggedInClient {
         }
     }
 
+
     public String create(String[] params) {
         if (params == null || params.length < 1) {
             return EscapeSequences.SET_TEXT_COLOR_RED + "cmd: 'create' did not have enough parameters.\n" +
@@ -109,7 +110,8 @@ public class LoggedInClient {
     }
 
     public String quit() {
-        //call logout,
+        var logoutLine = logout();
+        System.out.println(logoutLine);
         return "quit";
     }
 
@@ -117,8 +119,11 @@ public class LoggedInClient {
         return "";
     }
 
-    public String logout(String[] params) {
-        return "";
+    public String logout() {
+        String username = currentAuthToken.username();
+        currentAuthToken = null; //reset the authData so that I can read that in the repl.
+        return String.format("Logging '%s' out.", username) +
+                "\nrerun 'help' for commands again if needed.";
     }
 
     public String observe(String[] params) {
