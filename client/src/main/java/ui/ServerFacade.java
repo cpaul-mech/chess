@@ -63,7 +63,7 @@ public class ServerFacade {
     }
 
     static class GameListWrapper {
-        @SerializedName("items")  // Use the actual key name in your JSON
+        @SerializedName("games")  // Use the actual key name in your JSON
         List<GameData> items;
     }
 

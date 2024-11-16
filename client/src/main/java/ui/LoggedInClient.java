@@ -1,12 +1,17 @@
 package ui;
 
 import model.AuthData;
+import model.GameData;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class LoggedInClient {
     private AuthData currentAuthToken;
     private final ServerFacade server;
+    private Map<Integer, GameData> gamesMap = new HashMap<>();
 
     public LoggedInClient(String url, ServerFacade facade) {
         currentAuthToken = null;
@@ -37,7 +42,7 @@ public class LoggedInClient {
                 case "help" -> loggedInhelp();
                 case "quit" -> quit();
                 case "create" -> create(params);
-                case "list" -> list(params);
+                case "list" -> list();
                 case "join" -> joinGame(params);
                 case "observe" -> observe(params);
                 case "logout" -> logout();
@@ -52,7 +57,7 @@ public class LoggedInClient {
             return EscapeSequences.SET_TEXT_COLOR_RED + "cmd: 'join' did not have enough parameters.\n" +
                     EscapeSequences.RESET_TEXT_COLOR;
         } else {
-            try {
+            try { //TODO: NEED TO MAKE THE INTEGER CORRESPOND TO THE GAMEID OF THE GAME IN QUESTION.
                 JoinGameInput joinGameInput = new JoinGameInput(params[1], Integer.parseInt(params[0]));
                 server.joinGame(currentAuthToken, joinGameInput); //do I need to do anything with this?
             } catch (ServerException e) {
@@ -115,8 +120,50 @@ public class LoggedInClient {
         return "quit";
     }
 
-    public String list(String[] params) {
-        return "";
+    public String list() {
+        List<GameData> gamesList = null;
+        try {
+            gamesList = (List<GameData>) server.listGames(currentAuthToken);
+        } catch (ServerException e) {
+            if (e.getrCode() == 500) {
+                return EscapeSequences.SET_TEXT_COLOR_RED + "Uh oh, an internal server error occurred: \n" +
+                        e.getMessage() +
+                        "\nPlease try again!" + EscapeSequences.RESET_TEXT_COLOR;
+            }
+            if (e.getrCode() == 401) {
+                return EscapeSequences.SET_TEXT_COLOR_RED + """
+                        something strange happened, please re-login!""" + EscapeSequences.RESET_TEXT_COLOR;
+            }
+        }
+        //iterate through the gamesList and print the ID number, gameName, and player names.
+        mapGamesList(gamesList);
+        StringBuilder gameListString = new StringBuilder();
+        gameListString.append("Printing List of Current Games:" +
+                "\nGameNumber, Game Name, White Player Name, Black Player Name\n");
+        for (int i = 1; i < gamesMap.size(); i++) {
+            GameData gameData = gamesMap.get(i);
+            String gameName = gameData.gameName();
+            String whitePlayer = gameData.whiteUsername();
+            if (whitePlayer == null) {
+                whitePlayer = "none";
+            }
+            String blackPlayer = gameData.blackUsername();
+            if (blackPlayer == null) {
+                blackPlayer = "none";
+            }
+            gameListString.append(String.format("%d, %s, %s, %s\n", i, gameName, whitePlayer, blackPlayer));
+        }
+        return gameListString.toString() + "To join or observe a game, use the gameNumber to specify the game you want." +
+                "\ntype 'help' to review syntax if necessary.";
+
+    }
+
+    public void mapGamesList(List<GameData> gamesList) {
+        //this is where I will store the games.
+        for (int i = 1; i < gamesList.size() + 1; i++) {
+            //the index will serve as the game's number.
+            gamesMap.put(i, gamesList.get(i - 1));
+        }
     }
 
     public String logout() {
