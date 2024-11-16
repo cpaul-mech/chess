@@ -3,6 +3,7 @@ package ui;
 import model.AuthData;
 
 import java.util.Arrays;
+import java.util.Map;
 
 public class LoggedInClient {
     private AuthData currentAuthToken;
@@ -37,7 +38,7 @@ public class LoggedInClient {
                 case "quit" -> quit();
                 case "create" -> create(params);
                 case "list" -> list(params);
-                case "join" -> join(params);
+                case "join" -> joinGame(params);
                 case "observe" -> observe(params);
                 case "logout" -> logout(params);
                 default -> EscapeSequences.SET_TEXT_COLOR_RED + "cmd: '" + cmd + "' was not understood.\n" +
@@ -46,12 +47,65 @@ public class LoggedInClient {
         }
     }
 
-    public String join(String[] params) {
-        return "";
+    public String joinGame(String[] params) {
+        if (params == null || params.length < 2) {
+            return EscapeSequences.SET_TEXT_COLOR_RED + "cmd: 'join' did not have enough parameters.\n" +
+                    EscapeSequences.RESET_TEXT_COLOR;
+        } else {
+            try {
+                JoinGameInput joinGameInput = new JoinGameInput(params[1], Integer.parseInt(params[0]));
+                server.joinGame(currentAuthToken, joinGameInput); //do I need to do anything with this?
+            } catch (ServerException e) {
+                if (e.getrCode() == 500) {
+                    return EscapeSequences.SET_TEXT_COLOR_RED + "Uh oh, an internal server error occurred: \n" +
+                            e.getMessage() +
+                            "\nPlease try again!" + EscapeSequences.RESET_TEXT_COLOR;
+                }
+                if (e.getrCode() == 401) {
+                    return EscapeSequences.SET_TEXT_COLOR_RED + """
+                            something strange happened, please re-login!""" + EscapeSequences.RESET_TEXT_COLOR;
+                }
+                if (e.getrCode() == 403) {
+                    return EscapeSequences.SET_TEXT_COLOR_RED + "The player color you entered was not 'WHITE' or 'BLACK'" +
+                            "\n*not case sensitive*\n" +
+                            "Please try again." + EscapeSequences.RESET_TEXT_COLOR;
+                }
+            } catch (NumberFormatException e) {
+                return EscapeSequences.SET_TEXT_COLOR_RED + """
+                        The game number you provided was invalid
+                        please try again.""" + EscapeSequences.RESET_TEXT_COLOR;
+            }
+            //join game successful
+            return EscapeSequences.SET_TEXT_COLOR_GREEN + "You have successfully joined the game as player: " + params[1]
+                    + EscapeSequences.RESET_TEXT_COLOR;
+        }
     }
 
     public String create(String[] params) {
-        return "";
+        if (params == null || params.length < 1) {
+            return EscapeSequences.SET_TEXT_COLOR_RED + "cmd: 'create' did not have enough parameters.\n" +
+                    EscapeSequences.RESET_TEXT_COLOR;
+        } else {
+            try {
+                int newGameID = server.createGame(currentAuthToken, params[0]);
+            } catch (ServerException e) {
+                if (e.getrCode() == 500) {
+                    return EscapeSequences.SET_TEXT_COLOR_RED + "Uh oh, an internal server error occurred: \n" +
+                            e.getMessage() +
+                            "\nPlease try again!" + EscapeSequences.RESET_TEXT_COLOR;
+                }
+                if (e.getrCode() == 401) {
+                    return EscapeSequences.SET_TEXT_COLOR_RED + """
+                            something strange happened, please re-login!""" + EscapeSequences.RESET_TEXT_COLOR;
+                }
+                if (e.getrCode() == 400) {
+                    return EscapeSequences.SET_TEXT_COLOR_RED + """
+                            Provided gameName was rejected?""" + EscapeSequences.RESET_TEXT_COLOR;
+                }
+            }
+            return EscapeSequences.SET_TEXT_COLOR_GREEN + String.format("Created game '%s'", params[0]) +
+                    "\nPlease run 'list' to list this and other games you can join.";
+        }
     }
 
     public String quit() {

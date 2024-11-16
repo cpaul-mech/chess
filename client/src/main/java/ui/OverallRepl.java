@@ -59,14 +59,6 @@ public class OverallRepl {
 
     }
 
-    public void changeLoginState() {
-        if (loginState == LoginState.LOGGED_IN) {
-            loginState = LoginState.LOGGED_OUT;
-        } else {
-            loginState = LoginState.LOGGED_OUT;
-        }
-    }
-
     public void terminalArrows() {
         System.out.print(EscapeSequences.RESET_TEXT_COLOR + loginState.toString() + ": >>> ");
     }

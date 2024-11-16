@@ -100,7 +100,8 @@ public class LoggedOutClient {
 
     public String loginStatements() {
         return """
-                You are now logged in, please enter 'help' to review the updated
+                \nYou are now logged in, please enter 'help'
+                to review the updated
                 list of possible commands.""";
     }
 
