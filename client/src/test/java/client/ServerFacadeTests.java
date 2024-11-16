@@ -70,4 +70,29 @@ public class ServerFacadeTests {
         Assertions.assertDoesNotThrow(() -> serverFacade.registerUser(registerData));
     }
 
+    @Test
+    public void badRegisterTest() {
+        Assertions.assertThrows(ServerException.class, () -> serverFacade.registerUser(
+                new UserData("myNameIsMe", null, "dudeCrush@byu.com")));
+    }
+
+    @Test
+    public void createGameTest() throws ServerException {
+        UserData registerData = new UserData("cpaul", "PERSEVERANCE", "8ball@gmail.com");
+        var authData = serverFacade.registerUser(registerData);
+        Assertions.assertDoesNotThrow(() -> serverFacade.createGame(authData, "myNewGame"));
+    }
+
+    @Test
+    public void badCreateGameTest() throws ServerException {
+        UserData registerData = new UserData("cpaul2", "PERSEVERANCE2", "8ball2@gmail.com");
+        var authData = serverFacade.registerUser(registerData);
+        Assertions.assertThrows(ServerException.class, () -> serverFacade.createGame(new AuthData("notathing", "sbgidiahd"), "newGame"));
+    }
+
+    @Test
+    public void goodJoinGameTest() throws ServerException {
+
+    }
+
 }

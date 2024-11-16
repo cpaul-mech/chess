@@ -2,6 +2,7 @@ package ui;
 
 import com.google.gson.Gson;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 
 import java.io.IOException;
@@ -11,6 +12,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+
+import handler.JoinGameInput;
 
 public class ServerFacade {
     private final String serverUrl;
@@ -33,6 +36,18 @@ public class ServerFacade {
     public AuthData registerUser(UserData userData) throws ServerException {
         AuthData authData = makeRequest("POST", "/user", userData, AuthData.class, null);
         return authData;
+    }
+
+    public int createGame(AuthData authData, String gameName) throws ServerException {
+        String[] authHeader = {"authorization", authData.authToken()};
+        GameName thisGameName = new GameName("gameName");
+        GameData gameData = makeRequest("POST", "/game", thisGameName, GameData.class, authHeader);
+        return gameData.gameID();
+    }
+
+    public void joinGame(AuthData authData, JoinGameInput joinGameInput) throws ServerException {
+        String[] authHeader = {"authorization", authData.authToken()};
+        makeRequest("PUT", "/game", joinGameInput, null, authHeader);
     }
 
     public void clearDataBases() throws ServerException {
@@ -69,7 +84,6 @@ public class ServerFacade {
             String reqData = new Gson().toJson(request);
             try (OutputStream reqBody = http.getOutputStream()) {
                 reqBody.write(reqData.getBytes());
-
             }
         }
     }
