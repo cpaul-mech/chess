@@ -4,6 +4,7 @@ import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
+import ui.JoinGameInput;
 import ui.ServerException;
 import ui.ServerFacade;
 
@@ -87,12 +88,23 @@ public class ServerFacadeTests {
     public void badCreateGameTest() throws ServerException {
         UserData registerData = new UserData("cpaul2", "PERSEVERANCE2", "8ball2@gmail.com");
         var authData = serverFacade.registerUser(registerData);
-        Assertions.assertThrows(ServerException.class, () -> serverFacade.createGame(new AuthData("notathing", "sbgidiahd"), "newGame"));
+        Assertions.assertThrows(ServerException.class, () -> serverFacade.createGame(new AuthData("notathing",
+                "sbgidiahd"), "newGame"));
     }
 
     @Test
     public void goodJoinGameTest() throws ServerException {
+        UserData registerData = new UserData("cpaul3", "PERSEVERANCE3", "8ball3@gmail.com");
+        var authData = serverFacade.registerUser(registerData);
+        var gameID = serverFacade.createGame(authData, "myNewGame");
+        Assertions.assertDoesNotThrow(() -> serverFacade.joinGame(authData, new JoinGameInput("WHITE", gameID)));
+    }
 
+    @Test
+    public void badJoinGameTest() throws ServerException {
+        UserData registerData = new UserData("cpaul3", "PERSEVERANCE3", "8ball3@gmail.com");
+        var authData = serverFacade.registerUser(registerData);
+        Assertions.assertThrows(ServerException.class, () -> serverFacade.joinGame(authData, new JoinGameInput("notacolor", 123)));
     }
 
 }
