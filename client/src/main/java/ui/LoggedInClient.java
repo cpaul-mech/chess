@@ -39,7 +39,7 @@ public class LoggedInClient {
                 params = Arrays.copyOfRange(tokens, 1, tokens.length);
             }
             return switch (cmd) {
-                case "help" -> loggedInhelp();
+                case "help" -> loggedInHelp();
                 case "quit" -> quit();
                 case "create" -> create(params);
                 case "list" -> list();
@@ -47,7 +47,7 @@ public class LoggedInClient {
                 case "observe" -> observe(params);
                 case "logout" -> logout();
                 default -> EscapeSequences.SET_TEXT_COLOR_RED + "cmd: '" + cmd + "' was not understood.\n" +
-                        EscapeSequences.RESET_TEXT_COLOR + loggedInhelp();
+                        EscapeSequences.RESET_TEXT_COLOR + loggedInHelp();
             };
         }
     }
@@ -56,9 +56,14 @@ public class LoggedInClient {
         if (params == null || params.length < 2) {
             return EscapeSequences.SET_TEXT_COLOR_RED + "cmd: 'join' did not have enough parameters.\n" +
                     EscapeSequences.RESET_TEXT_COLOR;
+        }
+        if (gamesMap.isEmpty()) {
+            return "There are no games to join.\nPlease type 'help' to review syntax for creating a new game.";
         } else {
-            try { //TODO: NEED TO MAKE THE INTEGER CORRESPOND TO THE GAMEID OF THE GAME IN QUESTION.
-                JoinGameInput joinGameInput = new JoinGameInput(params[1], Integer.parseInt(params[0]));
+            try {
+                //need to get correct gameID:
+                GameData gameToJoin = gamesMap.get(Integer.parseInt(params[0]));
+                JoinGameInput joinGameInput = new JoinGameInput(params[1], gameToJoin.gameID());
                 server.joinGame(currentAuthToken, joinGameInput); //do I need to do anything with this?
             } catch (ServerException e) {
                 if (e.getrCode() == 500) {
@@ -70,10 +75,14 @@ public class LoggedInClient {
                     return EscapeSequences.SET_TEXT_COLOR_RED + """
                             something strange happened, please re-login!""" + EscapeSequences.RESET_TEXT_COLOR;
                 }
-                if (e.getrCode() == 403) {
+                if (e.getrCode() == 400) {
                     return EscapeSequences.SET_TEXT_COLOR_RED + "The player color you entered was not 'WHITE' or 'BLACK'" +
                             "\n*not case sensitive*\n" +
                             "Please try again." + EscapeSequences.RESET_TEXT_COLOR;
+                }
+                if (e.getrCode() == 403) {
+                    return EscapeSequences.SET_TEXT_COLOR_RED + "The game you chose already has someone playing as " +
+                            params[1].toUpperCase() + EscapeSequences.RESET_TEXT_COLOR;
                 }
             } catch (NumberFormatException e) {
                 return EscapeSequences.SET_TEXT_COLOR_RED + """
@@ -81,8 +90,8 @@ public class LoggedInClient {
                         please try again.""" + EscapeSequences.RESET_TEXT_COLOR;
             }
             //join game successful
-            return EscapeSequences.SET_TEXT_COLOR_GREEN + "You have successfully joined the game as player: " + params[1]
-                    + EscapeSequences.RESET_TEXT_COLOR;
+            return EscapeSequences.SET_TEXT_COLOR_GREEN + "You have successfully joined the game " + params[0] + " as player: " +
+                    currentAuthToken.username() + EscapeSequences.RESET_TEXT_COLOR;
         }
     }
 
@@ -136,11 +145,16 @@ public class LoggedInClient {
             }
         }
         //iterate through the gamesList and print the ID number, gameName, and player names.
+        if (gamesList == null || gamesList.isEmpty()) {
+            return "No games found, please type 'help' to review the syntax for creating a game.";
+        }
         mapGamesList(gamesList);
         StringBuilder gameListString = new StringBuilder();
-        gameListString.append("Printing List of Current Games:" +
-                "\nGameNumber, Game Name, White Player Name, Black Player Name\n");
-        for (int i = 1; i < gamesMap.size(); i++) {
+        gameListString.append("""
+                Printing List of Current Games:
+                GameNumber, Game Name, White Player Name, Black Player Name
+                """);
+        for (int i = 1; i < gamesMap.size() + 1; i++) {
             GameData gameData = gamesMap.get(i);
             String gameName = gameData.gameName();
             String whitePlayer = gameData.whiteUsername();
@@ -153,7 +167,7 @@ public class LoggedInClient {
             }
             gameListString.append(String.format("%d, %s, %s, %s\n", i, gameName, whitePlayer, blackPlayer));
         }
-        return gameListString.toString() + "To join or observe a game, use the gameNumber to specify the game you want." +
+        return gameListString + "To join or observe a game, use the gameNumber to specify the game you want." +
                 "\ntype 'help' to review syntax if necessary.";
 
     }
@@ -177,7 +191,7 @@ public class LoggedInClient {
         return "";
     }
 
-    public String loggedInhelp() {
+    public String loggedInHelp() {
         return """
                 options:
                 create <Name> - creates a new game called 'NAME'
