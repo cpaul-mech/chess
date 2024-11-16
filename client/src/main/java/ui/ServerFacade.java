@@ -1,6 +1,7 @@
 package ui;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -12,6 +13,9 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class ServerFacade {
     private final String serverUrl;
@@ -32,8 +36,7 @@ public class ServerFacade {
     }
 
     public AuthData registerUser(UserData userData) throws ServerException {
-        AuthData authData = makeRequest("POST", "/user", userData, AuthData.class, null);
-        return authData;
+        return makeRequest("POST", "/user", userData, AuthData.class, null);
     }
 
     public int createGame(AuthData authData, String gameName) throws ServerException {
@@ -41,6 +44,13 @@ public class ServerFacade {
         GameName thisGameName = new GameName("gameName");
         GameData gameData = makeRequest("POST", "/game", thisGameName, GameData.class, authHeader);
         return gameData.gameID();
+    }
+
+    public Collection<GameData> listGames(AuthData authData) throws ServerException {
+        GameListWrapper gamesList;
+        String[] authHeader = {"authorization", authData.authToken()};
+        gamesList = makeRequest("GET", "/game", null, GameListWrapper.class, authHeader);
+        return gamesList.items;
     }
 
     public void joinGame(AuthData authData, JoinGameInput joinGameInput) throws ServerException {
@@ -52,6 +62,10 @@ public class ServerFacade {
         makeRequest("DELETE", "/db", null, null, null);
     }
 
+    static class GameListWrapper {
+        @SerializedName("items")  // Use the actual key name in your JSON
+        List<GameData> items;
+    }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass,
                               String[] headerString) throws ServerException {

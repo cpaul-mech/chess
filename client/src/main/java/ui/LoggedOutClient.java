@@ -51,8 +51,7 @@ public class LoggedOutClient {
         }
         UserData loginData = new UserData(params[0], params[1], null);
         try {
-            AuthData returnedAuthData = server.login(loginData);
-            currentUserAuthData = returnedAuthData;
+            currentUserAuthData = server.login(loginData);
 
             //this means that the login was successful!!
             //need to store this authData somehow
@@ -80,8 +79,7 @@ public class LoggedOutClient {
         }
         UserData registerData = new UserData(params[0], params[1], params[2]);
         try {
-            AuthData returnedAuthData = server.registerUser(registerData);
-            currentUserAuthData = returnedAuthData;
+            currentUserAuthData = server.registerUser(registerData);
         } catch (ServerException e) {
             if (e.getrCode() == 500) {
                 return "Uh oh, an internal server error occurred: \n" +

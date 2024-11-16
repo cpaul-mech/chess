@@ -69,7 +69,6 @@ public class SQLGameDAO implements GameDataAccess {
                     ChessGame game = serializer.fromJson(rs.getString("game"), ChessGame.class);
                     gameList.add(new GameData(gameID, whiteUsername, blackUsername, gameName, game));
                 }
-                //TODO: FINISH AND TEST THIS!!!
                 return gameList;
             }
         } catch (SQLException ex) {

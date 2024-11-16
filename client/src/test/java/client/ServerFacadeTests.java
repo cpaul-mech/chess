@@ -1,6 +1,7 @@
 package client;
 
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
@@ -8,6 +9,7 @@ import ui.JoinGameInput;
 import ui.ServerException;
 import ui.ServerFacade;
 
+import java.util.Collection;
 import java.util.ServiceConfigurationError;
 
 
@@ -105,6 +107,17 @@ public class ServerFacadeTests {
         UserData registerData = new UserData("cpaul3", "PERSEVERANCE3", "8ball3@gmail.com");
         var authData = serverFacade.registerUser(registerData);
         Assertions.assertThrows(ServerException.class, () -> serverFacade.joinGame(authData, new JoinGameInput("notacolor", 123)));
+    }
+
+    @Test
+    public void listGames() throws ServerException {
+        UserData registerData = new UserData("cpaul3", "PERSEVERANCE3", "8ball3@gmail.com");
+        var authData = serverFacade.registerUser(registerData);
+        serverFacade.createGame(authData, "game1");
+        serverFacade.createGame(authData, "game2");
+        serverFacade.createGame(authData, "game3");
+        Assertions.assertDoesNotThrow(() -> serverFacade.listGames(authData));
+        Collection<GameData> gamesList = serverFacade.listGames(authData);
     }
 
 }
