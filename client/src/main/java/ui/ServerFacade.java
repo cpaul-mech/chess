@@ -13,8 +13,6 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 
-import handler.JoinGameInput;
-
 public class ServerFacade {
     private final String serverUrl;
 
