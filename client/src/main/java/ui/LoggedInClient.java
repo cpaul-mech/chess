@@ -1,5 +1,8 @@
 package ui;
 
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessPosition;
 import model.AuthData;
 import model.GameData;
 
@@ -43,7 +46,7 @@ public class LoggedInClient {
                 case "quit" -> quit();
                 case "create" -> create(params);
                 case "list" -> list();
-                case "join" -> joinGame(params);
+                case "play" -> joinGame(params);
                 case "observe" -> observe(params);
                 case "logout" -> logout();
                 default -> EscapeSequences.SET_TEXT_COLOR_RED + "cmd: '" + cmd + "' was not understood.\n" +
@@ -191,12 +194,145 @@ public class LoggedInClient {
         return "";
     }
 
+    public String printBlackGameSample() {
+        ChessGame chessGame = new ChessGame();
+        //first print the game from the perspective of the white team,
+        var board = chessGame.getBoard();
+        StringBuilder gameString = new StringBuilder();
+        for (int r = 0; r < 10; r++) {
+            if (r == 0 || r == 9) {
+                gameString.append(topBottomBlackPerspectiveString());
+            } else {
+                gameString.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SET_TEXT_COLOR_BLACK + String.format(" %d ", r));
+                if (r % 2 != 0) {
+                    gameString.append(printWhiteFirstRow(r, board));
+                } else {
+                    gameString.append(printBlackFirstRow(r, board));
+                }
+                gameString.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SET_TEXT_COLOR_BLACK + String.format(" %d ", r) + EscapeSequences.RESET_BG_COLOR + "\n");
+            }
+        }
+        return gameString.toString();
+    }
+
+    public String printWhiteGameSample() {
+        ChessGame chessGame = new ChessGame();
+        //first print the game from the perspective of the white team,
+        var board = chessGame.getBoard();
+        StringBuilder gameString = new StringBuilder();
+        for (int r = 9; r >= 0; r--) {
+            if (r == 0 || r == 9) {
+                gameString.append(topBottomWhitePerspective());
+            } else {
+                gameString.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SET_TEXT_COLOR_BLACK + String.format(" %d ", r));
+                if (r % 2 == 0) {
+                    gameString.append(printWhiteFirstRow(r, board));
+                } else {
+                    gameString.append(printBlackFirstRow(r, board));
+                }
+                gameString.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SET_TEXT_COLOR_BLACK + String.format(" %d ", r) + EscapeSequences.RESET_BG_COLOR + "\n");
+            }
+        }
+        return gameString.toString();
+    }
+
+    public String printWhiteFirstRow(int r, ChessBoard board) {
+        StringBuilder row = new StringBuilder();
+        for (int c = 1; c < 9; c++) {
+            if (c % 2 != 0) {//column number is odd,
+                row.append(EscapeSequences.SET_BG_COLOR_WHITE + " ");
+                row.append(stringizeChessPiece(r, c, board));
+                row.append(" ");
+            } else {
+                row.append(EscapeSequences.SET_BG_COLOR_BLACK + " ");
+                row.append(stringizeChessPiece(r, c, board));
+                row.append(" ");
+            }
+        }
+        return row.toString();
+    }
+
+    public String printBlackFirstRow(int r, ChessBoard board) {
+        StringBuilder row = new StringBuilder();
+        for (int c = 1; c < 9; c++) {
+            if (c % 2 == 0) {//column number is odd,
+                row.append(EscapeSequences.SET_BG_COLOR_WHITE + " ");
+                row.append(stringizeChessPiece(r, c, board));
+                row.append(" ");
+            } else {
+                row.append(EscapeSequences.SET_BG_COLOR_BLACK + " ");
+                row.append(stringizeChessPiece(r, c, board));
+                row.append(" ");
+            }
+        }
+        return row.toString();
+    }
+
+    public String stringizeChessPiece(int r, int c, ChessBoard board) {
+        ChessPosition p = new ChessPosition(r, c);
+        var piece = board.getPiece(p);
+        if (piece == null) {
+            return " ";
+        }
+        var pieceType = piece.getPieceType();
+        String pieceColor;
+        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            pieceColor = EscapeSequences.SET_TEXT_COLOR_RED;
+        } else {
+            pieceColor = EscapeSequences.SET_TEXT_COLOR_BLUE;
+        }
+        switch (pieceType) {
+            case ROOK -> {
+                return pieceColor + "R";
+            }
+            case KNIGHT -> {
+                return pieceColor + "N";
+            }
+            case BISHOP -> {
+                return pieceColor + "B";
+            }
+            case QUEEN -> {
+                return pieceColor + "Q";
+            }
+            case PAWN -> {
+                return pieceColor + "P";
+            }
+            case KING -> {
+                return pieceColor + "K";
+            }
+            default -> {
+                return " ";
+            }
+        }
+    }
+
+
+    public String topBottomBlackPerspectiveString() {
+        StringBuilder rowString = new StringBuilder();
+        rowString.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SET_TEXT_COLOR_BLACK + "   ");
+        for (char l = 'h'; l >= 'a'; l--) {
+            rowString.append(" " + l + " ");
+        }
+        rowString.append("   " + EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR + "\n");
+        return rowString.toString();
+    }
+
+    public String topBottomWhitePerspective() {
+        StringBuilder rowString = new StringBuilder();
+        rowString.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SET_TEXT_COLOR_BLACK + "   ");
+        for (char l = 'a'; l <= 'h'; l++) {
+            rowString.append(" " + l + " ");
+        }
+        rowString.append("   " + EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR + "\n");
+        return rowString.toString();
+    }
+
     public String loggedInHelp() {
         return """
                 options:
                 create <Name> - creates a new game called 'NAME'
                 list - prints a list of all the games
-                join <ID> [WHITE|BLACK] - join a game as either WHITE or BLACK
+                play <ID> [WHITE|BLACK] - join a game as either WHITE or BLACK
                 observe <ID> - Observe a game as it happens
                 logout - log yourself out
                 quit - logs you out, and quits chess
