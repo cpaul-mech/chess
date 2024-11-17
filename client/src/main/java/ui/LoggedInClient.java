@@ -94,10 +94,10 @@ public class LoggedInClient {
             }
             //join game successful
             return EscapeSequences.SET_TEXT_COLOR_GREEN + "You have successfully joined the game " + params[0] + " as player: " +
-                    currentAuthToken.username() + EscapeSequences.RESET_TEXT_COLOR;
+                    currentAuthToken.username() + EscapeSequences.RESET_TEXT_COLOR + "\n" +
+                    printWhiteGameSample() + "\n" + printBlackGameSample();
         }
     }
-
 
     public String create(String[] params) {
         if (params == null || params.length < 1) {
@@ -191,7 +191,27 @@ public class LoggedInClient {
     }
 
     public String observe(String[] params) {
-        return "";
+        if (params == null || params.length < 2) {
+            return EscapeSequences.SET_TEXT_COLOR_RED + "cmd: 'join' did not have enough parameters.\n" +
+                    EscapeSequences.RESET_TEXT_COLOR;
+        }
+        if (gamesMap.isEmpty()) {
+            return "There are no games to join.\nPlease type 'help' to review syntax for creating a new game.";
+        } else {
+            try {
+                //need to get correct gameID:
+                GameData gameToJoin = gamesMap.get(Integer.parseInt(params[0]));
+            } catch (NumberFormatException e) {
+                return EscapeSequences.SET_TEXT_COLOR_RED + """
+                        The game number you provided was invalid
+                        please try again.""" + EscapeSequences.RESET_TEXT_COLOR;
+            }
+            //join game successful
+            return EscapeSequences.SET_TEXT_COLOR_GREEN + "You have successfully Observed the game " + params[0] + " as player: " +
+                    currentAuthToken.username() + EscapeSequences.RESET_TEXT_COLOR + "\n" +
+                    printWhiteGameSample() + "\n" + printBlackGameSample();
+        }
+
     }
 
     public String printBlackGameSample() {

@@ -23,9 +23,6 @@ public class OverallRepl {
 
     public void run() {
         //this will be called to run the repl
-        System.out.println(loggedInClient.printBlackGameSample());
-        System.out.print("\n\n");
-        System.out.println(loggedInClient.printWhiteGameSample());
         System.out.println(EscapeSequences.SET_TEXT_COLOR_GREEN + "-----You have entered the ChessGame " +
                 "Terminal-----\n" + EscapeSequences.RESET_TEXT_COLOR +
                 "Type" + EscapeSequences.SET_TEXT_COLOR_GREEN + " help" + EscapeSequences.RESET_TEXT_COLOR +
