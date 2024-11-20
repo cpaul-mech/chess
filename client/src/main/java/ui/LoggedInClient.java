@@ -19,6 +19,7 @@ public class LoggedInClient {
     public LoggedInClient(String url, ServerFacade facade) {
         currentAuthToken = null;
         server = facade;
+        System.out.println(printBlackGameSample());
     }
 
     public void setCurrentAuthData(AuthData aD) {
@@ -66,6 +67,11 @@ public class LoggedInClient {
             try {
                 //need to get correct gameID:
                 GameData gameToJoin = gamesMap.get(Integer.parseInt(params[0]));
+                //need to check for if there is no game.
+                if (gameToJoin == null) {
+                    return EscapeSequences.SET_TEXT_COLOR_RED + "game number: " + Integer.parseInt(params[0]) + " does not exist." +
+                            "\nPlease type 'list' to list games again and run join with a valid game number.";
+                }
                 JoinGameInput joinGameInput = new JoinGameInput(params[1], gameToJoin.gameID());
                 server.joinGame(currentAuthToken, joinGameInput); //do I need to do anything with this?
             } catch (ServerException e) {
@@ -191,16 +197,19 @@ public class LoggedInClient {
     }
 
     public String observe(String[] params) {
-        if (params == null || params.length < 2) {
-            return EscapeSequences.SET_TEXT_COLOR_RED + "cmd: 'join' did not have enough parameters.\n" +
+        if (params == null || params.length < 1) {
+            return EscapeSequences.SET_TEXT_COLOR_RED + "cmd: 'observe' did not have enough parameters.\n" +
                     EscapeSequences.RESET_TEXT_COLOR;
         }
         if (gamesMap.isEmpty()) {
             return "There are no games to join.\nPlease type 'help' to review syntax for creating a new game.";
         } else {
             try {
-                //need to get correct gameID:
                 GameData gameToJoin = gamesMap.get(Integer.parseInt(params[0]));
+                if (gameToJoin == null) {
+                    return EscapeSequences.SET_TEXT_COLOR_RED + "game number: " + Integer.parseInt(params[0]) + " does not exist." +
+                            "\nPlease type 'list' to list games again and run join with a valid game number.";
+                }
             } catch (NumberFormatException e) {
                 return EscapeSequences.SET_TEXT_COLOR_RED + """
                         The game number you provided was invalid
@@ -258,13 +267,13 @@ public class LoggedInClient {
 
     public String printWhiteFirstRow(int r, ChessBoard board) {
         StringBuilder row = new StringBuilder();
-        for (int c = 1; c < 9; c++) {
-            if (c % 2 != 0) {//column number is odd,
-                row.append(EscapeSequences.SET_BG_COLOR_WHITE + " ");
+        for (int c = 8; c >= 1; c--) {
+            if (c % 2 == 0) {
+                row.append(EscapeSequences.SET_BG_COLOR_BLACK + " ");
                 row.append(stringizeChessPiece(r, c, board));
                 row.append(" ");
-            } else {
-                row.append(EscapeSequences.SET_BG_COLOR_BLACK + " ");
+            } else {//column number is odd,
+                row.append(EscapeSequences.SET_BG_COLOR_WHITE + " ");
                 row.append(stringizeChessPiece(r, c, board));
                 row.append(" ");
             }
@@ -274,13 +283,13 @@ public class LoggedInClient {
 
     public String printBlackFirstRow(int r, ChessBoard board) {
         StringBuilder row = new StringBuilder();
-        for (int c = 1; c < 9; c++) {
-            if (c % 2 == 0) {//column number is odd,
-                row.append(EscapeSequences.SET_BG_COLOR_WHITE + " ");
+        for (int c = 8; c >= 1; c--) {
+            if (c % 2 != 0) {
+                row.append(EscapeSequences.SET_BG_COLOR_BLACK + " ");
                 row.append(stringizeChessPiece(r, c, board));
                 row.append(" ");
-            } else {
-                row.append(EscapeSequences.SET_BG_COLOR_BLACK + " ");
+            } else {//column number is odd,
+                row.append(EscapeSequences.SET_BG_COLOR_WHITE + " ");
                 row.append(stringizeChessPiece(r, c, board));
                 row.append(" ");
             }
