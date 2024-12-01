@@ -20,6 +20,9 @@ public class LoggedInClient {
         currentAuthToken = null;
         server = facade;
         System.out.println(printBlackGameSample());
+        System.out.println("This is black game, blue on bottom, queens on their colors");
+        System.out.println(printWhiteGameSample());
+        System.out.println("This is a white game, blue on top, red on bottom, queens on their colors.");
     }
 
     public void setCurrentAuthData(AuthData aD) {
@@ -234,9 +237,9 @@ public class LoggedInClient {
             } else {
                 gameString.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SET_TEXT_COLOR_BLACK + String.format(" %d ", r));
                 if (r % 2 != 0) {
-                    gameString.append(printWhiteFirstRow(r, board));
+                    gameString.append(printBlackFirstRow(r, board, -1));
                 } else {
-                    gameString.append(printBlackFirstRow(r, board));
+                    gameString.append(printWhiteFirstRow(r, board, -1));
                 }
                 gameString.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SET_TEXT_COLOR_BLACK + String.format(" %d ", r) + EscapeSequences.RESET_BG_COLOR + "\n");
             }
@@ -254,10 +257,10 @@ public class LoggedInClient {
                 gameString.append(topBottomWhitePerspective());
             } else {
                 gameString.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SET_TEXT_COLOR_BLACK + String.format(" %d ", r));
-                if (r % 2 == 0) {
-                    gameString.append(printWhiteFirstRow(r, board));
+                if (r % 2 == 0) { //if row is even
+                    gameString.append(printWhiteFirstRow(r, board, 1));
                 } else {
-                    gameString.append(printBlackFirstRow(r, board));
+                    gameString.append(printBlackFirstRow(r, board, 1));
                 }
                 gameString.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SET_TEXT_COLOR_BLACK + String.format(" %d ", r) + EscapeSequences.RESET_BG_COLOR + "\n");
             }
@@ -265,36 +268,56 @@ public class LoggedInClient {
         return gameString.toString();
     }
 
-    public String printWhiteFirstRow(int r, ChessBoard board) {
+    public String printWhiteFirstRow(int r, ChessBoard board, int direction) {
         StringBuilder row = new StringBuilder();
-        for (int c = 8; c >= 1; c--) {
-            if (c % 2 == 0) {
-                row.append(EscapeSequences.SET_BG_COLOR_BLACK + " ");
-                row.append(stringizeChessPiece(r, c, board));
-                row.append(" ");
-            } else {//column number is odd,
-                row.append(EscapeSequences.SET_BG_COLOR_WHITE + " ");
-                row.append(stringizeChessPiece(r, c, board));
-                row.append(" ");
+        if (direction > 0) { //direction is positive, so we go positive.
+            for (int c = 1; c < 9; c++) {
+                secondRowPrintHelper(r, board, row, c);
+            }
+        } else {
+            for (int c = 8; c >= 1; c--) {
+                secondRowPrintHelper(r, board, row, c);
             }
         }
         return row.toString();
     }
 
-    public String printBlackFirstRow(int r, ChessBoard board) {
+    private void secondRowPrintHelper(int r, ChessBoard board, StringBuilder row, int c) {
+        if (c % 2 == 0) {
+            row.append(EscapeSequences.SET_BG_COLOR_BLACK + " ");
+            row.append(stringizeChessPiece(r, c, board));
+            row.append(" ");
+        } else {//column number is odd,
+            row.append(EscapeSequences.SET_BG_COLOR_WHITE + " ");
+            row.append(stringizeChessPiece(r, c, board));
+            row.append(" ");
+        }
+    }
+
+    public String printBlackFirstRow(int r, ChessBoard board, int direction) {
         StringBuilder row = new StringBuilder();
-        for (int c = 8; c >= 1; c--) {
-            if (c % 2 != 0) {
-                row.append(EscapeSequences.SET_BG_COLOR_BLACK + " ");
-                row.append(stringizeChessPiece(r, c, board));
-                row.append(" ");
-            } else {//column number is odd,
-                row.append(EscapeSequences.SET_BG_COLOR_WHITE + " ");
-                row.append(stringizeChessPiece(r, c, board));
-                row.append(" ");
+        if (direction > 0) {
+            for (int c = 1; c < 9; c++) {
+                printRowsHelper(r, board, row, c);
+            }
+        } else {
+            for (int c = 8; c >= 1; c--) {
+                printRowsHelper(r, board, row, c);
             }
         }
         return row.toString();
+    }
+
+    private void printRowsHelper(int r, ChessBoard board, StringBuilder row, int c) {
+        if (c % 2 != 0) {
+            row.append(EscapeSequences.SET_BG_COLOR_BLACK + " ");
+            row.append(stringizeChessPiece(r, c, board));
+            row.append(" ");
+        } else {//column number is odd,
+            row.append(EscapeSequences.SET_BG_COLOR_WHITE + " ");
+            row.append(stringizeChessPiece(r, c, board));
+            row.append(" ");
+        }
     }
 
     public String stringizeChessPiece(int r, int c, ChessBoard board) {
