@@ -7,5 +7,6 @@ public class Main {
         var server = new Server(); //this will call the default values!!
         server.run(8080);
         System.out.println("♕ 240 Chess Server: " + piece);
+        //will need to add websocket functionality here
     }
 }
