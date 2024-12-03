@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Map;
 
 public class LoggedInClient {
-    private AuthData currentAuthToken;
+    private AuthData currentAuthData;
     private final ServerFacade server;
-    private Map<Integer, GameData> gamesMap = new HashMap<>();
+    private final Map<Integer, GameData> gamesMap = new HashMap<>();
 
     public LoggedInClient(String url, ServerFacade facade) {
-        currentAuthToken = null;
+        currentAuthData = null;
         server = facade;
         System.out.println(printBlackGameSample());
         System.out.println("This is black game, blue on bottom, queens on their colors");
@@ -26,11 +26,11 @@ public class LoggedInClient {
     }
 
     public void setCurrentAuthData(AuthData aD) {
-        currentAuthToken = aD;
+        currentAuthData = aD;
     }
 
     public AuthData getCurrentAuthData() {
-        return currentAuthToken;
+        return currentAuthData;
     }
 
     public String eval(String line) {
@@ -76,7 +76,7 @@ public class LoggedInClient {
                             "\nPlease type 'list' to list games again and run join with a valid game number.";
                 }
                 JoinGameInput joinGameInput = new JoinGameInput(params[1], gameToJoin.gameID());
-                server.joinGame(currentAuthToken, joinGameInput); //do I need to do anything with this?
+                server.joinGame(currentAuthData, joinGameInput); //do I need to do anything with this?
             } catch (ServerException e) {
                 if (e.getrCode() == 500) {
                     return EscapeSequences.SET_TEXT_COLOR_RED + "Uh oh, an internal server error occurred: \n" +
@@ -103,7 +103,7 @@ public class LoggedInClient {
             }
             //join game successful
             return EscapeSequences.SET_TEXT_COLOR_GREEN + "You have successfully joined the game " + params[0] + " as player: " +
-                    currentAuthToken.username() + EscapeSequences.RESET_TEXT_COLOR + "\n" +
+                    currentAuthData.username() + EscapeSequences.RESET_TEXT_COLOR + "\n" +
                     printWhiteGameSample() + "\n" + printBlackGameSample();
         }
     }
@@ -114,7 +114,7 @@ public class LoggedInClient {
                     EscapeSequences.RESET_TEXT_COLOR;
         } else {
             try {
-                int newGameID = server.createGame(currentAuthToken, params[0]);
+                int newGameID = server.createGame(currentAuthData, params[0]);
             } catch (ServerException e) {
                 if (e.getrCode() == 500) {
                     return EscapeSequences.SET_TEXT_COLOR_RED + "Uh oh, an internal server error occurred: \n" +
@@ -144,7 +144,7 @@ public class LoggedInClient {
     public String list() {
         List<GameData> gamesList = null;
         try {
-            gamesList = (List<GameData>) server.listGames(currentAuthToken);
+            gamesList = (List<GameData>) server.listGames(currentAuthData);
         } catch (ServerException e) {
             if (e.getrCode() == 500) {
                 return EscapeSequences.SET_TEXT_COLOR_RED + "Uh oh, an internal server error occurred: \n" +
@@ -193,8 +193,8 @@ public class LoggedInClient {
     }
 
     public String logout() {
-        String username = currentAuthToken.username();
-        currentAuthToken = null; //reset the authData so that I can read that in the repl.
+        String username = currentAuthData.username();
+        currentAuthData = null; //reset the authData so that I can read that in the repl.
         return String.format("Logging '%s' out.", username) +
                 "\nrerun 'help' for commands again if needed.";
     }
@@ -220,7 +220,7 @@ public class LoggedInClient {
             }
             //join game successful
             return EscapeSequences.SET_TEXT_COLOR_GREEN + "You have successfully Observed the game " + params[0] + " as player: " +
-                    currentAuthToken.username() + EscapeSequences.RESET_TEXT_COLOR + "\n" +
+                    currentAuthData.username() + EscapeSequences.RESET_TEXT_COLOR + "\n" +
                     printWhiteGameSample() + "\n" + printBlackGameSample();
         }
 

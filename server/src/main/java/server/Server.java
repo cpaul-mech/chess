@@ -19,6 +19,7 @@ public class Server {
     private final Gson serializer = new Gson();
 
     public Server() {
+
     }
 
     public int run(int desiredPort) {
@@ -26,6 +27,7 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
+        Spark.webSocket("/ws",);
         Spark.post("/user", this::registerUser);
         Spark.post("/session", this::login);
         Spark.delete("/db", this::clearAllDB);
