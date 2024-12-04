@@ -7,6 +7,7 @@ import handler.JoinGameInput;
 import model.GameData;
 import model.UserData;
 import exceptions.BadServiceRequest;
+import server.websocket.WebsocketHandler;
 import service.ErrorMessage;
 import exceptions.UnauthorizedAccessError;
 import exceptions.UserAlreadyTakenError;
@@ -17,9 +18,13 @@ import java.util.Map;
 public class Server {
     private final Handler handler = new Handler();
     private final Gson serializer = new Gson();
+    private final WebsocketHandler wsHandler = new WebsocketHandler(this);
 
     public Server() {
+    }
 
+    public Handler getHandler() {
+        return handler;
     }
 
     public int run(int desiredPort) {
@@ -27,7 +32,7 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        Spark.webSocket("/ws",);
+        Spark.webSocket("/ws", wsHandler);
         Spark.post("/user", this::registerUser);
         Spark.post("/session", this::login);
         Spark.delete("/db", this::clearAllDB);

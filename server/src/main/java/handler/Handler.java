@@ -7,7 +7,6 @@ import model.GameData;
 import model.UserData;
 import service.*;
 
-import java.sql.Struct;
 import java.util.Collection;
 
 public class Handler {//this class will be used to call all the various services
@@ -28,6 +27,10 @@ public class Handler {//this class will be used to call all the various services
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public AuthService getAuthService() {
+        return authService;
     }
 
 
