@@ -61,7 +61,7 @@ public class WebsocketHandler {
     }
 
     private void connect(Connection conn, String msg) {
-
+        //TODO: HOW DOES THE CONNECTION MANAGER ONLY NOTIFY THOSE WHO BELONG TO A SPECIFIC GAME?
         try {
             connections.add(conn);
             ConnectCommand connectCommand = serializer.fromJson(msg, ConnectCommand.class);
