@@ -1,11 +1,11 @@
 package server.websocket;
 
 import com.google.gson.Gson;
+import commands.ConnectCommand;
 import commands.UserGameCommand;
 import dataaccess.DataAccessException;
 import exceptions.UnauthorizedAccessError;
 import messages.ErrorMessage;
-import model.AuthData;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
@@ -25,20 +25,51 @@ public class WebsocketHandler {
     }
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws IOException {
+    public void onMessage(Session session, String message) {
 //        System.out.printf("Received: %s", message);
 //        session.getRemote().sendString("WebSocket response: " + message);
         try {
             UserGameCommand command = serializer.fromJson(message, UserGameCommand.class);
             Connection conn = getConnection(command.getAuthToken(), session);
+            if (conn != null) {
+                switch (command.getCommandType()) {
+                    case UserGameCommand.CommandType.CONNECT -> connect(conn, message);
+                    case LEAVE -> leave(conn, message);
+                    case MAKE_MOVE -> makeMove(conn, message);
+                    case RESIGN -> resign(conn, message);
+                    case null, default -> {
+                        return;
+                    }
+                }
+            }
         } catch (Exception ex) {
             sendMessage(session.getRemote(), new ErrorMessage(ex.getMessage()));
         }
 
     }
 
+    private void resign(Connection conn, String message) {
+
+    }
+
+    private void makeMove(Connection conn, String message) {
+    }
+
+    private void leave(Connection conn, String message) {
+    }
+
+    private void connect(Connection conn, String msg) {
+        ConnectCommand connectCommand = serializer.fromJson(msg, ConnectCommand.class);
+        ErrorMessage e = new ErrorMessage("This is an error message!!");
+        sendMessage(conn.session.getRemote(), e);
+    }
+
     public void sendMessage(RemoteEndpoint remote, ErrorMessage errorMessage) {
-        //TODO: What does this method need to include?
+        try {
+            remote.sendString(serializer.toJson(errorMessage));
+        } catch (IOException e) {
+            throw new RuntimeException(e); //this shouldn't happen.
+        }
     }
 
     public Connection getConnection(String authToken, Session session) throws DataAccessException {
