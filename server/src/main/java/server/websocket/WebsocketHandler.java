@@ -12,6 +12,8 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import server.Server;
 
+import java.io.IOException;
+
 @WebSocket
 public class WebsocketHandler {
     private final ConnectionManager connections = new ConnectionManager();
@@ -23,31 +25,35 @@ public class WebsocketHandler {
     }
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) {
+    public void onMessage(Session session, String message) throws IOException {
+//        System.out.printf("Received: %s", message);
+//        session.getRemote().sendString("WebSocket response: " + message);
         try {
             UserGameCommand command = serializer.fromJson(message, UserGameCommand.class);
-            var conn = getConnection(command.getAuthToken(), session);
+            Connection conn = getConnection(command.getAuthToken(), session);
         } catch (Exception ex) {
             sendMessage(session.getRemote(), new ErrorMessage(ex.getMessage()));
         }
+
     }
 
-    private void sendMessage(RemoteEndpoint remote, ErrorMessage errorMessage) {
+    public void sendMessage(RemoteEndpoint remote, ErrorMessage errorMessage) {
         //TODO: What does this method need to include?
     }
 
-    private Connection getConnection(String authToken, Session session) throws DataAccessException {
+    public Connection getConnection(String authToken, Session session) throws DataAccessException {
         //TODO: need username so I can get the right Connection Object.
         String username = wsVerifyAuthToken(authToken);
         if (username != null) {
-            return new Connection(username, session);
+            Connection c = new Connection(username, session);
+            return c;
         } else {
             throw new UnauthorizedAccessError("Error: unauthorized");
         }
 
     }
 
-    private String wsVerifyAuthToken(String authToken) throws DataAccessException {
+    public String wsVerifyAuthToken(String authToken) throws DataAccessException {
         boolean result = server.getHandler().getAuthService().verifyAuthToken(authToken);
         var authService = server.getHandler().getAuthService();
         if (result) {
