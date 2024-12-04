@@ -15,6 +15,10 @@ public class ConnectionManager {
         connections.put(userName, connection);
     }
 
+    public void add(Connection conn) {
+        connections.put(conn.userName, conn);
+    }
+
     public void remove(String visitorName) {
         connections.remove(visitorName);
     }

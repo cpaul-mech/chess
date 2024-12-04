@@ -33,6 +33,10 @@ public class Handler {//this class will be used to call all the various services
         return authService;
     }
 
+    public GameService getGameService() {
+        return gameService;
+    }
+
 
     public AuthData registerUser(UserData userData) throws DataAccessException {
         //I'm going to replace the password here with a hashed password string.
