@@ -2,12 +2,12 @@ package server.websocket;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import commands.ConnectCommand;
-import commands.UserGameCommand;
+import websocket.commands.ConnectCommand;
+import websocket.commands.UserGameCommand;
 import dataaccess.DataAccessException;
-import messages.ErrorMessage;
-import messages.LoadGameMessage;
-import messages.NotificationMessage;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
@@ -32,7 +32,7 @@ public class WebsocketHandler {
     public void onMessage(Session session, String message) {
         try {
             UserGameCommand command = serializer.fromJson(message, UserGameCommand.class);
-            Connection conn = getConnection(command.getAuthToken(), session); //this verifies authToken!!
+            Connection conn = createIncompleteConnection(command.getAuthToken(), session); //this verifies authToken!!
             if (conn != null) {
                 switch (command.getCommandType()) {
                     case CONNECT -> connect(conn, message);
@@ -63,13 +63,22 @@ public class WebsocketHandler {
     private void connect(Connection conn, String msg) {
         //TODO: HOW DOES THE CONNECTION MANAGER ONLY NOTIFY THOSE WHO BELONG TO A SPECIFIC GAME?
         try {
-            connections.add(conn);
             ConnectCommand connectCommand = serializer.fromJson(msg, ConnectCommand.class);
+            //now we have the connectCommand, giving us the gameID of the intended game, and thus which color the player belongs to.
             String color = getPlayerColor(conn, connectCommand);
-            String gameName = getGameData(connectCommand).gameName();
-            String connectNotification = String.format("Player: %s, joined game %s as %s", conn.userName, gameName, color);
-            NotificationMessage noti = new NotificationMessage(connectNotification);
-            connections.broadcast(conn.userName, noti);
+            //now we need to fill out the other things in the connection object.
+            switch (color) {
+                case "BLACK" -> conn.setRole(Connection.Role.BLACK);
+                case "WHITE" -> conn.setRole(Connection.Role.WHITE);
+                case null -> conn.setRole(Connection.Role.OBSERVER);
+                default -> throw new DataAccessException("GameID Not found!");
+            }
+            conn.setGameID(connectCommand.getGameID());
+            connections.add(conn); //now it's safe to add the connection!!
+            String gameName = getGameData(connectCommand.getGameID()).gameName();
+            String connectNotification = String.format("Player '%s', joined game '%s' as '%s'", conn.userName, gameName, conn.role.toString());
+            NotificationMessage note = new NotificationMessage(connectNotification);
+            connections.broadcastToAllInGame(conn.gameID, conn.userName, note);
 
             LoadGameMessage lgm = createLoadGameMessage(connectCommand);
             conn.session.getRemote().sendString(serializer.toJson(lgm));
@@ -77,16 +86,18 @@ public class WebsocketHandler {
         } catch (IOException e) {
             sendErrorMessage(conn.session.getRemote(), new ErrorMessage("an IOException occurred..."));
         } catch (DataAccessException e) {
-            sendErrorMessage(conn.session.getRemote(), new ErrorMessage("Error: unauthorized"));
+            sendErrorMessage(conn.session.getRemote(), new ErrorMessage(e.getMessage()));
         }
 
     }
 
     private String getPlayerColor(Connection conn, ConnectCommand connectCommand) throws DataAccessException {
         String username = conn.userName;
-        GameData gameData = getGameData(connectCommand);
+        GameData gameData = getGameData(connectCommand.getGameID());
         //check if it matches either player color
-        if (Objects.equals(gameData.blackUsername(), username)) {
+        if (gameData == null) {
+            throw new DataAccessException("GameID not found!!");
+        } else if (Objects.equals(gameData.blackUsername(), username)) {
             return "BLACK";
         } else if (Objects.equals(gameData.whiteUsername(), username)) {
             return "WHITE";
@@ -95,13 +106,13 @@ public class WebsocketHandler {
         }
     }
 
-    private GameData getGameData(ConnectCommand connectCommand) throws DataAccessException {
-        return server.getHandler().getGameService().getGame(connectCommand.getGameID());
+    private GameData getGameData(Integer gameID) throws DataAccessException {
+        return server.getHandler().getGameService().getGame(gameID);
     }
 
     private LoadGameMessage createLoadGameMessage(ConnectCommand con) {
         try {
-            ChessGame game = server.getHandler().getGameService().getGame(con.getGameID()).game();
+            ChessGame game = getGameData(con.getGameID()).game();
             return new LoadGameMessage(game);
         } catch (DataAccessException e) {
             return null;
@@ -116,11 +127,11 @@ public class WebsocketHandler {
         }
     }
 
-    public Connection getConnection(String authToken, Session session) {
+    public Connection createIncompleteConnection(String authToken, Session session) {
         try {
             String username = wsVerifyAuthToken(authToken);
             if (username != null) {
-                return new Connection(username, session);
+                return new Connection(username, session, null, -1);
             } else {
                 return null;
             }
