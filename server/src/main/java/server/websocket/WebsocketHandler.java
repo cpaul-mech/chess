@@ -67,6 +67,10 @@ public class WebsocketHandler {
             //check for if Move is valid
             ChessGame chessGame = gameData.game();
             ChessMove move = moveCommand.move;
+            //need to create a chessGame method that will check which color piece this does.
+            if (!Objects.equals(conn.role.toString(), chessGame.getTeamTurn().toString())) {
+                throw new Exception("Player is trying to move their opponent's piece");
+            }
             chessGame.makeMove(move); //this will throw some kind of exception if the move is incorrect.
             GameData newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), chessGame);
             //now store the newest chessgame, then send out a notification.
@@ -76,7 +80,7 @@ public class WebsocketHandler {
             connections.broadcastToAllInGame(gameData.gameID(), conn.userName, notificationMessage);
             //now broadcast the LoadGameMessage to all players!!
             LoadGameMessage lgm = createLoadGameMessage(moveCommand);
-            connections.broadcastToAllInGame(gameData.gameID(), null, lgm);
+            connections.broadcastToAllInGame(gameData.gameID(), lgm);
 
         } catch (Exception e) {
             sendErrorMessage(conn.session.getRemote(), new ErrorMessage(e.getMessage()));
@@ -115,7 +119,6 @@ public class WebsocketHandler {
     }
 
     private void connect(Connection conn, String msg) {
-        //TODO: HOW DOES THE CONNECTION MANAGER ONLY NOTIFY THOSE WHO BELONG TO A SPECIFIC GAME?
         try {
             ConnectCommand connectCommand = serializer.fromJson(msg, ConnectCommand.class);
             //now we have the connectCommand, giving us the gameID of the intended game, and thus which color the player belongs to.

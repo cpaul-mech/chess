@@ -47,9 +47,27 @@ public class ConnectionManager {
         for (var c : connections.values()) {
             if (c.session.isOpen()) {//checking to add to the removeList.
                 if (c.gameID == relevantGameID) {
-                    if (!c.userName.equals(excludeUsername) || excludeUsername == null) {
+                    if (!c.userName.equals(excludeUsername)) {
                         c.send(serializer.toJson(serverMessage));
                     }
+                }
+            } else {
+                removeList.add(c);
+            }
+        }
+        // Clean up any connections that were left open.
+        for (var c : removeList) {
+            connections.remove(c.userName);
+        }
+    }
+
+    public void broadcastToAllInGame(Integer relevantGameID, ServerMessage serverMessage) throws IOException {
+        //first, we find the gameID that we need to check for, and send it to all connections with that gameID except for the excluded one.
+        var removeList = new ArrayList<Connection>();
+        for (var c : connections.values()) {
+            if (c.session.isOpen()) {//checking to add to the removeList.
+                if (c.gameID == relevantGameID) {
+                    c.send(serializer.toJson(serverMessage));
                 }
             } else {
                 removeList.add(c);
