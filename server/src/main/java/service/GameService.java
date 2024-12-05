@@ -41,6 +41,10 @@ public class GameService {
         return gameDataAccess.dbSize();
     }
 
+    public void updateEntireGame(int gameID, GameData gameData) throws DataAccessException {
+        gameDataAccess.updateGame(gameID, gameData);
+    }
+
     public void updateGame(String updateColor, int gameID, String newUsername) throws DataAccessException {
         //what happens if the gameID is invalid? we return null... but that doesn't make this stuff true
         ChessGame.TeamColor colorToChange;

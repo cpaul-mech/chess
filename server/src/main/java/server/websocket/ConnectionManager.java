@@ -46,8 +46,10 @@ public class ConnectionManager {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {//checking to add to the removeList.
-                if (c.gameID == relevantGameID && !c.userName.equals(excludeUsername)) {
-                    c.send(serializer.toJson(serverMessage));
+                if (c.gameID == relevantGameID) {
+                    if (!c.userName.equals(excludeUsername) || excludeUsername == null) {
+                        c.send(serializer.toJson(serverMessage));
+                    }
                 }
             } else {
                 removeList.add(c);

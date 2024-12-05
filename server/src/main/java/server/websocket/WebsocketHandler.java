@@ -1,9 +1,11 @@
 package server.websocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import websocket.commands.ConnectCommand;
 import websocket.commands.LeaveCommand;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import dataaccess.DataAccessException;
 import websocket.messages.ErrorMessage;
@@ -56,6 +58,29 @@ public class WebsocketHandler {
     }
 
     private void makeMove(Connection conn, String message) {
+        try {
+            MakeMoveCommand moveCommand = serializer.fromJson(message, MakeMoveCommand.class);
+            conn = connections.getConnection(conn.userName); //update the connection field
+            //the chessGame object has the error checking functionality for moving, and then the game must be stored anew through the updateGame
+            //method accessed through the handler object that I just wrote.
+            GameData gameData = getGameData(moveCommand.getGameID());
+            //check for if Move is valid
+            ChessGame chessGame = gameData.game();
+            ChessMove move = moveCommand.move;
+            chessGame.makeMove(move); //this will throw some kind of exception if the move is incorrect.
+            GameData newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), chessGame);
+            //now store the newest chessgame, then send out a notification.
+            server.getHandler().updateEntireGame(moveCommand.getAuthToken(), newGameData);
+            String moveNotification = String.format("Player: '%s' made move: '%s'.", conn.userName, move);
+            NotificationMessage notificationMessage = new NotificationMessage(moveNotification);
+            connections.broadcastToAllInGame(gameData.gameID(), conn.userName, notificationMessage);
+            //now broadcast the LoadGameMessage to all players!!
+            LoadGameMessage lgm = createLoadGameMessage(moveCommand);
+            connections.broadcastToAllInGame(gameData.gameID(), null, lgm);
+
+        } catch (Exception e) {
+            sendErrorMessage(conn.session.getRemote(), new ErrorMessage(e.getMessage()));
+        }
     }
 
     private void leave(Connection conn, String message) {
@@ -132,9 +157,9 @@ public class WebsocketHandler {
         return server.getHandler().getGameService().getGame(gameID);
     }
 
-    private LoadGameMessage createLoadGameMessage(ConnectCommand con) {
+    private LoadGameMessage createLoadGameMessage(UserGameCommand command) {
         try {
-            ChessGame game = getGameData(con.getGameID()).game();
+            ChessGame game = getGameData(command.getGameID()).game();
             return new LoadGameMessage(game);
         } catch (DataAccessException e) {
             return null;

@@ -77,6 +77,12 @@ public class Handler {//this class will be used to call all the various services
         }
     }
 
+    public void updateEntireGame(String authToken, GameData gameData) throws DataAccessException {
+        if (authService.verifyAuthToken(authToken)) {
+            gameService.updateEntireGame(gameData.gameID(), gameData);
+        }
+    }
+
     public void clearAllDB() throws DataAccessException {
         userService.clearUserDB();
         gameService.clearGameDB();
