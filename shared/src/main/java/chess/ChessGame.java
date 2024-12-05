@@ -13,6 +13,7 @@ import java.util.Objects;
 public class ChessGame {
     private ChessBoard board = new ChessBoard();
     private TeamColor whoTurn;
+    private boolean isGameOver = false;
 
     public ChessGame() {
         board.resetBoard();//starts the board off in a fresh state.
@@ -27,12 +28,12 @@ public class ChessGame {
         if (!(o instanceof ChessGame chessGame)) {
             return false;
         }
-        return board.equals(chessGame.board) && whoTurn == chessGame.whoTurn;
+        return board.equals(chessGame.board) && whoTurn == chessGame.whoTurn && (isGameOver == chessGame.isGameOver);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(board, whoTurn);
+        return Objects.hash(board, whoTurn, isGameOver);
     }
 
     /**
@@ -58,6 +59,10 @@ public class ChessGame {
         } else {
             whoTurn = TeamColor.WHITE;
         }
+    }
+
+    public void setGameOver() {
+        isGameOver = true;
     }
 
     /**
@@ -106,7 +111,7 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         var pieceHere = board.getPiece(startPosition);
-        if (pieceHere != null) {
+        if (pieceHere != null && !isGameOver) {
             Collection<ChessMove> moveSet = pieceHere.pieceMoves(board, startPosition);
             //this will return all the moves available to the piece,
             //but it doesn't check for if the piece would place the king into check or leave the king in check

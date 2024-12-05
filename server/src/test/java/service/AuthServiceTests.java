@@ -21,7 +21,7 @@ public class AuthServiceTests {
     @BeforeEach
     public void clear() throws DataAccessException {
         authService.clearAuthDB();
-        assertEquals(authService.dbSize(), 0);
+        assertEquals(0, authService.dbSize());
     }
 
     @Test
@@ -29,7 +29,7 @@ public class AuthServiceTests {
         var newUser = new UserData("crp", "abcd", "helpme@hotmail.com");
         var newUserAuthData = userService.registerUser(newUser);
         var result = authService.getAuthData(newUserAuthData.authToken());
-        assertEquals(result.getClass(), AuthData.class);
+        assertEquals(AuthData.class, result.getClass());
     }
 
     @Test
