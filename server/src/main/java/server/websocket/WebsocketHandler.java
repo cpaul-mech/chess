@@ -127,17 +127,14 @@ public class WebsocketHandler {
         }
     }
 
-    public Connection createIncompleteConnection(String authToken, Session session) {
-        try {
-            String username = wsVerifyAuthToken(authToken);
-            if (username != null) {
-                return new Connection(username, session, null, -1);
-            } else {
-                return null;
-            }
-        } catch (DataAccessException e) {
+    public Connection createIncompleteConnection(String authToken, Session session) throws DataAccessException {
+        String username = wsVerifyAuthToken(authToken);
+        if (username != null) {
+            return new Connection(username, session, null, -1);
+        } else {
             return null;
         }
+
     }
 
     public String wsVerifyAuthToken(String authToken) throws DataAccessException {
@@ -146,7 +143,7 @@ public class WebsocketHandler {
         if (result) {
             return authService.getAuthData(authToken).username();
         } else {
-            return null;
+            throw new DataAccessException("Error: unauthorized");
         }
     }
 
