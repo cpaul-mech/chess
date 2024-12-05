@@ -90,18 +90,43 @@ public class WebsocketHandler {
             ChessGame chessGame = gameData.game();
             ChessMove move = moveCommand.move;
             //need to create a chessGame method that will check which color piece this does.
-            if (!Objects.equals(conn.role.toString(), chessGame.getTeamTurn().toString())) {
-                throw new Exception("Player is trying to move their opponent's piece");
+            if (!Objects.equals(conn.role.toString(), chessGame.getTeamTurn().toString()) || conn.role == Connection.Role.OBSERVER) {
+                throw new Exception("Player is trying to move another players piece.");
             }
             chessGame.makeMove(move); //this will throw some kind of exception if the move is incorrect.
-            GameData newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), chessGame);
-            //now store the newest chessgame, then send out a notification.
-            server.getHandler().updateEntireGame(moveCommand.getAuthToken(), newGameData);
+            LoadGameMessage lgm = createLoadGameMessage(moveCommand);
             String moveNotification = String.format("Player: '%s' made move: '%s'.", conn.userName, move);
             NotificationMessage notificationMessage = new NotificationMessage(moveNotification);
             connections.broadcastToAllInGame(gameData.gameID(), conn.userName, notificationMessage);
+            //now check for if checkmate has occured.
+            //need to add notification that the other team is in check!!
+            ChessGame.TeamColor checkColorForCheck = null;
+            String otherPlayerName = "";
+            switch (conn.role) {
+                case WHITE -> {
+                    checkColorForCheck = ChessGame.TeamColor.BLACK;
+                    otherPlayerName = gameData.blackUsername();
+                }
+                case BLACK -> {
+                    checkColorForCheck = ChessGame.TeamColor.WHITE;
+                    otherPlayerName = gameData.whiteUsername();
+                }
+            }
+            if (chessGame.isInCheckmate(checkColorForCheck)) {
+                String winMessage = moveNotification + "\n" + String.format("Player: '%s' on team '%s' is in check mate!\n" +
+                        "Congratulations Player: '%s', you have won the game!", otherPlayerName, checkColorForCheck.toString(), conn.userName);
+                NotificationMessage winNotification = new NotificationMessage(winMessage);
+                connections.broadcastToAllInGame(moveCommand.getGameID(), winNotification);
+                chessGame.setGameOver();
+            } else if (chessGame.isInCheck(checkColorForCheck)) {
+                String checkMessage = String.format("Player: '%s' on team '%s' is in check!", otherPlayerName, checkColorForCheck.toString());
+                NotificationMessage checkNotification = new NotificationMessage(checkMessage);
+                connections.broadcastToAllInGame(moveCommand.getGameID(), checkNotification);
+            }
+            GameData newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), chessGame);
+            //now store the newest chessgame, then send out a notification.
+            server.getHandler().updateEntireGame(moveCommand.getAuthToken(), newGameData);
             //now broadcast the LoadGameMessage to all players!!
-            LoadGameMessage lgm = createLoadGameMessage(moveCommand);
             connections.broadcastToAllInGame(gameData.gameID(), lgm);
 
         } catch (Exception e) {
