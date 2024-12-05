@@ -3,10 +3,7 @@ package server.websocket;
 import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
-import websocket.commands.ConnectCommand;
-import websocket.commands.LeaveCommand;
-import websocket.commands.MakeMoveCommand;
-import websocket.commands.UserGameCommand;
+import websocket.commands.*;
 import dataaccess.DataAccessException;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -54,6 +51,31 @@ public class WebsocketHandler {
     }
 
     private void resign(Connection conn, String message) {
+        try {
+            ResignCommand resignCommand = serializer.fromJson(message, ResignCommand.class);
+            conn = connections.getConnection(conn.userName);
+            //need to send a notificaiton saying that a player resigned the game. the game is now over, and cannot be played anymore
+            //but doesn't actually force them to leave the game!!
+            GameData gameData = getGameData(resignCommand.getGameID());
+            if (gameData.game().isTheGameOver()) {
+                throw new Exception("The game is over, no other players can resign.");
+            } else if (conn.role == Connection.Role.OBSERVER) {
+                throw new Exception("You are an observer and cannot resign for an actual player.");
+            }
+            //now that we have access to the chessGame class, we can set the game to over
+            gameData.game().setGameOver();
+            GameData newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+            server.getHandler().updateEntireGame(resignCommand.getAuthToken(), newGameData);
+            String resignMessage = String.format("Player: '%s' has forfeited the game.", conn.userName);
+            NotificationMessage notificationMessage = new NotificationMessage(resignMessage);
+            connections.broadcastToAllInGame(resignCommand.getGameID(), notificationMessage);
+            //now overwrite it, it won't ever return any valid moves!!
+        } catch (Exception e) {
+            sendErrorMessage(conn.session.getRemote(), new ErrorMessage(e.getMessage()));
+        }
+    }
+
+    private void winsGame() {
 
     }
 
