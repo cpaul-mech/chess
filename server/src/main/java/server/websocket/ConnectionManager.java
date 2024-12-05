@@ -1,5 +1,6 @@
 package server.websocket;
 
+import com.google.gson.Gson;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
     public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
+    private final Gson serializer = new Gson();
 
     public void add(Connection conn) {
         connections.put(conn.userName, conn);
@@ -22,7 +24,7 @@ public class ConnectionManager {
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
                 if (!c.userName.equals(excludeVisitorName)) {
-                    c.send(serverMessage.toString());
+                    c.send(serializer.toJson(serverMessage));
                 }
             } else {
                 removeList.add(c);
@@ -41,7 +43,7 @@ public class ConnectionManager {
         for (var c : connections.values()) {
             if (c.session.isOpen()) {//checking to add to the removeList.
                 if (c.gameID == relevantGameID && !c.userName.equals(excludeUsername)) {
-                    c.send(serverMessage.toString());
+                    c.send(serializer.toJson(serverMessage));
                 }
             } else {
                 removeList.add(c);
