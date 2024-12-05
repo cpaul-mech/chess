@@ -64,7 +64,8 @@ public class WebsocketHandler {
             }
             //now that we have access to the chessGame class, we can set the game to over
             gameData.game().setGameOver();
-            GameData newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+            GameData newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(),
+                    gameData.gameName(), gameData.game());
             server.getHandler().updateEntireGame(resignCommand.getAuthToken(), newGameData);
             String resignMessage = String.format("Player: '%s' has forfeited the game.", conn.userName);
             NotificationMessage notificationMessage = new NotificationMessage(resignMessage);
@@ -73,10 +74,6 @@ public class WebsocketHandler {
         } catch (Exception e) {
             sendErrorMessage(conn.session.getRemote(), new ErrorMessage(e.getMessage()));
         }
-    }
-
-    private void winsGame() {
-
     }
 
     private void makeMove(Connection conn, String message) {
@@ -113,17 +110,21 @@ public class WebsocketHandler {
                 }
             }
             if (chessGame.isInCheckmate(checkColorForCheck)) {
-                String winMessage = moveNotification + "\n" + String.format("Player: '%s' on team '%s' is in check mate!\n" +
-                        "Congratulations Player: '%s', you have won the game!", otherPlayerName, checkColorForCheck.toString(), conn.userName);
+                String winMessage = moveNotification + "\n" + String.format("Player: '%s' on team '%s' is in check " +
+                                "mate!\n" +
+                                "Congratulations Player: '%s', you have won the game!", otherPlayerName,
+                        checkColorForCheck.toString(), conn.userName);
                 NotificationMessage winNotification = new NotificationMessage(winMessage);
                 connections.broadcastToAllInGame(moveCommand.getGameID(), winNotification);
                 chessGame.setGameOver();
             } else if (chessGame.isInCheck(checkColorForCheck)) {
-                String checkMessage = String.format("Player: '%s' on team '%s' is in check!", otherPlayerName, checkColorForCheck.toString());
+                String checkMessage = String.format("Player: '%s' on team '%s' is in check!", otherPlayerName,
+                        checkColorForCheck.toString());
                 NotificationMessage checkNotification = new NotificationMessage(checkMessage);
                 connections.broadcastToAllInGame(moveCommand.getGameID(), checkNotification);
             }
-            GameData newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), chessGame);
+            GameData newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(),
+                    gameData.gameName(), chessGame);
             //now store the newest chessgame, then send out a notification.
             server.getHandler().updateEntireGame(moveCommand.getAuthToken(), newGameData);
             //now broadcast the LoadGameMessage to all players!!
@@ -153,10 +154,10 @@ public class WebsocketHandler {
             GameData gameData = getGameData(leaveCommand.getGameID());
             if (conn.role != Connection.Role.OBSERVER) {
                 switch (conn.role) {
-                    case BLACK ->
-                            gameData = new GameData(gameData.gameID(), gameData.whiteUsername(), null, gameData.gameName(), gameData.game());
-                    case WHITE ->
-                            gameData = new GameData(gameData.gameID(), null, gameData.blackUsername(), gameData.gameName(), gameData.game());
+                    case BLACK -> gameData = new GameData(gameData.gameID(), gameData.whiteUsername(), null,
+                            gameData.gameName(), gameData.game());
+                    case WHITE -> gameData = new GameData(gameData.gameID(), null, gameData.blackUsername(),
+                            gameData.gameName(), gameData.game());
                 }
                 server.getHandler().updateEntireGame(leaveCommand.getAuthToken(), gameData);
             }
@@ -184,7 +185,8 @@ public class WebsocketHandler {
             updateConnectionFields(conn, color, connectCommand.getGameID());
             connections.add(conn); //now it's safe to add the connection!!
             String gameName = getGameData(connectCommand.getGameID()).gameName();
-            String connectNotification = String.format("Player '%s', joined game '%s' as '%s'", conn.userName, gameName, conn.role.toString());
+            String connectNotification = String.format("Player '%s', joined game '%s' as '%s'", conn.userName, gameName,
+                    conn.role.toString());
             NotificationMessage note = new NotificationMessage(connectNotification);
             connections.broadcastToAllInGame(conn.gameID, conn.userName, note);
 
