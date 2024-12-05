@@ -235,13 +235,15 @@ public class LoggedInClient {
             if (r == 0 || r == 9) {
                 gameString.append(topBottomBlackPerspectiveString());
             } else {
-                gameString.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SET_TEXT_COLOR_BLACK + String.format(" %d ", r));
+                gameString.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SET_TEXT_COLOR_BLACK +
+                        String.format(" %d ", r));
                 if (r % 2 != 0) {
                     gameString.append(printBlackFirstRow(r, board, -1));
                 } else {
                     gameString.append(printWhiteFirstRow(r, board, -1));
                 }
-                gameString.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SET_TEXT_COLOR_BLACK + String.format(" %d ", r) + EscapeSequences.RESET_BG_COLOR + "\n");
+                gameString.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SET_TEXT_COLOR_BLACK +
+                        String.format(" %d ", r) + EscapeSequences.RESET_BG_COLOR + "\n");
             }
         }
         return gameString.toString();
@@ -256,13 +258,15 @@ public class LoggedInClient {
             if (r == 0 || r == 9) {
                 gameString.append(topBottomWhitePerspective());
             } else {
-                gameString.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SET_TEXT_COLOR_BLACK + String.format(" %d ", r));
+                gameString.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SET_TEXT_COLOR_BLACK +
+                        String.format(" %d ", r));
                 if (r % 2 == 0) { //if row is even
                     gameString.append(printWhiteFirstRow(r, board, 1));
                 } else {
                     gameString.append(printBlackFirstRow(r, board, 1));
                 }
-                gameString.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SET_TEXT_COLOR_BLACK + String.format(" %d ", r) + EscapeSequences.RESET_BG_COLOR + "\n");
+                gameString.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SET_TEXT_COLOR_BLACK +
+                        String.format(" %d ", r) + EscapeSequences.RESET_BG_COLOR + "\n");
             }
         }
         return gameString.toString();

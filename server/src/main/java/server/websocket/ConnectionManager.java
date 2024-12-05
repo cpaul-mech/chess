@@ -23,24 +23,6 @@ public class ConnectionManager {
         return connections.get(username);
     }
 
-    public void broadcastToAllConnections(String excludeVisitorName, ServerMessage serverMessage) throws IOException {
-        var removeList = new ArrayList<Connection>();
-        for (var c : connections.values()) {
-            if (c.session.isOpen()) {
-                if (!c.userName.equals(excludeVisitorName)) {
-                    c.send(serializer.toJson(serverMessage));
-                }
-            } else {
-                removeList.add(c);
-            }
-        }
-
-        // Clean up any connections that were left open.
-        for (var c : removeList) {
-            connections.remove(c.userName);
-        }
-    }
-
     public void broadcastToAllInGame(Integer relevantGameID, String excludeUsername, ServerMessage serverMessage) throws IOException {
         //first, we find the gameID that we need to check for, and send it to all connections with that gameID except for the excluded one.
         var removeList = new ArrayList<Connection>();
