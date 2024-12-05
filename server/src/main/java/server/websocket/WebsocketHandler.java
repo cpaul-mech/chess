@@ -124,6 +124,17 @@ public class WebsocketHandler {
             NotificationMessage n = new NotificationMessage(leavingNotification);
             connections.broadcastToAllInGame(leaveCommand.getGameID(), conn.userName, n);
             connections.remove(conn.userName);
+            //need to remove that username from the game.
+            GameData gameData = getGameData(leaveCommand.getGameID());
+            if (conn.role != Connection.Role.OBSERVER) {
+                switch (conn.role) {
+                    case BLACK ->
+                            gameData = new GameData(gameData.gameID(), gameData.whiteUsername(), null, gameData.gameName(), gameData.game());
+                    case WHITE ->
+                            gameData = new GameData(gameData.gameID(), null, gameData.blackUsername(), gameData.gameName(), gameData.game());
+                }
+                server.getHandler().updateEntireGame(leaveCommand.getAuthToken(), gameData);
+            }
 
         } catch (Exception e) {
             sendErrorMessage(conn.session.getRemote(), new ErrorMessage(e.getMessage()));
