@@ -15,8 +15,12 @@ public class ConnectionManager {
         connections.put(conn.userName, conn);
     }
 
-    public void remove(String visitorName) {
-        connections.remove(visitorName);
+    public void remove(String username) {
+        connections.remove(username);
+    }
+
+    public Connection getConnection(String username) {
+        return connections.get(username);
     }
 
     public void broadcastToAllConnections(String excludeVisitorName, ServerMessage serverMessage) throws IOException {

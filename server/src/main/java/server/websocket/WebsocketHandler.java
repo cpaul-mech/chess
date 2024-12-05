@@ -3,6 +3,7 @@ package server.websocket;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import websocket.commands.ConnectCommand;
+import websocket.commands.LeaveCommand;
 import websocket.commands.UserGameCommand;
 import dataaccess.DataAccessException;
 import websocket.messages.ErrorMessage;
@@ -58,6 +59,34 @@ public class WebsocketHandler {
     }
 
     private void leave(Connection conn, String message) {
+        try {
+            LeaveCommand leaveCommand = serializer.fromJson(message, LeaveCommand.class);
+            //need to remove the connection object from the serializer. but first make sure that we notify everyone else properly.
+            String color = getPlayerColor(conn, leaveCommand);
+//            updateConnectionFields(conn, color, leaveCommand.getGameID());
+            //or we could do this.
+            Connection actConn = connections.getConnection(conn.userName);
+            conn = actConn;
+            String gameName = getGameData(leaveCommand.getGameID()).gameName();
+            String leavingNotification = String.format("Player: '%s', role: '%s', has left game '%s'."
+                    , conn.userName, conn.role, gameName);
+            NotificationMessage n = new NotificationMessage(leavingNotification);
+            connections.broadcastToAllInGame(leaveCommand.getGameID(), conn.userName, n);
+            connections.remove(conn.userName);
+
+        } catch (Exception e) {
+            sendErrorMessage(conn.session.getRemote(), new ErrorMessage(e.getMessage()));
+        }
+    }
+
+    private void updateConnectionFields(Connection conn, String color, Integer gameID) throws DataAccessException {
+        switch (color) {
+            case "BLACK" -> conn.setRole(Connection.Role.BLACK);
+            case "WHITE" -> conn.setRole(Connection.Role.WHITE);
+            case null -> conn.setRole(Connection.Role.OBSERVER);
+            default -> throw new DataAccessException("GameID Not found!");
+        }
+        conn.setGameID(gameID);
     }
 
     private void connect(Connection conn, String msg) {
@@ -66,14 +95,7 @@ public class WebsocketHandler {
             ConnectCommand connectCommand = serializer.fromJson(msg, ConnectCommand.class);
             //now we have the connectCommand, giving us the gameID of the intended game, and thus which color the player belongs to.
             String color = getPlayerColor(conn, connectCommand);
-            //now we need to fill out the other things in the connection object.
-            switch (color) {
-                case "BLACK" -> conn.setRole(Connection.Role.BLACK);
-                case "WHITE" -> conn.setRole(Connection.Role.WHITE);
-                case null -> conn.setRole(Connection.Role.OBSERVER);
-                default -> throw new DataAccessException("GameID Not found!");
-            }
-            conn.setGameID(connectCommand.getGameID());
+            updateConnectionFields(conn, color, connectCommand.getGameID());
             connections.add(conn); //now it's safe to add the connection!!
             String gameName = getGameData(connectCommand.getGameID()).gameName();
             String connectNotification = String.format("Player '%s', joined game '%s' as '%s'", conn.userName, gameName, conn.role.toString());
@@ -91,9 +113,9 @@ public class WebsocketHandler {
 
     }
 
-    private String getPlayerColor(Connection conn, ConnectCommand connectCommand) throws DataAccessException {
+    private String getPlayerColor(Connection conn, UserGameCommand command) throws DataAccessException {
         String username = conn.userName;
-        GameData gameData = getGameData(connectCommand.getGameID());
+        GameData gameData = getGameData(command.getGameID());
         //check if it matches either player color
         if (gameData == null) {
             throw new DataAccessException("GameID not found!!");
