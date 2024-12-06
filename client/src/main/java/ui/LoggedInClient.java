@@ -5,6 +5,7 @@ import chess.ChessGame;
 import chess.ChessPosition;
 import model.AuthData;
 import model.GameData;
+import server.websocket.Connection;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,12 +16,15 @@ public class LoggedInClient {
     private AuthData currentAuthData;
     private final ServerFacade server;
     private final Map<Integer, GameData> gamesMap = new HashMap<>();
-    private final BoardPrinter boardPrinter = new BoardPrinter();
+    public String playerColor;
+    public Integer gameID;
+    //maybe I could have the loggedinClient be intelligent.
 
     public LoggedInClient(String url, ServerFacade facade) {
         currentAuthData = null;
         server = facade;
-
+        gameID = null;
+        playerColor = null;
     }
 
     public void setCurrentAuthData(AuthData aD) {
@@ -75,6 +79,9 @@ public class LoggedInClient {
                 }
                 JoinGameInput joinGameInput = new JoinGameInput(params[1], gameToJoin.gameID());
                 server.joinGame(currentAuthData, joinGameInput); //do I need to do anything with this?
+                playerColor = params[1];
+                gameID = gameToJoin.gameID();
+
             } catch (ServerException e) {
                 if (e.getrCode() == 500) {
                     return EscapeSequences.SET_TEXT_COLOR_RED + "Uh oh, an internal server error occurred: \n" +
@@ -134,6 +141,8 @@ public class LoggedInClient {
 
     public String quit() {
         var logoutLine = logout();
+        playerColor = null;
+        gameID = null;
         System.out.println(logoutLine);
         return "quit";
     }
@@ -210,12 +219,14 @@ public class LoggedInClient {
                     return EscapeSequences.SET_TEXT_COLOR_RED + "game number: " + Integer.parseInt(params[0]) + " does not exist." +
                             "\nPlease type 'list' to list games again and run join with a valid game number.";
                 }
+                //observe game successful
+                //if the playerColor string is still null, then it must be observer that was called.
+                gameID = gameToJoin.gameID();
             } catch (NumberFormatException e) {
                 return EscapeSequences.SET_TEXT_COLOR_RED + """
                         The game number you provided was invalid
                         please try again.""" + EscapeSequences.RESET_TEXT_COLOR;
             }
-            //join game successful
             return EscapeSequences.SET_TEXT_COLOR_GREEN + "You have successfully Observed the game " + params[0] + " as player: " +
                     currentAuthData.username() + EscapeSequences.RESET_TEXT_COLOR + "\n";
         }
