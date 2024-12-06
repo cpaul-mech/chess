@@ -26,11 +26,18 @@ public class GamePlayClient {
         this.playerColor = playerColor;
     }
 
-    public void inializeWSFacade() {
+    public void initializeWSFacade() {
         try {
             ws = new WSFacade(url, notificationHandler);
+            ws.gameID = this.gameID;
+            //now it has all the information that it needs!!
+            //gameID
         } catch (ServerException e) {
             throw new RuntimeException(e); //this is probably wrong.
         }
+    }
+
+    public String eval(String line) {
+        
     }
 }

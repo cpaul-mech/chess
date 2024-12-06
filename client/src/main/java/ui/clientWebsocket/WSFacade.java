@@ -6,7 +6,6 @@ import ui.ServerException;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
-import javax.websocket.Endpoint;
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
@@ -15,6 +14,8 @@ import java.net.URISyntaxException;
 public class WSFacade extends Endpoint {
     Session session;
     NotificationHandler notificationHandler;
+    //all I need to transfer is the gameID.
+    public Integer gameID;
 
 
     public WSFacade(String url, NotificationHandler notificationHandler) throws ServerException {
