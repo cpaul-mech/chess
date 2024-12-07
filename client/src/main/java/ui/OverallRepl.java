@@ -66,6 +66,7 @@ public class OverallRepl implements NotificationHandler {
                         this.playerColor = loggedInClient.playerColor.toUpperCase();
                         gamePlayClient.setGameID(loggedInClient.gameID);
                         gamePlayClient.setCurrentAuthData(loggedInClient.getCurrentAuthData());
+                        gamePlayClient.setServer(loggedOutClient.getServer());
                         gamePlayClient.initializeWSFacade();
 
                     }

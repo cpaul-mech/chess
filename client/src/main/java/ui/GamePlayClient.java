@@ -1,6 +1,7 @@
 package ui;
 
 import model.AuthData;
+import server.Server;
 import ui.clientWebsocket.NotificationHandler;
 import ui.clientWebsocket.WSFacade;
 
@@ -13,22 +14,12 @@ public class GamePlayClient {
     private String playerColor;
     private Integer gameID;
     private final NotificationHandler notificationHandler;
+    private BoardPrinter boardPrinter = new BoardPrinter();
+    private ServerFacade server;
 
     public GamePlayClient(String url, NotificationHandler notificationHandler) {
         this.url = url;
         this.notificationHandler = notificationHandler;
-    }
-
-    public void setGameID(Integer gameID) {
-        this.gameID = gameID;
-    }
-
-    public void setPlayerColor(String playerColor) {
-        this.playerColor = playerColor;
-    }
-
-    public void setCurrentAuthData(AuthData authData) {
-        this.currentAuthData = authData;
     }
 
     public void initializeWSFacade() {
@@ -54,11 +45,18 @@ public class GamePlayClient {
             }
             return switch (cmd) {
                 case "help" -> gamePlayHelp();
+                case "redraw" -> redraw();
                 default -> EscapeSequences.SET_TEXT_COLOR_RED + "cmd: '" + cmd + "' was not understood.\n" +
                         EscapeSequences.RESET_TEXT_COLOR + gamePlayHelp();
             };
         }
     }
+
+    private String redraw() {
+        server.
+    }
+
+
 
     public String gamePlayHelp() {
         String helpString = """
@@ -69,5 +67,19 @@ public class GamePlayClient {
                 'resign' -user concedes the game and loses the match
                 'highlight <two character position>' - highlights green all the squares where the player can move. """;
         return helpString;
+    }
+    public void setGameID(Integer gameID) {
+        this.gameID = gameID;
+    }
+
+    public void setPlayerColor(String playerColor) {
+        this.playerColor = playerColor;
+    }
+
+    public void setCurrentAuthData(AuthData authData) {
+        this.currentAuthData = authData;
+    }
+    public void setServer(ServerFacade server){
+        this.server = server;
     }
 }

@@ -33,7 +33,7 @@ public class WSFacade extends Endpoint {
                 @Override
                 public void onMessage(String message) {
                     ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
-                    //TODO: IMPLEMENT A SWITCH STATEMENT THAT CHECKS WHAT KIND OF THING IS COMING IN!
+                    
                     //then calls notify on that resulting logical step.
                     switch (serverMessage.getServerMessageType()) {
                         case NOTIFICATION -> {

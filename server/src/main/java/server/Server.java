@@ -74,6 +74,7 @@ public class Server {
     }
 
     private String joinGame(Request req, Response res) throws DataAccessException {
+        //TODO: ADD CHECKING FOR IF THE USER JOINS THE GAME ON BOTH SIDES?
         String authToken = req.headers("authorization");
         JoinGameInput joinGameInput = serializer.fromJson(req.body(), JoinGameInput.class);
         try {
