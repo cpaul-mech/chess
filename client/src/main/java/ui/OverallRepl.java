@@ -59,6 +59,7 @@ public class OverallRepl implements NotificationHandler {
                         //the player has joined or observed a game.
                         uiState = UiState.GAME_PLAY;
                         gamePlayClient.setGameID(loggedInClient.gameID);
+                        gamePlayClient.setCurrentAuthData(loggedInClient.getCurrentAuthData());
                         gamePlayClient.initializeWSFacade();
                     }
                 } else if (uiState == UiState.GAME_PLAY) {
