@@ -89,7 +89,7 @@ public class OverallRepl implements NotificationHandler {
 
     public void notify(NotificationMessage n, LoadGameMessage l, ErrorMessage e) {
         if (n != null) {
-            System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + n.message);
+            System.out.println("\n" + EscapeSequences.SET_TEXT_COLOR_BLUE + n.message);
             terminalArrows();
         } else if (l != null) {
             switch (playerColor) {
@@ -97,15 +97,15 @@ public class OverallRepl implements NotificationHandler {
                     System.out.println("\n" + boardPrinter.printWhiteGame(l.game));
                 }
                 case "BLACK" -> {
-                    System.out.println(boardPrinter.printBlackGame(l.game));
+                    System.out.println("\n" + boardPrinter.printBlackGame(l.game));
                 }
                 case null, default -> {
-                    System.out.println("SOMETHING WENT WRONG with notify.");
+                    System.out.println("\nSOMETHING WENT WRONG with notify.");
                 }
             }
             terminalArrows();
         } else if (e != null) {
-            System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + e.errorMessage);
+            System.out.println("\n" + EscapeSequences.SET_TEXT_COLOR_BLUE + e.errorMessage);
             terminalArrows();
         }
     }
