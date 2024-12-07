@@ -222,6 +222,7 @@ public class LoggedInClient {
                 //observe game successful
                 //if the playerColor string is still null, then it must be observer that was called.
                 gameID = gameToJoin.gameID();
+                playerColor = "observer";
             } catch (NumberFormatException e) {
                 return EscapeSequences.SET_TEXT_COLOR_RED + """
                         The game number you provided was invalid

@@ -5,6 +5,8 @@ import model.AuthData;
 import ui.ServerException;
 import websocket.commands.ConnectCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
@@ -36,7 +38,15 @@ public class WSFacade extends Endpoint {
                     switch (serverMessage.getServerMessageType()) {
                         case NOTIFICATION -> {
                             NotificationMessage notificationMessage = serializer.fromJson(message, NotificationMessage.class);
-                            notificationHandler.notify(notificationMessage);
+                            notificationHandler.notify(notificationMessage, null, null);
+                        }
+                        case LOAD_GAME -> {
+                            LoadGameMessage loadGameMessage = serializer.fromJson(message, LoadGameMessage.class);
+                            notificationHandler.notify(null, loadGameMessage, null);
+                        }
+                        case ERROR -> {
+                            ErrorMessage errorMessage = serializer.fromJson(message, ErrorMessage.class);
+                            notificationHandler.notify(null, null, errorMessage);
                         }
                     }
                 }
