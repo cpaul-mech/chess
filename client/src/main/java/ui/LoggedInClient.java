@@ -56,21 +56,13 @@ public class LoggedInClient {
                 case "play" -> joinGame(params);
                 case "observe" -> observe(params);
                 case "logout" -> logout();
-                case "clear" -> clearDataBases();
+
                 default -> EscapeSequences.SET_TEXT_COLOR_RED + "cmd: '" + cmd + "' was not understood.\n" +
                         EscapeSequences.RESET_TEXT_COLOR + loggedInHelp();
             };
         }
     }
 
-    private String clearDataBases() {
-        try {
-            server.clearDataBases();
-            return "databases cleared successfully";
-        } catch (ServerException e) {
-            return EscapeSequences.SET_TEXT_COLOR_RED + "there was an error clearing the database.";
-        }
-    }
 
     public String joinGame(String[] params) {
         if (params == null || params.length < 2) {

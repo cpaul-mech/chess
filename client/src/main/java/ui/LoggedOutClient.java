@@ -38,9 +38,19 @@ public class LoggedOutClient {
                 case "quit" -> quit();
                 case "login" -> login(params);
                 case "register" -> register(params);
+                case "clear" -> clearDataBases();
                 default -> EscapeSequences.SET_TEXT_COLOR_RED + "cmd: '" + cmd + "' was not understood.\n" +
                         EscapeSequences.RESET_TEXT_COLOR + loggedOutHelp();
             };
+        }
+    }
+
+    private String clearDataBases() {
+        try {
+            server.clearDataBases();
+            return "databases cleared successfully";
+        } catch (ServerException e) {
+            return EscapeSequences.SET_TEXT_COLOR_RED + "there was an error clearing the database.";
         }
     }
 
