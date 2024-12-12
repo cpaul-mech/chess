@@ -18,6 +18,7 @@ public class LoggedInClient {
     private final Map<Integer, GameData> gamesMap = new HashMap<>();
     public String playerColor;
     public Integer gameID;
+    public GameData gameData;
     //maybe I could have the loggedinClient be intelligent.
 
     public LoggedInClient(String url, ServerFacade facade) {
@@ -55,9 +56,19 @@ public class LoggedInClient {
                 case "play" -> joinGame(params);
                 case "observe" -> observe(params);
                 case "logout" -> logout();
+                case "clear" -> clearDataBases();
                 default -> EscapeSequences.SET_TEXT_COLOR_RED + "cmd: '" + cmd + "' was not understood.\n" +
                         EscapeSequences.RESET_TEXT_COLOR + loggedInHelp();
             };
+        }
+    }
+
+    private String clearDataBases() {
+        try {
+            server.clearDataBases();
+            return "databases cleared successfully";
+        } catch (ServerException e) {
+            return EscapeSequences.SET_TEXT_COLOR_RED + "there was an error clearing the database.";
         }
     }
 
@@ -81,6 +92,8 @@ public class LoggedInClient {
                 server.joinGame(currentAuthData, joinGameInput); //do I need to do anything with this?
                 playerColor = params[1];
                 gameID = gameToJoin.gameID();
+                gameData = gameToJoin;
+                //need to store the
 
             } catch (ServerException e) {
                 if (e.getrCode() == 500) {
@@ -223,6 +236,7 @@ public class LoggedInClient {
                 //if the playerColor string is still null, then it must be observer that was called.
                 gameID = gameToJoin.gameID();
                 playerColor = "observer";
+                gameData = gameToJoin;
             } catch (NumberFormatException e) {
                 return EscapeSequences.SET_TEXT_COLOR_RED + """
                         The game number you provided was invalid

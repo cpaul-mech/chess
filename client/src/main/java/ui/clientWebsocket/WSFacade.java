@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import model.AuthData;
 import ui.ServerException;
 import websocket.commands.ConnectCommand;
+import websocket.commands.LeaveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -33,7 +34,7 @@ public class WSFacade extends Endpoint {
                 @Override
                 public void onMessage(String message) {
                     ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
-                    
+
                     //then calls notify on that resulting logical step.
                     switch (serverMessage.getServerMessageType()) {
                         case NOTIFICATION -> {
@@ -68,6 +69,12 @@ public class WSFacade extends Endpoint {
         ConnectCommand connectCommand = new ConnectCommand(authData.authToken(), gameID);
         sendMessage(connectCommand);
     }
+
+    public void leave(AuthData authData, int gameID) throws ServerException {
+        LeaveCommand leaveCommand = new LeaveCommand(authData.authToken(), gameID);
+        sendMessage(leaveCommand);
+    }
+
 
     public void sendMessage(UserGameCommand userGameCommand) throws ServerException {
         try {

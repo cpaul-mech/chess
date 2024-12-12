@@ -1,6 +1,8 @@
 package ui;
 
+import chess.ChessGame;
 import model.AuthData;
+import model.GameData;
 import server.Server;
 import ui.clientWebsocket.NotificationHandler;
 import ui.clientWebsocket.WSFacade;
@@ -16,6 +18,8 @@ public class GamePlayClient {
     private final NotificationHandler notificationHandler;
     private BoardPrinter boardPrinter = new BoardPrinter();
     private ServerFacade server;
+    private GameData gameData;
+
 
     public GamePlayClient(String url, NotificationHandler notificationHandler) {
         this.url = url;
@@ -46,16 +50,41 @@ public class GamePlayClient {
             return switch (cmd) {
                 case "help" -> gamePlayHelp();
                 case "redraw" -> redraw();
+                case "leave" -> leave();
+                case "highlight" -> renderLegalMoves();
                 default -> EscapeSequences.SET_TEXT_COLOR_RED + "cmd: '" + cmd + "' was not understood.\n" +
                         EscapeSequences.RESET_TEXT_COLOR + gamePlayHelp();
             };
         }
     }
 
-    private String redraw() {
-        server.
+    private String leave() {
+        //needs to disconnect!!
+        try {
+            ws.leave(this.currentAuthData, this.gameID);
+            playerColor = null; //resetting all the variables.
+            gameID = null;
+            gameData = null;
+            ws = null;
+            return String.format("player '%s' has left successfully", currentAuthData.username())
+                    + "\nReturning to loggedIn UI";
+        } catch (ServerException e) {
+            return EscapeSequences.SET_TEXT_COLOR_RED + "Error " + e.getrCode() + ", " + e.getMessage();
+        }
     }
 
+    private String redraw() {
+        //actually I shouldn't need to get the game again, I just need to update the game within the gameplay client every time a load game message is sent.
+        return switch (playerColor) {
+            case "WHITE", "OBSERVER" -> boardPrinter.printWhiteGame(gameData.game());
+            case "BLACK" -> boardPrinter.printBlackGame(gameData.game());
+            case null, default -> "something went wrong while attempting to redraw the board.";
+        };
+    }
+
+    private String renderLegalMoves() {
+        return "Not quite implemented!!";
+    }
 
 
     public String gamePlayHelp() {
@@ -68,6 +97,7 @@ public class GamePlayClient {
                 'highlight <two character position>' - highlights green all the squares where the player can move. """;
         return helpString;
     }
+
     public void setGameID(Integer gameID) {
         this.gameID = gameID;
     }
@@ -79,7 +109,21 @@ public class GamePlayClient {
     public void setCurrentAuthData(AuthData authData) {
         this.currentAuthData = authData;
     }
-    public void setServer(ServerFacade server){
+
+    public void setServer(ServerFacade server) {
         this.server = server;
+    }
+
+    public void setGameData(GameData gameData) {
+        this.gameData = gameData;
+    }
+
+    public void updateChessGame(ChessGame game) {
+        GameData upGameData = new GameData(this.gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
+        this.gameData = upGameData;
+    }
+
+    public Integer getGameID() {
+        return gameID;
     }
 }

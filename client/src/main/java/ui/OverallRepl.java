@@ -64,14 +64,24 @@ public class OverallRepl implements NotificationHandler {
                         //the player has joined or observed a game.
                         uiState = UiState.GAME_PLAY;
                         this.playerColor = loggedInClient.playerColor.toUpperCase();
+                        gamePlayClient.setPlayerColor(this.playerColor);
                         gamePlayClient.setGameID(loggedInClient.gameID);
                         gamePlayClient.setCurrentAuthData(loggedInClient.getCurrentAuthData());
                         gamePlayClient.setServer(loggedOutClient.getServer());
+                        gamePlayClient.setGameData(loggedInClient.gameData);
                         gamePlayClient.initializeWSFacade();
 
                     }
                 } else if (uiState == UiState.GAME_PLAY) {
                     result = gamePlayClient.eval(line);
+                    if (gamePlayClient.getGameID() == null) {
+                        //the player has left the game, transition to the postLogin UI
+                        playerColor = null;
+                        loggedInClient.playerColor = null;
+                        loggedInClient.gameData = null;
+                        loggedInClient.gameID = null;
+                        uiState = UiState.LOGGED_IN;
+                    }
                 }
                 System.out.println(result);
 
@@ -96,9 +106,12 @@ public class OverallRepl implements NotificationHandler {
             switch (playerColor) {
                 case "WHITE", "OBSERVER" -> {
                     System.out.println("\n" + boardPrinter.printWhiteGame(l.game));
+                    //If I need to I can have the board printer accessed only by the GamePlayClient.
+                    gamePlayClient.updateChessGame(l.game);
                 }
                 case "BLACK" -> {
                     System.out.println("\n" + boardPrinter.printBlackGame(l.game));
+                    gamePlayClient.updateChessGame(l.game);
                 }
                 case null, default -> {
                     System.out.println("\nSOMETHING WENT WRONG with notify.");
@@ -106,7 +119,7 @@ public class OverallRepl implements NotificationHandler {
             }
             terminalArrows();
         } else if (e != null) {
-            System.out.println("\n" + EscapeSequences.SET_TEXT_COLOR_BLUE + e.errorMessage);
+            System.out.println("\n" + EscapeSequences.SET_TEXT_COLOR_RED + e.errorMessage);
             terminalArrows();
         }
     }
