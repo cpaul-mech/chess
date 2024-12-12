@@ -1,10 +1,12 @@
 package ui.clientWebsocket;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
 import model.AuthData;
 import ui.ServerException;
 import websocket.commands.ConnectCommand;
 import websocket.commands.LeaveCommand;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -73,6 +75,11 @@ public class WSFacade extends Endpoint {
     public void leave(AuthData authData, int gameID) throws ServerException {
         LeaveCommand leaveCommand = new LeaveCommand(authData.authToken(), gameID);
         sendMessage(leaveCommand);
+    }
+
+    public void makeMove(AuthData authData, int gameID, ChessMove move) throws ServerException {
+        MakeMoveCommand moveCommand = new MakeMoveCommand(authData.authToken(), gameID, move);
+        sendMessage(moveCommand);
     }
 
 
